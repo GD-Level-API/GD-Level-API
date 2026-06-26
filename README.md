@@ -107,6 +107,22 @@ Returns profile data for a Geometry Dash player.
 
 ---
 
+### `GET /api/icon?name={username}`
+
+Returns a player's GD icon as a **PNG** rendered with their real colors, glow, and correct icon number.
+
+| Param  | Type   | Required | Description |
+|--------|--------|----------|-------------|
+| `name` | string | ✅       | GD username |
+| `form` | string | ❌       | `cube`, `ship`, `ball`, `ufo`, `wave`, `robot`, `spider`, `swing`, `jetpack`. Defaults to the player's active form. |
+| `all`  | string | ❌       | Set to `1` to return JSON with all 9 forms instead of a PNG. |
+
+```html
+<img src="https://gd-level-api.liamt.xyz/api/icon?name=RobTop&form=cube" />
+```
+
+---
+
 ## CORS
 
 All endpoints return `Access-Control-Allow-Origin: *`. Usable directly from the browser with no extra configuration.
