@@ -1522,7 +1522,7 @@ document.querySelectorAll('.cw').forEach(cw => {
     const el = document.createElement('div');
     el.className = 'gal-item';
     // GDBrowser serves thumbnails instantly at this path
-    el.innerHTML = `<img class="gal-img" src="https://gdbrowser.com/assets/levelthumbs/${lvl.id}.png" alt="${esc(lvl.name)}" loading="lazy" onerror="this.src='https://levelthumbs.prevter.me/thumbnail/${lvl.id}'"/>
+    el.innerHTML = `<img class="gal-img" src="${BASE}/thumbnail/${lvl.id}" alt="${esc(lvl.name)}" loading="lazy"/>
       <div class="gal-meta"><span class="gal-name">${esc(lvl.name)}</span><span class="gal-auth">by ${esc(lvl.author)} · ⭐${lvl.stars} · ${esc(lvl.diff)}</span></div>`;
     el.onclick = () => { document.getElementById('cardId').value = lvl.id; document.getElementById('demo-card').scrollIntoView({behavior:'smooth'}); setTimeout(runCard, 350); };
     grid.appendChild(el);
