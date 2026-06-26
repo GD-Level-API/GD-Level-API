@@ -1091,11 +1091,12 @@ export default {
         if (request.method === 'DELETE') return await handleDeleteComment(request, url, env);
       }
 
+      const HTML_HEADERS = { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache, no-store, must-revalidate' };
       if (url.pathname === '/' || url.pathname === '/index.html') {
-        return new Response(landingPage, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+        return new Response(landingPage, { headers: HTML_HEADERS });
       }
       if (url.pathname === '/status') {
-        return new Response(statusPage, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+        return new Response(statusPage, { headers: HTML_HEADERS });
       }
       if (url.pathname === '/favicon.svg') {
         return new Response(faviconSvg, { headers: { 'Content-Type': 'image/svg+xml', 'Cache-Control': 'public, max-age=86400' } });
