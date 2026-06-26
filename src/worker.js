@@ -252,7 +252,7 @@ async function handleCard(url) {
     ],
   });
 
-  const resvg = new Resvg(svg, { fitTo: { mode: 'width', value: 800 } });
+  const resvg = new Resvg(svg, { fitTo: { mode: 'width', value: 1600 } });
   const png   = resvg.render().asPng();
 
   return new Response(png, {
