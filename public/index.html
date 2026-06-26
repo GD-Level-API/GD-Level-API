@@ -216,15 +216,41 @@
     .gal-skeleton{background:var(--card);border:1px solid var(--b1);border-radius:10px;height:130px;animation:sk 1.5s ease-in-out infinite}
     @media(max-width:900px){.gal-grid{grid-template-columns:1fr}}
 
-    footer{border-top:1px solid var(--b1);padding:24px;text-align:center;color:var(--m);font-size:.74rem;position:relative;z-index:1}
+    footer{border-top:1px solid var(--b1);padding:48px 0 28px;position:relative;z-index:1}
+    .footer-inner{max-width:1180px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}
+    .footer-brand p{font-size:.78rem;color:var(--m);line-height:1.7;margin-top:8px;max-width:240px}
+    .footer-brand .flogo{font-size:.92rem;font-weight:800;color:var(--white);display:flex;align-items:center;gap:7px}
+    .footer-col h4{font-size:.65rem;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:12px}
+    .footer-col a{display:block;font-size:.78rem;color:var(--m2);text-decoration:none;margin-bottom:7px;transition:color .15s}
+    .footer-col a:hover{color:var(--white)}
+    .footer-bottom{max-width:1180px;margin:32px auto 0;padding:20px 24px 0;border-top:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+    .footer-bottom span{font-size:.72rem;color:var(--m)}
+    .footer-bottom a{font-size:.72rem;color:var(--m);text-decoration:none;transition:color .15s}
+    .footer-bottom a:hover{color:var(--m2)}
 
     @media(max-width:900px){
       .hero-inner{flex-direction:column;gap:36px;padding:40px 0}
       .hero-right{width:100%}
-      .hero h1{font-size:2.6rem}
+      .hero h1{font-size:2.2rem;letter-spacing:-1.5px}
+      .hero-desc{font-size:.88rem}
       aside{display:none}
       .docs-main{padding-left:0}
       .pg-grid{grid-template-columns:1fr}
+      .ep-path{font-size:.76rem}
+      .footer-inner{grid-template-columns:1fr 1fr;gap:28px}
+      .footer-brand{grid-column:1/-1}
+      .footer-bottom{flex-direction:column;text-align:center;gap:6px}
+      nav{padding:0 16px}
+      .nbadge{display:none}
+      .wrap{padding:0 16px}
+      .irow{flex-direction:column}
+      .pg-grid{gap:10px}
+      .feat-grid{grid-template-columns:1fr}
+    }
+    @media(max-width:480px){
+      .hero h1{font-size:1.9rem}
+      .footer-inner{grid-template-columns:1fr}
+      .nlink{font-size:.7rem;padding:4px 7px}
     }
   </style>
 </head>
@@ -868,12 +894,81 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
   <div id="commentsList" style="display:flex;flex-direction:column;gap:10px"></div>
 </div>
 
+<!-- ── PRIVACY & TERMS ── -->
+<div id="privacy" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;overflow-y:auto;padding:40px 16px" onclick="if(event.target===this)this.style.display='none'">
+  <div style="max-width:600px;margin:0 auto;background:var(--s);border:1px solid var(--b2);border-radius:12px;padding:32px">
+    <h2 style="color:var(--white);margin-bottom:16px;font-size:1.2rem">Privacy Policy</h2>
+    <div style="font-size:.8rem;color:var(--m2);line-height:1.8">
+      <p><strong style="color:var(--white)">Data we collect</strong><br>When you log in with Discord we store your Discord user ID, username and avatar URL in a temporary session (7 days). Comments you post are stored in our database with your Discord ID, username and avatar.</p>
+      <p style="margin-top:12px"><strong style="color:var(--white)">What we don't collect</strong><br>We do not store your email, password or any Discord tokens. We do not sell or share your data with third parties.</p>
+      <p style="margin-top:12px"><strong style="color:var(--white)">API usage</strong><br>API requests are rate-limited per IP. We do not log or store individual API requests.</p>
+      <p style="margin-top:12px"><strong style="color:var(--white)">Cookies</strong><br>We use a single session cookie (<code>gd_session</code>) to keep you logged in. No tracking or analytics cookies.</p>
+      <p style="margin-top:12px"><strong style="color:var(--white)">Deleting your data</strong><br>You can delete your own comments at any time. To request full data deletion contact us on Discord.</p>
+      <p style="margin-top:12px;color:var(--m)">Last updated: June 2026</p>
+    </div>
+    <button onclick="document.getElementById('privacy').style.display='none'" style="margin-top:20px;padding:7px 18px;border-radius:6px;border:none;background:var(--b2);color:var(--white);cursor:pointer;font-family:inherit">Close</button>
+  </div>
+</div>
+
+<div id="terms" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;overflow-y:auto;padding:40px 16px" onclick="if(event.target===this)this.style.display='none'">
+  <div style="max-width:600px;margin:0 auto;background:var(--s);border:1px solid var(--b2);border-radius:12px;padding:32px">
+    <h2 style="color:var(--white);margin-bottom:16px;font-size:1.2rem">Terms of Use</h2>
+    <div style="font-size:.8rem;color:var(--m2);line-height:1.8">
+      <p><strong style="color:var(--white)">Free use</strong><br>This API is free to use for personal and non-commercial projects. Attribution appreciated but not required for API usage.</p>
+      <p style="margin-top:12px"><strong style="color:var(--white)">Prohibited</strong><br>You may not use this API to build a competing commercial service, resell access, or abuse rate limits intentionally.</p>
+      <p style="margin-top:12px"><strong style="color:var(--white)">No warranty</strong><br>The API is provided as-is. We reserve the right to change or discontinue the service at any time without notice.</p>
+      <p style="margin-top:12px"><strong style="color:var(--white)">Source code</strong><br>The source code is licensed under CC BY-NC 4.0. See the LICENSE file for details.</p>
+      <p style="margin-top:12px"><strong style="color:var(--white)">Geometry Dash</strong><br>This project is not affiliated with or endorsed by RobTop Games.</p>
+    </div>
+    <button onclick="document.getElementById('terms').style.display='none'" style="margin-top:20px;padding:7px 18px;border-radius:6px;border:none;background:var(--b2);color:var(--white);cursor:pointer;font-family:inherit">Close</button>
+  </div>
+</div>
+
 <footer>
-  gd-level-api.liamt.xyz &nbsp;·&nbsp; Free · No auth · No limits
-  &nbsp;·&nbsp;
-  <a href="https://discord.gg/wfWX2nuXw4" target="_blank" rel="noopener" style="color:var(--m2);text-decoration:none">Discord</a>
-  &nbsp;·&nbsp;
-  Powered by <a href="https://github.com/liamt8d" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none">Liam</a>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="flogo">
+        <img src="/favicon.svg" style="width:20px;height:20px"/> GD Level API
+      </div>
+      <p>Free public REST API for Geometry Dash. Get level data, generate PNG cards, search levels and more — no key required.</p>
+      <p style="margin-top:10px;font-size:.72rem">Powered by <a href="https://github.com/liamt8d" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none;font-weight:700">Liam</a></p>
+    </div>
+
+    <div class="footer-col">
+      <h4>API</h4>
+      <a href="#ep-level">/api/level</a>
+      <a href="#ep-levels">/api/levels</a>
+      <a href="#ep-search">/api/search</a>
+      <a href="#ep-card">/api/card</a>
+      <a href="#ep-thumb">/api/thumbnail</a>
+      <a href="#ep-random">/api/random</a>
+      <a href="#ep-user">/api/user</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Resources</h4>
+      <a href="#playground">Playground</a>
+      <a href="https://github.com/GD-Level-API/GD-Level-API" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://discord.gg/wfWX2nuXw4" target="_blank" rel="noopener">Discord</a>
+      <a href="https://github.com/GD-Level-API/GD-Level-API/issues" target="_blank" rel="noopener">Report a bug</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <a href="#" onclick="event.preventDefault();document.getElementById('privacy').style.display='block'">Privacy Policy</a>
+      <a href="https://github.com/GD-Level-API/GD-Level-API/blob/master/LICENSE" target="_blank" rel="noopener">License (CC BY-NC 4.0)</a>
+      <a href="#" onclick="event.preventDefault();document.getElementById('terms').style.display='block'">Terms of use</a>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <span>© 2026 GD Level API · Not affiliated with RobTop Games</span>
+    <div style="display:flex;gap:16px">
+      <a href="#" onclick="event.preventDefault();document.getElementById('privacy').style.display='block'">Privacy</a>
+      <a href="https://github.com/GD-Level-API/GD-Level-API" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://discord.gg/wfWX2nuXw4" target="_blank" rel="noopener">Discord</a>
+    </div>
+  </div>
 </footer>
 
 <script>
