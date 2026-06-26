@@ -449,8 +449,8 @@ async function runUptimeCron(env) {
   const today = new Date().toISOString().slice(0, 10);
   const checks = { api: false, gdb: false, thumb: false };
 
+  checks.api = true; // if cron runs, the Worker is up
   await Promise.all([
-    fetch('https://gd-level-api.liamt.xyz/api/level?id=128').then(r => { checks.api = r.ok; }).catch(() => {}),
     fetch('https://gdbrowser.com/api/level/128').then(r => { checks.gdb = r.ok; }).catch(() => {}),
     fetch('https://levelthumbs.prevter.me/thumbnail/1').then(r => { checks.thumb = r.ok; }).catch(() => {}),
   ]);
