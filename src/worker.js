@@ -444,6 +444,59 @@ async function handleCard(url, env, request) {
   });
 }
 
+// ── Handler: /og ─────────────────────────────────────────────────────────────
+async function handleOgImage(env) {
+  const cacheKey = 'og:banner:v1';
+  if (env?.CARD_CACHE) {
+    const cached = await env.CARD_CACHE.get(cacheKey, 'arrayBuffer');
+    if (cached) return new Response(cached, { headers: { 'Content-Type': 'image/png', 'Cache-Control': 'public, max-age=86400' } });
+  }
+
+  const [[fontRegular, fontBold]] = await Promise.all([ensureFonts(), ensureWasm()]);
+
+  const svg = await satori(
+    h('div', {
+      style: {
+        width: '1200px', height: '630px', display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        background: 'linear-gradient(135deg, #07070b 0%, #0d0d14 50%, #1a1a2e 100%)',
+        fontFamily: 'Inter', position: 'relative',
+      },
+    },
+      h('div', { style: { position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 70% 30%, rgba(99,102,241,0.12), transparent 60%)', borderRadius: '0' } }),
+      h('div', { style: { display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '28px' } },
+        h('div', { style: { width: '72px', height: '72px', background: 'linear-gradient(135deg,#f59e0b,#f97316)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' } },
+          h('div', { style: { color: '#000', fontSize: '38px', fontWeight: 900 } }, '⬡'),
+        ),
+        h('div', { style: { fontSize: '52px', fontWeight: 900, color: '#eeeeff', letterSpacing: '-2px' } }, 'GD Level API'),
+      ),
+      h('div', { style: { fontSize: '24px', color: '#6060a0', textAlign: 'center', maxWidth: '780px', lineHeight: 1.5 } },
+        'Free public REST API for Geometry Dash',
+      ),
+      h('div', { style: { display: 'flex', gap: '16px', marginTop: '40px' } },
+        ...['Level data', 'PNG Cards', 'Search', 'User Profiles', 'Player Icons'].map(label =>
+          h('div', { style: { background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '10px 20px', fontSize: '17px', color: '#9090c0' } }, label)
+        ),
+      ),
+      h('div', { style: { position: 'absolute', bottom: '32px', fontSize: '16px', color: '#3d3d5c' } }, 'gd-level-api.liamt.xyz'),
+    ),
+    {
+      width: 1200, height: 630,
+      fonts: [
+        { name: 'Inter', data: fontRegular, weight: 400, style: 'normal' },
+        { name: 'Inter', data: fontBold,    weight: 700, style: 'normal' },
+      ],
+    }
+  );
+
+  const resvg = new Resvg(svg, { fitTo: { mode: 'width', value: 1200 } });
+  const png   = resvg.render().asPng();
+
+  if (env?.CARD_CACHE) await env.CARD_CACHE.put(cacheKey, png, { expirationTtl: 86400 });
+
+  return new Response(png, { headers: { 'Content-Type': 'image/png', 'Cache-Control': 'public, max-age=86400' } });
+}
+
 // ── Handler: /api/random ─────────────────────────────────────────────────────
 async function handleRandom(url) {
   const page = Math.floor(Math.random() * 8);
@@ -814,6 +867,7 @@ export default {
       if (url.pathname === '/favicon.svg') {
         return new Response(faviconSvg, { headers: { 'Content-Type': 'image/svg+xml', 'Cache-Control': 'public, max-age=86400' } });
       }
+      if (url.pathname === '/og') return await handleOgImage(env);
       return new Response('Not Found', { status: 404 });
     } catch (err) {
       return new Response(`Error: ${err.message}`, { status: 500 });
