@@ -14,7 +14,7 @@ id      = "79333153777345988879b240b0b8b1d0"
 
 [[rules]]
 type  = "Text"
-globs = ["**/*.html"]
+globs = ["**/*.html", "**/*.svg"]
 
 [[rules]]
 type  = "CompiledWasm"
