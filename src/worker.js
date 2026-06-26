@@ -491,6 +491,9 @@ async function runUptimeCron(env) {
 // ── Handler: /api/status-history ─────────────────────────────────────────────
 async function handleStatusHistory(env) {
   const raw = await env?.CARD_CACHE?.get('status:history', 'json').catch(() => null) || {};
+  // default current to all up if no data yet
+  if (!raw.current) raw.current = { api: true, gdb: true, thumb: true };
+  if (!raw.lastCheck) raw.lastCheck = new Date().toISOString();
   return json(raw);
 }
 
@@ -998,6 +1001,7 @@ export default {
       if (url.pathname === '/api/leaderboard')         return await handleLeaderboard(env);
       if (url.pathname === '/api/status')              return await handleStatus();
       if (url.pathname === '/api/status-history')      return await handleStatusHistory(env);
+      if (url.pathname === '/api/run-cron')            { await runUptimeCron(env); return json({ ok: true }); }
       if (url.pathname === '/api/subscribe' && request.method === 'POST') return await handleSubscribe(request, env);
       if (url.pathname === '/api/kofi-goal')           return await handleKofiGoal(env);
       if (url.pathname === '/kofi-webhook' && request.method === 'POST') return await handleKofiWebhook(request, env);
