@@ -207,14 +207,32 @@
     /* gallery */
     .gal-sec{padding:0 0 72px}
     .gal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px}
-    .gal-item{background:var(--card);border:1px solid var(--b1);border-radius:10px;overflow:hidden;transition:border-color .2s,transform .2s}
+    .gal-item{background:var(--card);border:1px solid var(--b1);border-radius:10px;overflow:hidden;transition:border-color .2s,transform .2s;cursor:pointer}
     .gal-item:hover{border-color:var(--b2);transform:translateY(-2px)}
-    .gal-img{width:100%;display:block}
+    .gal-img{width:100%;display:block;aspect-ratio:800/260;object-fit:cover;background:var(--b1)}
     .gal-meta{padding:10px 13px}
     .gal-name{font-size:.82rem;font-weight:600;color:var(--white);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .gal-auth{font-size:.7rem;color:var(--m2)}
     .gal-skeleton{background:var(--card);border:1px solid var(--b1);border-radius:10px;height:130px;animation:sk 1.5s ease-in-out infinite}
     @media(max-width:900px){.gal-grid{grid-template-columns:1fr}}
+
+    /* sponsor */
+    .sponsor-sec{padding:0 0 72px}
+    .sponsor-box{background:linear-gradient(135deg,#1a1a2e,#111119);border:1px solid #f59e0b30;border-radius:16px;padding:36px 40px;display:flex;align-items:center;justify-content:space-between;gap:32px;position:relative;overflow:hidden}
+    .sponsor-box::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 50%,#f59e0b08,transparent 60%);pointer-events:none}
+    .sponsor-left{flex:1}
+    .sponsor-tag{font-size:.62rem;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:10px;display:block}
+    .sponsor-title{font-size:1.5rem;font-weight:800;color:var(--white);margin-bottom:8px;letter-spacing:-.5px}
+    .sponsor-desc{font-size:.85rem;color:var(--m2);line-height:1.7;max-width:480px}
+    .sponsor-goal{margin-top:18px;background:var(--bg);border-radius:8px;padding:14px 18px;border:1px solid var(--b1);max-width:360px}
+    .sponsor-goal-label{display:flex;justify-content:space-between;margin-bottom:8px}
+    .sponsor-goal-label span{font-size:.72rem;color:var(--m2)}
+    .sponsor-goal-label strong{font-size:.72rem;color:var(--gold);font-weight:700}
+    .sponsor-bar{height:8px;background:var(--b1);border-radius:99px;overflow:hidden}
+    .sponsor-bar-fill{height:100%;background:linear-gradient(90deg,#f59e0b,#f97316);border-radius:99px;width:0%;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+    .sponsor-btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#f59e0b,#f97316);color:#000;font-weight:800;font-size:.85rem;padding:13px 28px;border-radius:10px;text-decoration:none;transition:opacity .15s,transform .15s;flex-shrink:0}
+    .sponsor-btn:hover{opacity:.9;transform:translateY(-1px)}
+    @media(max-width:900px){.sponsor-box{flex-direction:column;padding:24px}.sponsor-btn{width:100%;justify-content:center}}
 
     footer{border-top:1px solid var(--b1);padding:48px 0 28px;position:relative;z-index:1}
     .footer-inner{max-width:1180px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}
@@ -1082,6 +1100,27 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
   </div>
 </div>
 
+<!-- ── SPONSOR ───────────────────────────── -->
+<div class="wrap sponsor-sec">
+  <div class="sponsor-box">
+    <div class="sponsor-left">
+      <span class="sponsor-tag">☕ Support the project</span>
+      <div class="sponsor-title">Help keep GD Level API free</div>
+      <p class="sponsor-desc">This API runs 100% free, no ads, no paywalls. If it's been useful for your bot, project or app — consider buying a coffee. Every contribution helps cover server costs.</p>
+      <div class="sponsor-goal">
+        <div class="sponsor-goal-label">
+          <span>Goal: hosting &amp; uptime</span>
+          <strong id="goalPct">0 / $100</strong>
+        </div>
+        <div class="sponsor-bar"><div class="sponsor-bar-fill" id="goalBar"></div></div>
+      </div>
+    </div>
+    <a class="sponsor-btn" href="https://ko-fi.com/liancito/goal?g=0" target="_blank" rel="noopener">
+      ☕ Support on Ko-fi
+    </a>
+  </div>
+</div>
+
 <footer>
   <div class="footer-inner">
     <div class="footer-brand">
@@ -1449,38 +1488,37 @@ document.querySelectorAll('.cw').forEach(cw => {
 /* ── Gallery ─────────────────── */
 (async () => {
   const grid = document.getElementById('galGrid');
-  const queries = ['First Race', 'Clubstep', 'Jawbreaker'];
+  const ids = [128, 10565740, 44543505, 27318416, 39017968, 62717162];
   let loaded = 0;
-  for (const q of queries) {
+  const shuffle = a => a.sort(() => Math.random() - .5);
+  for (const id of shuffle(ids)) {
     if (loaded >= 3) break;
     try {
-      const results = await fetch(`${BASE}/api/search?q=${encodeURIComponent(q)}&count=5`).then(r => r.json());
-      if (!Array.isArray(results) || !results.length) continue;
-      for (const level of results.slice(0, 4)) {
-        if (loaded >= 3) break;
-        try {
-          const ctrl = new AbortController();
-          const timer = setTimeout(() => ctrl.abort(), 8000);
-          const cardRes = await fetch(`${BASE}/api/card?id=${level.id}&size=small`, { signal: ctrl.signal });
-          clearTimeout(timer);
-          if (!cardRes.ok) continue;
-          const src = URL.createObjectURL(await cardRes.blob());
-          const skeleton = grid.querySelector('.gal-skeleton');
-          if (skeleton) skeleton.remove();
-          const el = document.createElement('div');
-          el.className = 'gal-item';
-          el.innerHTML = `<img class="gal-img" src="${src}" alt="${esc(level.name)}"/>
-            <div class="gal-meta"><span class="gal-name">${esc(level.name)}</span><span class="gal-auth">by ${esc(level.author)} · ${esc(level.difficulty)}</span></div>`;
-          el.style.cursor = 'pointer';
-          el.onclick = () => { document.getElementById('cardId').value = level.id; document.getElementById('cardSize').value = 'small'; document.getElementById('demo-card').scrollIntoView({behavior:'smooth'}); setTimeout(runCard, 350); };
-          grid.appendChild(el);
-          loaded++; break;
-        } catch(e) { continue; }
-      }
+      const level = await fetch(`${BASE}/api/level?id=${id}`).then(r => r.ok ? r.json() : null);
+      if (!level) continue;
+      const thumb = level.urls?.thumbnail || `https://levelthumbs.prevter.me/thumbnail/${id}`;
+      const skeleton = grid.querySelector('.gal-skeleton');
+      if (skeleton) skeleton.remove();
+      const el = document.createElement('div');
+      el.className = 'gal-item';
+      el.innerHTML = `<img class="gal-img" src="${esc(thumb)}" alt="${esc(level.name)}" loading="lazy" onerror="this.style.display='none'"/>
+        <div class="gal-meta"><span class="gal-name">${esc(level.name)}</span><span class="gal-auth">by ${esc(level.author)} · ⭐${level.stars ?? 0} · ${esc(level.difficulty)}</span></div>`;
+      el.onclick = () => { document.getElementById('cardId').value = id; document.getElementById('demo-card').scrollIntoView({behavior:'smooth'}); setTimeout(runCard, 350); };
+      grid.appendChild(el);
+      loaded++;
     } catch(e) {}
   }
   grid.querySelectorAll('.gal-skeleton').forEach(s => s.remove());
   if (!grid.children.length) grid.style.display = 'none';
+})();
+
+/* ── Sponsor goal bar ─────────── */
+(async () => {
+  const bar = document.getElementById('goalBar');
+  const pct = document.getElementById('goalPct');
+  if (!bar) return;
+  // Animate bar — Ko-fi doesn't have a public API so we show the goal visually
+  setTimeout(() => { bar.style.width = '0%'; pct.textContent = '$0 / $100'; }, 100);
 })();
 
 /* ── Shareable playground URL ── */
