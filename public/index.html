@@ -367,6 +367,7 @@
       <a href="#ep-thumbnail">/thumbnail/:id</a>
       <a href="#ep-random">/api/random</a>
       <a href="#ep-user">/api/user</a>
+      <a href="#ep-icon">/api/icon</a>
       <span class="slabel">Try it</span>
       <a href="#playground">Playground</a>
     </aside>
@@ -779,6 +780,60 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
           </div></div>
         </div>
 
+        <!-- /api/icon -->
+        <div class="ep" id="ep-icon">
+          <div class="ep-head" onclick="tog(this.closest('.ep'))">
+            <span class="method">GET</span><span class="ep-path">/api/icon?name={username}</span><span class="chev">▼</span>
+          </div>
+          <div class="ep-body"><div class="ep-inner">
+            <div class="ep-desc">
+              Returns the player's GD icon rendered as a PNG with their real colors, glow, and correct icon number — not a placeholder. Powered by a dedicated render server using sprite atlas compositing.
+              <div class="params" style="margin-top:10px">
+                <div class="pr"><span class="pn">name</span><span class="req">required</span><span class="pi">GD username.</span></div>
+                <div class="pr"><span class="pn">form</span><span class="opt">optional</span><span class="pi">Icon form: <code>cube</code>, <code>ship</code>, <code>ball</code>, <code>ufo</code>, <code>wave</code>, <code>robot</code>, <code>spider</code>, <code>swing</code>, <code>jetpack</code>. Defaults to the player's active form.</span></div>
+                <div class="pr"><span class="pn">all</span><span class="opt">optional</span><span class="pi">Set to <code>1</code> to return JSON with all 9 forms and their icon numbers instead of a PNG.</span></div>
+              </div>
+              <div style="margin-top:10px;font-size:.77rem;color:var(--m2);line-height:1.8">
+                <strong style="color:var(--white);display:block;margin-bottom:5px">Response</strong>
+                Without <code>all=1</code>: returns a <strong style="color:var(--white)">PNG image</strong> directly — drop the URL into an <code>&lt;img&gt;</code> tag or Discord embed thumbnail.<br>
+                With <code>all=1</code>: returns JSON with <code>icons</code> object containing all forms, icon numbers, and per-form URLs.
+              </div>
+              <div style="margin-top:10px;font-size:.75rem;color:var(--red)"><strong>Errors</strong> — <code style="color:var(--red)">404</code> if player not found · <code style="color:var(--red)">502</code> if render failed.</div>
+            </div>
+            <div class="cw">
+              <div class="tabs">
+                <div class="tab on" onclick="stab('li','curl')">curl</div><div class="tab" onclick="stab('li','js')">JavaScript</div><div class="tab" onclick="stab('li','py')">Python</div><div class="tab" onclick="stab('li','djs')">Discord.js</div>
+              </div>
+              <div class="tp on" data-g="li" data-l="curl"><pre>curl <span class="s">"https://gd-level-api.liamt.xyz/api/icon?name=RobTop&form=cube"</span> --output icon.png</pre></div>
+              <div class="tp" data-g="li" data-l="js"><pre><span class="c">// PNG directo</span>
+<span class="kw">const</span> <span class="v">url</span> = <span class="s">"https://gd-level-api.liamt.xyz/api/icon?name=RobTop&form=cube"</span>;
+<span class="c">// JSON con todos los forms</span>
+<span class="kw">const</span> <span class="v">all</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/icon?name=RobTop&all=1"</span>).<span class="fn">then</span>(<span class="v">r</span> <span class="op">=></span> <span class="v">r</span>.<span class="fn">json</span>());</pre></div>
+              <div class="tp" data-g="li" data-l="py"><pre><span class="kw">import</span> requests
+<span class="c"># Guardar PNG</span>
+<span class="v">png</span> = requests.<span class="fn">get</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/icon"</span>, <span class="k">params</span>={<span class="s">"name"</span>: <span class="s">"RobTop"</span>, <span class="s">"form"</span>: <span class="s">"ship"</span>}).<span class="k">content</span>
+<span class="c"># JSON</span>
+<span class="v">icons</span> = requests.<span class="fn">get</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/icon"</span>, <span class="k">params</span>={<span class="s">"name"</span>: <span class="s">"RobTop"</span>, <span class="s">"all"</span>: <span class="s">"1"</span>}).<span class="fn">json</span>()</pre></div>
+              <div class="tp" data-g="li" data-l="djs"><pre><span class="kw">const</span> <span class="v">iconUrl</span> = <span class="s">`https://gd-level-api.liamt.xyz/api/icon?name=<span class="op">${name}</span>&form=cube`</span>;
+<span class="kw">const</span> <span class="v">embed</span> = <span class="kw">new</span> <span class="ty">EmbedBuilder</span>()
+  .<span class="fn">setTitle</span>(<span class="v">name</span>)
+  .<span class="fn">setThumbnail</span>(<span class="v">iconUrl</span>);
+<span class="kw">await</span> <span class="v">interaction</span>.<span class="fn">reply</span>({ <span class="k">embeds</span>: [<span class="v">embed</span>] });</pre></div>
+              <p class="rl">Response (all=1)</p>
+<pre>{
+  <span class="k">"username"</span>: <span class="s">"RobTop"</span>,
+  <span class="k">"activeForm"</span>: <span class="s">"cube"</span>,
+  <span class="k">"col1"</span>: <span class="n">0</span>, <span class="k">"col2"</span>: <span class="n">3</span>, <span class="k">"glow"</span>: <span class="b">false</span>,
+  <span class="k">"icons"</span>: {
+    <span class="k">"cube"</span>:   { <span class="k">"form"</span>: <span class="s">"cube"</span>,   <span class="k">"num"</span>: <span class="n">1</span>,  <span class="k">"url"</span>: <span class="s">"/api/icon?name=RobTop&form=cube"</span>,   <span class="k">"active"</span>: <span class="b">true</span>  },
+    <span class="k">"ship"</span>:   { <span class="k">"form"</span>: <span class="s">"ship"</span>,   <span class="k">"num"</span>: <span class="n">1</span>,  <span class="k">"url"</span>: <span class="s">"/api/icon?name=RobTop&form=ship"</span>,   <span class="k">"active"</span>: <span class="b">false</span> },
+    <span class="k">"..."</span>: <span class="s">"ball, ufo, wave, robot, spider, swing, jetpack"</span>
+  }
+}</pre>
+            </div>
+          </div></div>
+        </div>
+
       </div>
 
       <!-- PLAYGROUND -->
@@ -821,6 +876,44 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
             <div class="err" id="srErr"></div>
             <div class="rc" id="srCard" style="margin-top:10px"><img id="srImg" src="" alt=""/></div>
             <div class="rlinks" id="srLinks"><a id="srLJ" href="#" target="_blank"></a><a id="srLC" href="#" target="_blank"></a></div>
+          </div>
+        </div>
+
+        <!-- Icon preview -->
+        <div class="pg pg-full" id="demo-icon">
+          <div class="pg-hd"><div class="pg-dot"></div><span class="pg-title">Player icons</span><span class="pg-sub">/api/icon</span></div>
+          <div class="pg-body">
+            <div class="irow">
+              <input type="text" id="iconName" placeholder="GD username (e.g. RobTop)"/>
+              <select id="iconForm">
+                <option value="">Active form</option>
+                <option value="cube">Cube</option>
+                <option value="ship">Ship</option>
+                <option value="ball">Ball</option>
+                <option value="ufo">UFO</option>
+                <option value="wave">Wave</option>
+                <option value="robot">Robot</option>
+                <option value="spider">Spider</option>
+                <option value="swing">Swing</option>
+                <option value="jetpack">Jetpack</option>
+              </select>
+              <button class="btn" id="iconBtn" onclick="runIcon()">Load</button>
+            </div>
+            <div class="lrow" id="iconLoad"><div class="spin v"></div>Rendering icon...</div>
+            <div class="err" id="iconErr"></div>
+            <div id="iconRes" style="display:none">
+              <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;margin-top:12px">
+                <div style="text-align:center">
+                  <div class="preview-label">Active icon</div>
+                  <img id="iconSingle" src="" alt="icon" style="width:128px;height:128px;border-radius:8px;background:var(--s);display:block"/>
+                  <div class="rlinks" style="margin-top:6px"><a id="iconLC" href="#" target="_blank" style="font-size:.68rem">Copy URL</a></div>
+                </div>
+                <div style="flex:1;min-width:0">
+                  <div class="preview-label">All forms</div>
+                  <img id="iconComposite" src="" alt="all icons" style="width:100%;border-radius:8px;background:var(--s);display:block;image-rendering:auto"/>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1285,11 +1378,42 @@ async function runThumb() {
   } catch(e) { show('thumbLoad', false); txt('thumbErr','⚠ Network error.'); show('thumbErr', true); btn.disabled = false; }
 }
 
+async function runIcon() {
+  const name = document.getElementById('iconName').value.trim();
+  const form = document.getElementById('iconForm').value;
+  if (!name) return;
+  const btn = document.getElementById('iconBtn');
+  btn.disabled = true;
+  show('iconLoad', true); show('iconRes', false); show('iconErr', false);
+
+  const singleUrl    = `${BASE}/api/icon?name=${encodeURIComponent(name)}${form ? '&form='+form : ''}`;
+  const compositeUrl = `https://icon.liamt.xyz/composite?name=${encodeURIComponent(name)}`;
+
+  try {
+    const [singleRes, compositeRes] = await Promise.all([fetch(singleUrl), fetch(compositeUrl)]);
+    if (!singleRes.ok) {
+      show('iconLoad', false);
+      txt('iconErr', singleRes.status === 404 ? `⚠ Player "${name}" not found.` : `⚠ Error ${singleRes.status}.`);
+      show('iconErr', true); btn.disabled = false; return;
+    }
+    const singleBlob    = await singleRes.blob();
+    const compositeBlob = compositeRes.ok ? await compositeRes.blob() : null;
+
+    document.getElementById('iconSingle').src    = URL.createObjectURL(singleBlob);
+    document.getElementById('iconComposite').src = compositeBlob ? URL.createObjectURL(compositeBlob) : '';
+    const lc = document.getElementById('iconLC');
+    lc.href = singleUrl; lc.textContent = singleUrl;
+    show('iconLoad', false); show('iconRes', true);
+  } catch(e) { show('iconLoad', false); txt('iconErr','⚠ Network error.'); show('iconErr', true); }
+  btn.disabled = false;
+}
+
 /* keyboard */
 document.getElementById('cardId').addEventListener('keydown',  e=>{if(e.key==='Enter')runCard();});
 document.getElementById('srQ').addEventListener('keydown',     e=>{if(e.key==='Enter')runSearch();});
 document.getElementById('multiIds').addEventListener('keydown',e=>{if(e.key==='Enter')runMulti();});
 document.getElementById('thumbId').addEventListener('keydown', e=>{if(e.key==='Enter')runThumb();});
+document.getElementById('iconName').addEventListener('keydown',e=>{if(e.key==='Enter')runIcon();});
 
 /* ── Tab persistence ─────────── */
 const prefLang = localStorage.getItem('pref-lang');
