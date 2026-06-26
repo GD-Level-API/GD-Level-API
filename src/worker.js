@@ -26,7 +26,7 @@ const DIFF_API    = 'https://autonick.github.io/diff-faces/levels/';
 const NO_THUMB  = 'https://raw.githubusercontent.com/cdc-sys/level-thumbs-mod/main/resources/noThumb.png';
 const FONT_400  = 'https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.ttf';
 const FONT_700  = 'https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.ttf';
-const WATERMARK = 'thumball.liamt.xyz';
+const WATERMARK = 'gd-level-api.liamt.xyz';
 
 const DIFF_KEY = {
   'Auto': 'auto', 'Easy': 'easy', 'Normal': 'normal', 'Hard': 'hard',
