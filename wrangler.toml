@@ -8,6 +8,10 @@ compatibility_flags = ["nodejs_compat"]
 # pattern  = "thumball.liamt.xyz/*"
 # zone_name = "liamt.xyz"
 
+[[kv_namespaces]]
+binding = "CARD_CACHE"
+id      = "79333153777345988879b240b0b8b1d0"
+
 [[rules]]
 type  = "Text"
 globs = ["**/*.html"]

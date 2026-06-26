@@ -3,7 +3,6 @@ import { Resvg, initWasm } from '@resvg/resvg-wasm';
 import landingPage from '../public/index.html';
 import resvgWasm from '../node_modules/@resvg/resvg-wasm/index_bg.wasm';
 
-// Construye React elements sin importar React (evita conflicto de instancias en wrangler)
 const REACT_ELEMENT = Symbol.for('react.element');
 function h(type, props, ...children) {
   const flat = children.flat(Infinity).filter(c => c !== null && c !== undefined && c !== false);
@@ -23,8 +22,9 @@ const GD_WORKER = 'https://royal-water-898c.lester-0f9.workers.dev/?id=';
 const THUMB_API = 'https://levelthumbs.prevter.me/thumbnail/';
 const DIFF_API  = 'https://autonick.github.io/diff-faces/levels/';
 const NO_THUMB  = 'https://raw.githubusercontent.com/cdc-sys/level-thumbs-mod/main/resources/noThumb.png';
-const FONT_400 = 'https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.ttf';
-const FONT_700 = 'https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.ttf';
+const FONT_400  = 'https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.ttf';
+const FONT_700  = 'https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.ttf';
+const WATERMARK = 'thumball.liamt.xyz';
 
 const DIFF_KEY = {
   'Auto': 'auto', 'Easy': 'easy', 'Normal': 'normal', 'Hard': 'hard',
@@ -38,8 +38,8 @@ const LEN_ES = {
   Long: 'Largo', XL: 'XL', Platformer: 'Platformer',
 };
 
-// ── Caches (persisten entre requests calientes) ───────────────────────────────
-let wasmReady = null;
+// ── Caches en memoria (persisten entre requests calientes) ────────────────────
+let wasmReady  = null;
 let fontsReady = null;
 
 function ensureWasm() {
@@ -70,21 +70,53 @@ function json(data, status = 200) {
   });
 }
 
-function resolveLevel(level, id) {
-  const coins    = level.coins || 0;
-  const typeStr  = level.mythic ? 'mythic' : level.legendary ? 'legendary' : level.epic ? 'epic' : level.featured ? 'feature' : 'none';
-  const diffKey  = DIFF_KEY[level.difficulty] || 'na';
-  const coinStr  = coins > 0 ? `${coins}${level.verifiedCoins ? 'v' : 'u'}` : 'none';
+function resolveLevel(level) {
+  const coins     = level.coins || 0;
+  const typeStr   = level.mythic ? 'mythic' : level.legendary ? 'legendary' : level.epic ? 'epic' : level.featured ? 'feature' : 'none';
+  const diffKey   = DIFF_KEY[level.difficulty] || 'na';
+  const coinStr   = coins > 0 ? `${coins}${level.verifiedCoins ? 'v' : 'u'}` : 'none';
   const ratingStr = level.stars > 0 ? `${level.stars}s` : 'none';
-  const diffUrl  = `${DIFF_API}${typeStr}/${diffKey}/${coinStr}/${ratingStr}.png`;
+  const diffUrl   = `${DIFF_API}${typeStr}/${diffKey}/${coinStr}/${ratingStr}.png`;
   const epicLabel = level.mythic ? 'Mythic' : level.legendary ? 'Legendary' : level.epic ? 'Epic' : null;
-  const extras = [
+  const extras    = [
     epicLabel,
     (!level.epic && !level.legendary && !level.mythic && level.featured) ? 'Featured' : null,
     coins > 0 ? `${coins} coin${coins > 1 ? 's' : ''}${level.verifiedCoins ? ' ✓' : ''}` : null,
   ].filter(Boolean);
 
   return { coins, typeStr, diffKey, coinStr, ratingStr, diffUrl, epicLabel, extras };
+}
+
+// Convierte URL a base64 data URL. Si es WebP usa weserv para convertir a PNG
+// (satori no soporta WebP).
+async function toDataUrl(url) {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const mime = res.headers.get('content-type') || '';
+
+    if (mime.includes('webp')) {
+      const pngRes = await fetch(`https://images.weserv.nl/?url=${encodeURIComponent(url)}&output=png`);
+      if (!pngRes.ok) return null;
+      return bufToDataUrl(await pngRes.arrayBuffer(), 'image/png');
+    }
+
+    return bufToDataUrl(await res.arrayBuffer(), mime || 'image/png');
+  } catch { return null; }
+}
+
+function bufToDataUrl(buf, mime) {
+  const bytes  = new Uint8Array(buf);
+  const CHUNK  = 8192;
+  let binary   = '';
+  for (let i = 0; i < bytes.length; i += CHUNK)
+    binary += String.fromCharCode(...bytes.subarray(i, i + CHUNK));
+  return `data:${mime};base64,${btoa(binary)}`;
+}
+
+function starsText(n) {
+  if (!n) return '';
+  return '★'.repeat(Math.min(n, 10));
 }
 
 // ── Handler: /api/level ───────────────────────────────────────────────────────
@@ -102,25 +134,24 @@ async function handleLevel(url) {
   if (!level?.name) return json({ error: 'Nivel no encontrado' }, 404);
 
   const thumbUrl = thumbRes.ok ? `${THUMB_API}${id}` : NO_THUMB;
-  const { diffUrl, extras } = resolveLevel(level, id);
-  const { coins } = resolveLevel(level, id);
+  const { diffUrl, extras, coins } = resolveLevel(level);
 
   return json({
     id,
-    name:         level.name,
-    author:       level.author        || 'Desconocido',
-    downloads:    Number(level.downloads || 0),
-    likes:        Number(level.likes     || 0),
-    length:       level.length           || 'Unknown',
-    lengthEs:     LEN_ES[level.length]   || level.length || 'Desconocido',
-    difficulty:   level.difficulty       || 'NA',
-    stars:        level.stars            || 0,
+    name:          level.name,
+    author:        level.author         || 'Desconocido',
+    downloads:     Number(level.downloads || 0),
+    likes:         Number(level.likes     || 0),
+    length:        level.length           || 'Unknown',
+    lengthEs:      LEN_ES[level.length]   || level.length || 'Desconocido',
+    difficulty:    level.difficulty       || 'NA',
+    stars:         level.stars            || 0,
     coins,
-    verifiedCoins: level.verifiedCoins  || false,
-    featured:     level.featured         || false,
-    epic:         level.epic             || false,
-    legendary:    level.legendary        || false,
-    mythic:       level.mythic           || false,
+    verifiedCoins: level.verifiedCoins    || false,
+    featured:      level.featured         || false,
+    epic:          level.epic             || false,
+    legendary:     level.legendary        || false,
+    mythic:        level.mythic           || false,
     extras,
     song: {
       name:   level.songName   || 'Desconocida',
@@ -134,37 +165,180 @@ async function handleLevel(url) {
   });
 }
 
-// Convierte URL de imagen a data URL para que satori la renderice.
-// satori no soporta WebP — si el servidor devuelve WebP, redirigimos
-// el fetch a images.weserv.nl para convertirlo a PNG en el vuelo.
-async function toDataUrl(url) {
-  try {
-    let fetchUrl = url;
-    const probe = await fetch(url);
-    if (!probe.ok) return null;
-    const mime = probe.headers.get('content-type') || '';
-    if (mime.includes('webp')) {
-      fetchUrl = `https://images.weserv.nl/?url=${encodeURIComponent(url)}&output=png`;
-    }
+// ── Handler: /api/levels (múltiples IDs) ─────────────────────────────────────
+async function handleLevels(url) {
+  const raw = url.searchParams.get('ids') || '';
+  const ids = [...new Set(raw.split(',').map(Number).filter(n => n > 0))].slice(0, 10);
+  if (!ids.length) return json({ error: 'Usá /api/levels?ids=128,1,2 (máx 10)' }, 400);
 
-    const res  = fetchUrl === url ? probe : await fetch(fetchUrl);
-    if (!res.ok) return null;
-    const buf   = await res.arrayBuffer();
-    const bytes = new Uint8Array(buf);
-    const CHUNK = 8192;
-    let binary  = '';
-    for (let i = 0; i < bytes.length; i += CHUNK) {
-      binary += String.fromCharCode(...bytes.subarray(i, i + CHUNK));
+  const results = await Promise.all(ids.map(async id => {
+    try {
+      const [gdRes, thumbRes] = await Promise.all([
+        fetch(`${GD_WORKER}${id}`, { headers: { 'User-Agent': 'Mozilla/5.0' } }),
+        fetch(`${THUMB_API}${id}/info`),
+      ]);
+      if (!gdRes.ok) return { id, error: 'No encontrado' };
+      const level = await gdRes.json();
+      if (!level?.name) return { id, error: 'No encontrado' };
+      const thumbUrl = thumbRes.ok ? `${THUMB_API}${id}` : NO_THUMB;
+      const { diffUrl, extras, coins } = resolveLevel(level);
+      return {
+        id,
+        name:          level.name,
+        author:        level.author         || 'Desconocido',
+        downloads:     Number(level.downloads || 0),
+        likes:         Number(level.likes     || 0),
+        length:        level.length           || 'Unknown',
+        difficulty:    level.difficulty       || 'NA',
+        stars:         level.stars            || 0,
+        coins,
+        verifiedCoins: level.verifiedCoins    || false,
+        featured:      level.featured         || false,
+        epic:          level.epic             || false,
+        legendary:     level.legendary        || false,
+        mythic:        level.mythic           || false,
+        extras,
+        song: { name: level.songName || 'Desconocida', author: level.songAuthor || 'Desconocido' },
+        urls: {
+          thumbnail: thumbUrl,
+          diffFace:  diffUrl,
+          card:      `${url.origin}/api/card?id=${id}`,
+        },
+      };
+    } catch (e) {
+      return { id, error: e.message };
     }
-    const finalMime = res.headers.get('content-type') || 'image/png';
-    return `data:${finalMime};base64,${btoa(binary)}`;
-  } catch { return null; }
+  }));
+
+  return json(results);
+}
+
+// ── Render card SVG ───────────────────────────────────────────────────────────
+function buildCard(level, thumbData, diffData, size) {
+  const small = size === 'small';
+  const W = small ? 600 : 800;
+  const H = small ? 160 : 260;
+  const thumbW = small ? 160 : 240;
+
+  const { coins, extras } = resolveLevel(level);
+  const duracion  = LEN_ES[level.length] || level.length || '?';
+  const downloads = Number(level.downloads || 0).toLocaleString('es');
+  const likes     = Number(level.likes || 0).toLocaleString('es');
+  const stars     = level.stars || 0;
+  const song      = `${level.songName || '?'} — ${level.songAuthor || '?'}`;
+
+  const fs = small
+    ? { label: 8, title: 15, sub: 10, stat: 10, badge: 8, song: 9, wm: 8, diff: 38 }
+    : { label: 10, title: 21, sub: 13, stat: 13, badge: 10, song: 11, wm: 9, diff: 54 };
+  const pad = small ? '10px 14px' : '16px 20px';
+  const gap = small ? '4px' : '7px';
+
+  // Badge de estrellas
+  const starBadge = stars > 0
+    ? h('div', {
+        style: { display: 'flex', alignItems: 'center', gap: '3px', background: '#f0c94e22', border: '1px solid #f0c94e55', borderRadius: '20px', padding: '2px 8px' },
+      },
+        h('span', { style: { color: '#f0c94e', fontSize: `${fs.badge}px`, letterSpacing: '1px' } }, starsText(stars)),
+        h('span', { style: { color: '#f0c94ecc', fontSize: `${fs.badge - 1}px` } }, `${stars}`),
+      )
+    : null;
+
+  const badgePill = (text, accent) => h('span', {
+    style: {
+      display: 'flex', background: `${accent}22`, border: `1px solid ${accent}55`,
+      color: accent, fontSize: `${fs.badge}px`, padding: '2px 9px',
+      borderRadius: '20px', whiteSpace: 'nowrap',
+    },
+  }, text);
+
+  const extraBadges = [
+    level.mythic    ? badgePill('Mythic',   '#e040fb') : null,
+    level.legendary ? badgePill('Legendary','#ff9800') : null,
+    level.epic      ? badgePill('Epic',     '#ff5722') : null,
+    (!level.epic && !level.legendary && !level.mythic && level.featured) ? badgePill('Featured', '#4fc3f7') : null,
+    coins > 0 ? badgePill(`${coins} coin${coins > 1 ? 's' : ''}${level.verifiedCoins ? ' ✓' : ''}`, '#81c784') : null,
+  ].filter(Boolean);
+
+  return h('div', {
+    style: {
+      display: 'flex', width: `${W}px`, height: `${H}px`,
+      background: 'linear-gradient(135deg, #0d0d20 0%, #12122a 100%)',
+      fontFamily: 'Inter', overflow: 'hidden',
+    },
+  },
+    // Thumbnail
+    thumbData
+      ? h('img', { src: thumbData, width: thumbW, height: H, style: { objectFit: 'cover', flexShrink: 0 } })
+      : h('div', { style: { width: `${thumbW}px`, height: `${H}px`, background: '#1a1a35', flexShrink: 0, display: 'flex' } }),
+
+    // Borde izquierdo
+    h('div', { style: { width: '2px', background: 'linear-gradient(180deg, #f0c94e 0%, #f0c94e44 100%)', flexShrink: 0 } }),
+
+    // Contenido
+    h('div', {
+      style: { display: 'flex', flexDirection: 'column', flex: 1, padding: pad, gap, background: 'transparent', overflow: 'hidden' },
+    },
+      // Label superior
+      h('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
+        h('span', { style: { color: '#f0c94e', fontSize: `${fs.label}px`, fontWeight: 700, letterSpacing: '2px' } }, 'NUEVO NIVEL'),
+        h('span', { style: { color: '#444466', fontSize: `${fs.label - 1}px`, letterSpacing: '1px' } }, `#${level.id || ''}`),
+      ),
+
+      h('div', { style: { height: '1px', background: 'linear-gradient(90deg, #f0c94e55 0%, transparent 100%)' } }),
+
+      // Icono + título
+      h('div', { style: { display: 'flex', alignItems: 'center', gap: '10px' } },
+        diffData
+          ? h('img', { src: diffData, width: fs.diff, height: fs.diff, style: { objectFit: 'contain', flexShrink: 0 } })
+          : h('div', { style: { width: `${fs.diff}px`, height: `${fs.diff}px`, flexShrink: 0, display: 'flex' } }),
+        h('div', { style: { display: 'flex', flexDirection: 'column', gap: '2px', overflow: 'hidden' } },
+          h('span', { style: { color: '#ffffff', fontSize: `${fs.title}px`, fontWeight: 700, display: 'flex', whiteSpace: 'nowrap', overflow: 'hidden' } }, level.name),
+          h('span', { style: { color: '#9999bb', fontSize: `${fs.sub}px`, display: 'flex' } }, `por ${level.author || 'Desconocido'}`),
+        ),
+      ),
+
+      h('div', { style: { height: '1px', background: '#252545' } }),
+
+      // Stats
+      h('div', { style: { display: 'flex', gap: '16px', color: '#c8c8e0', fontSize: `${fs.stat}px` } },
+        h('span', { style: { display: 'flex' } }, `⬇ ${downloads}`),
+        h('span', { style: { display: 'flex' } }, `♥ ${likes}`),
+        h('span', { style: { display: 'flex' } }, duracion),
+        starBadge,
+      ),
+
+      h('div', { style: { flex: 1 } }),
+
+      // Footer: canción + badges + watermark
+      h('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' } },
+        h('div', { style: { display: 'flex', flexDirection: 'column', gap: '4px', overflow: 'hidden' } },
+          h('span', { style: { color: '#555577', fontSize: `${fs.song}px`, display: 'flex', whiteSpace: 'nowrap', overflow: 'hidden' } }, `♪ ${song}`),
+          extraBadges.length > 0
+            ? h('div', { style: { display: 'flex', gap: '4px' } }, ...extraBadges)
+            : null,
+        ),
+        h('span', { style: { color: '#333355', fontSize: `${fs.wm}px`, whiteSpace: 'nowrap', flexShrink: 0, marginLeft: '8px' } }, WATERMARK),
+      ),
+    ),
+  );
 }
 
 // ── Handler: /api/card ────────────────────────────────────────────────────────
-async function handleCard(url) {
-  const id = Number(url.searchParams.get('id'));
+async function handleCard(url, env) {
+  const id   = Number(url.searchParams.get('id'));
+  const size = url.searchParams.get('size') === 'small' ? 'small' : 'normal';
   if (!id || id < 1) return new Response('ID inválido', { status: 400, headers: CORS });
+
+  // KV cache: clave única por ID + tamaño
+  const cacheKey = `card:${id}:${size}`;
+  if (env?.CARD_CACHE) {
+    const cached = await env.CARD_CACHE.get(cacheKey, 'arrayBuffer');
+    if (cached) {
+      return new Response(cached, {
+        headers: { ...CORS, 'Content-Type': 'image/png', 'Cache-Control': 'public, max-age=3600', 'X-Cache': 'HIT' },
+      });
+    }
+  }
 
   const [[fontRegular, fontBold], , [gdRes, thumbRes]] = await Promise.all([
     ensureFonts(),
@@ -178,89 +352,39 @@ async function handleCard(url) {
   if (!gdRes.ok) return new Response('Nivel no encontrado', { status: 404, headers: CORS });
   const level = await gdRes.json();
   if (!level?.name) return new Response('Nivel no encontrado', { status: 404, headers: CORS });
+  level.id = id;
 
-  const rawThumb  = thumbRes.ok ? `${THUMB_API}${id}` : NO_THUMB;
-  const { diffUrl, coins } = resolveLevel(level, id);
+  const rawThumb = thumbRes.ok ? `${THUMB_API}${id}` : NO_THUMB;
+  const { diffUrl } = resolveLevel(level);
 
-  // Fetch imágenes como data URLs para que satori las renderice correctamente
   const [thumbData, diffData] = await Promise.all([
     toDataUrl(rawThumb),
     toDataUrl(diffUrl),
   ]);
 
-  const duracion  = LEN_ES[level.length] || level.length || '?';
-  const downloads = Number(level.downloads || 0).toLocaleString('es');
-  const likes     = Number(level.likes || 0).toLocaleString('es');
+  const W = size === 'small' ? 600 : 800;
+  const H = size === 'small' ? 160 : 260;
 
-  const epicLabel = level.mythic ? 'Mythic' : level.legendary ? 'Legendary' : level.epic ? 'Epic' : null;
-  const cardExtras = [
-    epicLabel,
-    (!level.epic && !level.legendary && !level.mythic && level.featured) ? 'Featured' : null,
-    coins > 0 ? `${coins} coin${coins > 1 ? 's' : ''}${level.verifiedCoins ? ' (v)' : ''}` : null,
-  ].filter(Boolean);
-
-  const card = h('div', {
-    style: { display: 'flex', width: '800px', height: '260px', background: '#0f0f23', fontFamily: 'Inter', overflow: 'hidden' },
-  },
-    // Thumbnail
-    thumbData
-      ? h('img', { src: thumbData, width: 240, height: 260, style: { objectFit: 'cover', flexShrink: 0 } })
-      : h('div', { style: { width: '240px', height: '260px', background: '#1a1a35', flexShrink: 0 } }),
-    h('div', { style: { width: '1px', background: '#252545', flexShrink: 0 } }),
-    h('div', {
-      style: { display: 'flex', flexDirection: 'column', flex: 1, padding: '16px 20px', gap: '7px', background: '#161628', overflow: 'hidden' },
-    },
-      h('div', { style: { display: 'flex', color: '#f0c94e', fontSize: '10px', fontWeight: 700, letterSpacing: '2px' } }, 'NUEVO NIVEL PARA JUGAR'),
-      h('div', { style: { height: '1px', background: '#252545' } }),
-      h('div', { style: { display: 'flex', alignItems: 'center', gap: '12px' } },
-        diffData
-          ? h('img', { src: diffData, width: 54, height: 54, style: { objectFit: 'contain', flexShrink: 0 } })
-          : h('div', { style: { width: '54px', height: '54px', flexShrink: 0 } }),
-        h('div', { style: { display: 'flex', flexDirection: 'column', gap: '3px', overflow: 'hidden' } },
-          h('span', { style: { color: '#ffffff', fontSize: '21px', fontWeight: 700, display: 'flex', whiteSpace: 'nowrap', overflow: 'hidden' } }, level.name),
-          h('span', { style: { color: '#9999bb', fontSize: '13px', display: 'flex' } }, `por ${level.author || 'Desconocido'}`),
-        ),
-      ),
-      h('div', { style: { height: '1px', background: '#252545' } }),
-      h('div', { style: { display: 'flex', gap: '20px', color: '#c8c8e0', fontSize: '13px' } },
-        h('span', { style: { display: 'flex' } }, `DL  ${downloads}`),
-        h('span', { style: { display: 'flex' } }, `+${likes} likes`),
-        h('span', { style: { display: 'flex' } }, duracion),
-      ),
-      h('div', { style: { flex: 1 } }),
-      h('div', { style: { color: '#666688', fontSize: '12px', display: 'flex', whiteSpace: 'nowrap', overflow: 'hidden' } },
-        `${level.songName || '?'} - ${level.songAuthor || '?'}`
-      ),
-      cardExtras.length > 0
-        ? h('div', { style: { display: 'flex', gap: '5px' } },
-            ...cardExtras.map(badge =>
-              h('span', {
-                style: { display: 'flex', background: '#252545', color: '#c8c8e0', fontSize: '10px', padding: '2px 9px', borderRadius: '20px', whiteSpace: 'nowrap' },
-              }, badge),
-            ),
-          )
-        : null,
-    ),
-  );
-
-  const svg = await satori(card, {
-    width: 800,
-    height: 260,
+  const svg = await satori(buildCard(level, thumbData, diffData, size), {
+    width: W,
+    height: H,
     fonts: [
       { name: 'Inter', data: fontRegular, weight: 400, style: 'normal' },
       { name: 'Inter', data: fontBold,    weight: 700, style: 'normal' },
     ],
   });
 
-  const resvg = new Resvg(svg, { fitTo: { mode: 'width', value: 1600 } });
+  const outW  = W * 2;
+  const resvg = new Resvg(svg, { fitTo: { mode: 'width', value: outW } });
   const png   = resvg.render().asPng();
 
+  // Guardar en KV con TTL de 1 hora
+  if (env?.CARD_CACHE) {
+    await env.CARD_CACHE.put(cacheKey, png, { expirationTtl: 3600 });
+  }
+
   return new Response(png, {
-    headers: {
-      ...CORS,
-      'Content-Type':  'image/png',
-      'Cache-Control': 'public, max-age=3600',
-    },
+    headers: { ...CORS, 'Content-Type': 'image/png', 'Cache-Control': 'public, max-age=3600', 'X-Cache': 'MISS' },
   });
 }
 
@@ -284,7 +408,7 @@ async function handleThumbnail(pathname) {
 
 // ── Router principal ──────────────────────────────────────────────────────────
 export default {
-  async fetch(request) {
+  async fetch(request, env) {
     const url = new URL(request.url);
 
     if (request.method === 'OPTIONS') {
@@ -292,9 +416,10 @@ export default {
     }
 
     try {
-      if (url.pathname === '/api/level') return await handleLevel(url);
-      if (url.pathname === '/api/card')  return await handleCard(url);
-      if (url.pathname.startsWith('/thumbnail/')) return await handleThumbnail(url.pathname);
+      if (url.pathname === '/api/level')               return await handleLevel(url);
+      if (url.pathname === '/api/levels')              return await handleLevels(url);
+      if (url.pathname === '/api/card')                return await handleCard(url, env);
+      if (url.pathname.startsWith('/thumbnail/'))      return await handleThumbnail(url.pathname);
       if (url.pathname === '/' || url.pathname === '/index.html') {
         return new Response(landingPage, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
       }
