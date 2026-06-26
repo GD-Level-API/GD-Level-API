@@ -255,6 +255,29 @@
     .sponsor-btn:hover{opacity:.9;transform:translateY(-1px)}
     @media(max-width:900px){.sponsor-box{flex-direction:column;padding:24px}.sponsor-btn{width:100%;justify-content:center}}
 
+    /* changelog */
+    .clog-sec{padding:0 0 72px}
+    .clog-list{margin-top:24px;display:flex;flex-direction:column;gap:12px}
+    .clog-entry{background:var(--card);border:1px solid var(--b1);border-radius:10px;padding:18px 22px;display:flex;gap:18px;align-items:flex-start}
+    .clog-date{font-size:.68rem;font-weight:700;color:var(--gold);white-space:nowrap;padding-top:2px;min-width:72px}
+    .clog-content h4{font-size:.85rem;font-weight:700;color:var(--white);margin-bottom:4px}
+    .clog-content p{font-size:.78rem;color:var(--m2);line-height:1.6}
+    .clog-tag{display:inline-block;font-size:.58rem;font-weight:700;letter-spacing:1px;padding:2px 7px;border-radius:20px;margin-bottom:6px;text-transform:uppercase}
+    .clog-tag.feat{background:#6366f114;color:var(--blue);border:1px solid #6366f128}
+    .clog-tag.fix{background:#22c55e14;color:var(--green);border:1px solid #22c55e28}
+    .clog-tag.new{background:#f59e0b14;color:var(--gold);border:1px solid #f59e0b28}
+
+    /* status */
+    .status-sec{padding:0 0 72px}
+    .status-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px}
+    .status-card{background:var(--card);border:1px solid var(--b1);border-radius:10px;padding:18px 20px}
+    .status-label{font-size:.68rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--m2);margin-bottom:6px}
+    .status-val{font-size:1.4rem;font-weight:800;color:var(--white)}
+    .status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+    .status-dot.up{background:var(--green)}
+    .status-dot.down{background:var(--red)}
+    @media(max-width:900px){.status-grid{grid-template-columns:1fr 1fr}}
+
     footer{border-top:1px solid var(--b1);padding:48px 0 28px;position:relative;z-index:1}
     .footer-inner{max-width:1180px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}
     .footer-brand p{font-size:.78rem;color:var(--m);line-height:1.7;margin-top:8px;max-width:240px}
@@ -1122,6 +1145,80 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
 </div>
 
 <!-- ── SPONSOR ───────────────────────────── -->
+<!-- ── STATUS ────────────────────────────── -->
+<div class="wrap status-sec">
+  <div class="sec-head">
+    <span class="sec-ey">Live</span>
+    <h2>API Status</h2>
+    <p>Real-time health check — updated on page load.</p>
+  </div>
+  <div class="status-grid">
+    <div class="status-card">
+      <div class="status-label">Status</div>
+      <div class="status-val" id="st-status">—</div>
+    </div>
+    <div class="status-card">
+      <div class="status-label">Latency</div>
+      <div class="status-val" id="st-latency">—</div>
+    </div>
+    <div class="status-card">
+      <div class="status-label">GDBrowser</div>
+      <div class="status-val" id="st-gdb">—</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CHANGELOG ──────────────────────────── -->
+<div class="wrap clog-sec">
+  <div class="sec-head">
+    <span class="sec-ey">Updates</span>
+    <h2>Changelog</h2>
+    <p>What's new in GD Level API.</p>
+  </div>
+  <div class="clog-list">
+    <div class="clog-entry">
+      <span class="clog-date">Jun 2026</span>
+      <div class="clog-content">
+        <span class="clog-tag new">New</span>
+        <h4>Player Icons API</h4>
+        <p>New <code>/api/icon</code> endpoint renders GD player icons with real colors, glow, and all 9 forms including robot and spider animations.</p>
+      </div>
+    </div>
+    <div class="clog-entry">
+      <span class="clog-date">Jun 2026</span>
+      <div class="clog-content">
+        <span class="clog-tag feat">Feature</span>
+        <h4>Batch level fetch</h4>
+        <p>New <code>/api/levels?ids=1,2,3</code> endpoint — fetch up to 10 levels in a single request.</p>
+      </div>
+    </div>
+    <div class="clog-entry">
+      <span class="clog-date">Jun 2026</span>
+      <div class="clog-content">
+        <span class="clog-tag feat">Feature</span>
+        <h4>Interactive playground</h4>
+        <p>Live API playground on the docs site — test every endpoint in your browser with real-time previews.</p>
+      </div>
+    </div>
+    <div class="clog-entry">
+      <span class="clog-date">May 2026</span>
+      <div class="clog-content">
+        <span class="clog-tag new">New</span>
+        <h4>PNG Card generation</h4>
+        <p>Added <code>/api/card</code> — generates a styled 800×260 PNG card with level info, thumbnail, difficulty face and song data.</p>
+      </div>
+    </div>
+    <div class="clog-entry">
+      <span class="clog-date">May 2026</span>
+      <div class="clog-content">
+        <span class="clog-tag fix">Fix</span>
+        <h4>Initial release</h4>
+        <p>Public launch of GD Level API with <code>/api/level</code>, <code>/api/search</code>, <code>/api/user</code>, <code>/api/random</code> and <code>/api/thumbnail</code>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="wrap sponsor-sec">
   <div class="sponsor-box">
     <div class="sponsor-left">
@@ -1529,13 +1626,30 @@ document.querySelectorAll('.cw').forEach(cw => {
   });
 })();
 
-/* ── Sponsor goal bar ─────────── */
+/* ── Sponsor goal bar (real data) ── */
 (async () => {
   const bar = document.getElementById('goalBar');
   const pct = document.getElementById('goalPct');
   if (!bar) return;
-  // Animate bar — Ko-fi doesn't have a public API so we show the goal visually
-  setTimeout(() => { bar.style.width = '0%'; pct.textContent = '$0 / $100'; }, 100);
+  try {
+    const g = await fetch(`${BASE}/api/kofi-goal`).then(r => r.json());
+    const p = Math.min(100, g.pct || 0);
+    pct.textContent = `$${g.total.toFixed(2)} / $${g.goal}`;
+    setTimeout(() => { bar.style.width = p + '%'; }, 200);
+  } catch { bar.style.width = '0%'; }
+})();
+
+/* ── API Status ──────────────── */
+(async () => {
+  try {
+    const s = await fetch(`${BASE}/api/status`).then(r => r.json());
+    document.getElementById('st-status').innerHTML = `<span class="status-dot up"></span>Operational`;
+    document.getElementById('st-latency').textContent = `${s.latency_ms}ms`;
+    document.getElementById('st-gdb').innerHTML = s.upstream.gdbrowser === 'up'
+      ? `<span class="status-dot up"></span>Up` : `<span class="status-dot down"></span>Down`;
+  } catch {
+    document.getElementById('st-status').innerHTML = `<span class="status-dot down"></span>Unknown`;
+  }
 })();
 
 /* ── Shareable playground URL ── */

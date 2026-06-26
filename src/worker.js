@@ -149,7 +149,7 @@ function bufToDataUrl(buf, mime) {
 
 
 // ── Handler: /api/level ───────────────────────────────────────────────────────
-async function handleLevel(url) {
+async function handleLevel(url, env) {
   const id = Number(url.searchParams.get('id'));
   if (!id || id < 1) return json({ error: 'ID inválido. Usá /api/level?id=128' }, 400);
 
@@ -164,6 +164,14 @@ async function handleLevel(url) {
 
   const thumbUrl = thumbRes.ok ? `${THUMB_PROXY}${id}` : NO_THUMB;
   const { diffUrl, extras, coins } = resolveLevel(level);
+
+  // track views async
+  if (env?.CARD_CACHE) {
+    env.CARD_CACHE.get('leaderboard:views','json').then(v => {
+      const views = v || {}; views[id] = (views[id]||0)+1;
+      env.CARD_CACHE.put('leaderboard:views', JSON.stringify(views));
+    }).catch(()=>{});
+  }
 
   return json({
     id,
@@ -371,6 +379,63 @@ function buildCard(level, thumbData, diffData, size, icons) {
       ),
     ),
   );
+}
+
+// ── Handler: /api/levels (batch) ─────────────────────────────────────────────
+async function handleLevelsBatch(url, env) {
+  const raw = url.searchParams.get('ids') || '';
+  const ids = [...new Set(raw.split(',').map(Number).filter(n => n > 0))].slice(0, 10);
+  if (!ids.length) return json({ error: 'Parameter "ids" required. e.g. /api/levels?ids=128,1,2' }, 400);
+  const results = await Promise.all(ids.map(id => {
+    const u = new URL(url.href); u.searchParams.set('id', id);
+    return handleLevel(u, env).then(r => r.json()).catch(() => null);
+  }));
+  return json(results.filter(Boolean));
+}
+
+// ── Handler: /api/leaderboard ─────────────────────────────────────────────────
+async function handleLeaderboard(env) {
+  if (!env?.CARD_CACHE) return json([]);
+  const raw = await env.CARD_CACHE.get('leaderboard:views', 'json').catch(() => null);
+  const views = raw || {};
+  const sorted = Object.entries(views).sort((a,b) => b[1]-a[1]).slice(0,10);
+  return json(sorted.map(([id, views]) => ({ id: Number(id), views })));
+}
+
+// ── Handler: /kofi-webhook ────────────────────────────────────────────────────
+async function handleKofiWebhook(request, env) {
+  try {
+    const body = await request.text();
+    const params = new URLSearchParams(body);
+    const data = JSON.parse(params.get('data') || '{}');
+    if (!data.amount || !data.currency) return new Response('ok');
+    const usd = data.currency === 'USD' ? parseFloat(data.amount) : parseFloat(data.amount) * 0.001;
+    if (env?.CARD_CACHE) {
+      const current = await env.CARD_CACHE.get('kofi:total', 'json').catch(() => 0) || 0;
+      await env.CARD_CACHE.put('kofi:total', JSON.stringify(current + usd));
+      await env.CARD_CACHE.put('kofi:last', JSON.stringify({ name: data.from_name, amount: usd, message: data.message, ts: Date.now() }));
+    }
+    return new Response('ok');
+  } catch { return new Response('ok'); }
+}
+
+// ── Handler: /api/kofi-goal ───────────────────────────────────────────────────
+async function handleKofiGoal(env) {
+  const total = await env?.CARD_CACHE?.get('kofi:total', 'json').catch(() => 0) || 0;
+  const last  = await env?.CARD_CACHE?.get('kofi:last',  'json').catch(() => null);
+  return json({ total: Math.round(total * 100) / 100, goal: 100, pct: Math.min(100, Math.round(total)), last }, { headers: CORS });
+}
+
+// ── Handler: /api/status ──────────────────────────────────────────────────────
+async function handleStatus() {
+  const start = Date.now();
+  const gdOk = await fetch('https://gdbrowser.com/api/level/128').then(r => r.ok).catch(() => false);
+  return json({
+    status: 'operational',
+    latency_ms: Date.now() - start,
+    upstream: { gdbrowser: gdOk ? 'up' : 'down' },
+    timestamp: new Date().toISOString(),
+  });
 }
 
 // ── Handler: /api/card ────────────────────────────────────────────────────────
@@ -846,8 +911,12 @@ export default {
     }
 
     try {
-      if (url.pathname === '/api/level')               return await handleLevel(url);
-      if (url.pathname === '/api/levels')              return await handleLevels(url);
+      if (url.pathname === '/api/level')               return await handleLevel(url, env);
+      if (url.pathname === '/api/levels')              return await handleLevelsBatch(url, env);
+      if (url.pathname === '/api/leaderboard')         return await handleLeaderboard(env);
+      if (url.pathname === '/api/status')              return await handleStatus();
+      if (url.pathname === '/api/kofi-goal')           return await handleKofiGoal(env);
+      if (url.pathname === '/kofi-webhook' && request.method === 'POST') return await handleKofiWebhook(request, env);
       if (url.pathname === '/api/random')              return await handleRandom(url);
       if (url.pathname === '/api/user')                return await handleUser(url);
       if (url.pathname === '/api/icon')                return await handleIcon(url, env);
