@@ -1387,7 +1387,7 @@ async function runIcon() {
   show('iconLoad', true); show('iconRes', false); show('iconErr', false);
 
   const singleUrl    = `${BASE}/api/icon?name=${encodeURIComponent(name)}${form ? '&form='+form : ''}`;
-  const compositeUrl = `https://icon.liamt.xyz/composite?name=${encodeURIComponent(name)}`;
+  const compositeUrl = `${BASE}/api/icon/composite?name=${encodeURIComponent(name)}`;
 
   try {
     const [singleRes, compositeRes] = await Promise.all([fetch(singleUrl), fetch(compositeUrl)]);

@@ -550,6 +550,15 @@ async function handleIcon(url, env) {
   });
 }
 
+async function handleIconComposite(url) {
+  const name = url.searchParams.get('name')?.trim();
+  if (!name) return json({ error: 'Parameter "name" required' }, 400);
+  const res = await fetch(`https://icon.liamt.xyz/composite?name=${encodeURIComponent(name)}`);
+  if (!res.ok) return json({ error: 'Render failed' }, 502);
+  const buf = await res.arrayBuffer();
+  return new Response(buf, { headers: { 'Content-Type': 'image/png', 'Cache-Control': 'public, max-age=300', ...CORS } });
+}
+
 // ── Handler: /api/search ─────────────────────────────────────────────────────
 async function handleSearch(url, env, request) {
   const q     = url.searchParams.get('q')?.trim();
@@ -783,6 +792,7 @@ export default {
       if (url.pathname === '/api/random')              return await handleRandom(url);
       if (url.pathname === '/api/user')                return await handleUser(url);
       if (url.pathname === '/api/icon')                return await handleIcon(url, env);
+      if (url.pathname === '/api/icon/composite')      return await handleIconComposite(url);
       if (url.pathname === '/api/search')              return await handleSearch(url, env, request);
       if (url.pathname === '/api/card')                return await handleCard(url, env, request);
       if (url.pathname.startsWith('/thumbnail/'))      return await handleThumbnail(url.pathname);
