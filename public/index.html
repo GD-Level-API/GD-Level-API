@@ -227,10 +227,10 @@
 
     /* gallery */
     .gal-sec{padding:0 0 72px}
-    .gal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px}
+    .gal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px;align-items:start}
     .gal-item{background:var(--card);border:1px solid var(--b1);border-radius:10px;overflow:hidden;transition:border-color .2s,transform .2s;cursor:pointer}
     .gal-item:hover{border-color:var(--b2);transform:translateY(-2px)}
-    .gal-img{width:100%;height:130px;display:block;object-fit:cover;background:var(--b1)}
+    .gal-img{width:100%;height:140px;display:block;object-fit:cover;object-position:center;background:var(--b1)}
     .gal-meta{padding:10px 13px}
     .gal-name{font-size:.82rem;font-weight:600;color:var(--white);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .gal-auth{font-size:.7rem;color:var(--m2)}
@@ -1607,12 +1607,12 @@ document.querySelectorAll('.cw').forEach(cw => {
 (() => {
   const grid = document.getElementById('galGrid');
   const levels = [
-    { id: 128,      name: '1st level',         author: 'real storm',   stars: 3,  diff: 'Normal' },
-    { id: 10565740, name: 'Clubstep',           author: 'RobTop',       stars: 14, diff: 'Hard Demon' },
-    { id: 44543505, name: 'Finger Dash',        author: 'RobTop',       stars: 10, diff: 'Harder' },
-    { id: 27318416, name: 'Deadlocked',         author: 'RobTop',       stars: 12, diff: 'Insane' },
-    { id: 39017968, name: 'The Lightning Road', author: 'Narutogoku9',  stars: 10, diff: 'Harder' },
-    { id: 62717162, name: 'Niwa',               author: 'Exen',         stars: 10, diff: 'Hard' },
+    { id: 44543505, name: 'Finger Dash',   author: 'RobTop',    stars: 10, diff: 'Harder' },
+    { id: 27318416, name: 'Deadlocked',    author: 'RobTop',    stars: 12, diff: 'Insane' },
+    { id: 10565740, name: 'Clubstep',      author: 'RobTop',    stars: 14, diff: 'Hard Demon' },
+    { id: 26276574, name: 'Sonic Wave',    author: 'Cyclic',    stars: 10, diff: 'Extreme Demon' },
+    { id: 39017968, name: 'The Lightning Road', author: 'Narutogoku9', stars: 10, diff: 'Harder' },
+    { id: 5717 ,    name: 'Bloodbath',     author: 'Riot',      stars: 10, diff: 'Extreme Demon' },
   ];
   grid.innerHTML = '';
   [...levels].sort(() => Math.random() - .5).slice(0, 3).forEach(lvl => {
