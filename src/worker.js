@@ -492,7 +492,7 @@ async function handleUser(url) {
 const ICON_FORMS = ['cube', 'ship', 'ball', 'ufo', 'wave', 'robot', 'spider', 'swing', 'jetpack'];
 const ICON_FIELD = { cube: 'icon', ship: 'ship', ball: 'ball', ufo: 'ufo', wave: 'wave', robot: 'robot', spider: 'spider', swing: 'swing', jetpack: 'jetpack' };
 
-async function handleIcon(url) {
+async function handleIcon(url, env) {
   const name = url.searchParams.get('name')?.trim();
   if (!name) return json({ error: 'Parameter "name" required. e.g. /api/icon?name=RobTop' }, 400);
 
@@ -788,7 +788,7 @@ export default {
       if (url.pathname === '/api/levels')              return await handleLevels(url);
       if (url.pathname === '/api/random')              return await handleRandom(url);
       if (url.pathname === '/api/user')                return await handleUser(url);
-      if (url.pathname === '/api/icon')                return await handleIcon(url);
+      if (url.pathname === '/api/icon')                return await handleIcon(url, env);
       if (url.pathname === '/api/search')              return await handleSearch(url, env, request);
       if (url.pathname === '/api/card')                return await handleCard(url, env, request);
       if (url.pathname.startsWith('/thumbnail/'))      return await handleThumbnail(url.pathname);
