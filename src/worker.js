@@ -264,6 +264,24 @@ async function handleCard(url) {
   });
 }
 
+// ── Handler: /thumbnail/:id ───────────────────────────────────────────────────
+async function handleThumbnail(pathname) {
+  const id = pathname.split('/')[2];
+  if (!id) return new Response('ID requerido', { status: 400, headers: CORS });
+
+  const res = await fetch(`${THUMB_API}${id}`);
+  if (!res.ok) return new Response('Thumbnail no encontrado', { status: 404, headers: CORS });
+
+  const body = await res.arrayBuffer();
+  return new Response(body, {
+    headers: {
+      ...CORS,
+      'Content-Type':  res.headers.get('content-type') || 'image/webp',
+      'Cache-Control': 'public, max-age=86400',
+    },
+  });
+}
+
 // ── Router principal ──────────────────────────────────────────────────────────
 export default {
   async fetch(request) {
@@ -276,6 +294,7 @@ export default {
     try {
       if (url.pathname === '/api/level') return await handleLevel(url);
       if (url.pathname === '/api/card')  return await handleCard(url);
+      if (url.pathname.startsWith('/thumbnail/')) return await handleThumbnail(url.pathname);
       if (url.pathname === '/' || url.pathname === '/index.html') {
         return new Response(landingPage, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
       }
