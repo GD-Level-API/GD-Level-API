@@ -134,10 +134,20 @@ async function handleLevel(url) {
   });
 }
 
-// Convierte URL de imagen a data URL para que satori la renderice
+// Convierte URL de imagen a data URL para que satori la renderice.
+// satori no soporta WebP — si el servidor devuelve WebP, redirigimos
+// el fetch a images.weserv.nl para convertirlo a PNG en el vuelo.
 async function toDataUrl(url) {
   try {
-    const res = await fetch(url);
+    let fetchUrl = url;
+    const probe = await fetch(url);
+    if (!probe.ok) return null;
+    const mime = probe.headers.get('content-type') || '';
+    if (mime.includes('webp')) {
+      fetchUrl = `https://images.weserv.nl/?url=${encodeURIComponent(url)}&output=png`;
+    }
+
+    const res  = fetchUrl === url ? probe : await fetch(fetchUrl);
     if (!res.ok) return null;
     const buf   = await res.arrayBuffer();
     const bytes = new Uint8Array(buf);
@@ -146,8 +156,8 @@ async function toDataUrl(url) {
     for (let i = 0; i < bytes.length; i += CHUNK) {
       binary += String.fromCharCode(...bytes.subarray(i, i + CHUNK));
     }
-    const mime = res.headers.get('content-type') || 'image/png';
-    return `data:${mime};base64,${btoa(binary)}`;
+    const finalMime = res.headers.get('content-type') || 'image/png';
+    return `data:${finalMime};base64,${btoa(binary)}`;
   } catch { return null; }
 }
 
