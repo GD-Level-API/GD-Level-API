@@ -2,13 +2,17 @@
 
 Public REST API for **Geometry Dash** — full level data, PNG card generation, name search, thumbnails, random levels and user profiles. No API key, no sign-up, free forever.
 
+[![Discord](https://img.shields.io/discord/wfWX2nuXw4?label=Discord&logo=discord&logoColor=white&color=5865F2)](https://discord.gg/wfWX2nuXw4)
+
 Hosted on Cloudflare Workers. Base URL:
 
 ```
 https://gd-level-api.liamt.xyz
 ```
 
-Docs & playground: **[gd-level-api.liamt.xyz](https://gd-level-api.liamt.xyz)**
+Docs & playground: **[gd-level-api.liamt.xyz](https://gd-level-api.liamt.xyz)**  
+Discord: **[discord.gg/wfWX2nuXw4](https://discord.gg/wfWX2nuXw4)**  
+Made by **[Liam](https://github.com/liamt8d)**
 
 ---
 
