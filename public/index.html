@@ -29,7 +29,8 @@
     /* nav */
     nav{position:sticky;top:0;z-index:100;background:rgba(7,7,11,.82);backdrop-filter:blur(16px);border-bottom:1px solid var(--b1);height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 28px}
     .nav-logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:.92rem;color:var(--white);text-decoration:none;letter-spacing:-.3px}
-    .logo-box{width:26px;height:26px;background:linear-gradient(135deg,#f59e0b,#f97316);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+    .logo-box{width:28px;height:28px;background:linear-gradient(135deg,#f59e0b,#f97316);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+    .logo-box img{width:22px;height:22px;object-fit:contain;display:block}
     .nav-r{display:flex;align-items:center;gap:5px}
     .nbadge{font-size:.62rem;font-weight:700;background:#f59e0b12;color:var(--gold);border:1px solid #f59e0b28;padding:3px 9px;border-radius:20px;letter-spacing:.8px}
     .nlink{font-size:.76rem;font-weight:500;color:var(--m2);text-decoration:none;padding:5px 10px;border-radius:7px;transition:color .15s,background .15s}
@@ -197,6 +198,24 @@
     .err{color:var(--red);font-size:.78rem;margin-top:7px;display:none}
     .err.v{display:block}
 
+    /* copy button */
+    .cw{position:relative}
+    .copy-btn{position:absolute;top:8px;right:10px;font-size:.6rem;font-weight:600;color:var(--m2);background:var(--s);border:1px solid var(--b1);border-radius:5px;padding:3px 10px;cursor:pointer;transition:color .15s,border-color .15s;z-index:3;font-family:inherit}
+    .copy-btn:hover{color:var(--white);border-color:var(--b2)}
+    .copy-btn.ok{color:var(--green);border-color:#22c55e40}
+
+    /* gallery */
+    .gal-sec{padding:0 0 72px}
+    .gal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px}
+    .gal-item{background:var(--card);border:1px solid var(--b1);border-radius:10px;overflow:hidden;transition:border-color .2s,transform .2s}
+    .gal-item:hover{border-color:var(--b2);transform:translateY(-2px)}
+    .gal-img{width:100%;display:block}
+    .gal-meta{padding:10px 13px}
+    .gal-name{font-size:.82rem;font-weight:600;color:var(--white);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .gal-auth{font-size:.7rem;color:var(--m2)}
+    .gal-skeleton{background:var(--card);border:1px solid var(--b1);border-radius:10px;height:130px;animation:sk 1.5s ease-in-out infinite}
+    @media(max-width:900px){.gal-grid{grid-template-columns:1fr}}
+
     footer{border-top:1px solid var(--b1);padding:24px;text-align:center;color:var(--m);font-size:.74rem;position:relative;z-index:1}
 
     @media(max-width:900px){
@@ -215,7 +234,7 @@
 
 <nav>
   <a class="nav-logo" href="#">
-    <div class="logo-box">⭐</div>
+    <div class="logo-box"><img src="/favicon.svg" alt="GD" style="width:18px;height:18px;object-fit:contain"/></div>
     GD Level API
   </a>
   <div class="nav-r">
@@ -291,6 +310,20 @@
   </div>
 </section>
 
+<!-- ── GALLERY ───────────────────────────── -->
+<div class="wrap gal-sec">
+  <div class="sec-head">
+    <span class="sec-ey">Examples</span>
+    <h2>Cards in the wild</h2>
+    <p>Generated on the fly from real GD data — fetched live, cached 1 hour.</p>
+  </div>
+  <div class="gal-grid" id="galGrid">
+    <div class="gal-skeleton"></div>
+    <div class="gal-skeleton"></div>
+    <div class="gal-skeleton"></div>
+  </div>
+</div>
+
 <!-- ── DOCS ──────────────────────────────── -->
 <div class="wrap docs" id="docs">
   <div class="docs-layout">
@@ -302,6 +335,8 @@
       <a href="#ep-search">/api/search</a>
       <a href="#ep-card">/api/card</a>
       <a href="#ep-thumbnail">/thumbnail/:id</a>
+      <a href="#ep-random">/api/random</a>
+      <a href="#ep-user">/api/user</a>
       <span class="slabel">Try it</span>
       <a href="#playground">Playground</a>
     </aside>
@@ -311,7 +346,25 @@
       <div class="sec-head">
         <span class="sec-ey">Reference</span>
         <h2>API Endpoints</h2>
-        <p>All endpoints are GET. CORS enabled for all origins. Returns JSON or PNG.</p>
+        <p>All endpoints use <strong style="color:var(--white)">GET</strong>. CORS is fully open (<code>*</code>) — call from any browser, bot, or server. Responses are either <strong style="color:var(--white)">JSON</strong> or <strong style="color:var(--white)">PNG</strong>. No authentication or API key required.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+          <div style="font-size:.73rem;color:var(--m2);background:var(--card);border:1px solid var(--b1);border-radius:7px;padding:7px 13px;line-height:1.7">
+            <strong style="color:var(--white)">Base URL</strong><br>
+            <code style="color:#93c5fd">https://thumball.liamt.xyz</code>
+          </div>
+          <div style="font-size:.73rem;color:var(--m2);background:var(--card);border:1px solid var(--b1);border-radius:7px;padding:7px 13px;line-height:1.7">
+            <strong style="color:var(--white)">Rate limits</strong><br>
+            None enforced — fair use assumed.
+          </div>
+          <div style="font-size:.73rem;color:var(--m2);background:var(--card);border:1px solid var(--b1);border-radius:7px;padding:7px 13px;line-height:1.7">
+            <strong style="color:var(--white)">Card caching</strong><br>
+            KV-cached per level · 1 hour TTL.
+          </div>
+          <div style="font-size:.73rem;color:var(--m2);background:var(--card);border:1px solid var(--b1);border-radius:7px;padding:7px 13px;line-height:1.7">
+            <strong style="color:var(--white)">Thumbnail caching</strong><br>
+            CDN-cached · 24 hour TTL.
+          </div>
+        </div>
       </div>
 
       <div class="ep-list">
@@ -322,41 +375,89 @@
             <span class="method">GET</span><span class="ep-path">/api/level?id={levelId}</span><span class="chev">▼</span>
           </div>
           <div class="ep-body"><div class="ep-inner">
-            <div class="ep-desc">Returns a JSON with all resolved level data: name, author, stats, song, thumbnail and difficulty face URLs.
-              <div class="params">
-                <div class="pr"><span class="pn">id</span><span class="req">required</span><span class="pi">Numeric level ID in Geometry Dash</span></div>
+            <div class="ep-desc">
+              Returns a JSON object with all resolved data for a single Geometry Dash level: name, author, download and like counts, difficulty, star rating, coins, song info, and ready-to-use URLs for the thumbnail, difficulty face image, and generated card.
+              <div class="params" style="margin-top:12px">
+                <div class="pr"><span class="pn">id</span><span class="req">required</span><span class="pi">Numeric level ID. You can find it in-game or via <code style="color:var(--gold)">/api/search</code>.</span></div>
+              </div>
+              <div style="margin-top:14px;font-size:.77rem;color:var(--m2);line-height:1.8">
+                <strong style="color:var(--white);display:block;margin-bottom:6px">Response fields</strong>
+                <div style="display:grid;grid-template-columns:auto 1fr;gap:3px 16px">
+                  <code style="color:var(--gold)">id</code><span>Numeric level ID.</span>
+                  <code style="color:var(--gold)">name</code><span>Level name.</span>
+                  <code style="color:var(--gold)">author</code><span>Creator username.</span>
+                  <code style="color:var(--gold)">downloads</code><span>Total download count.</span>
+                  <code style="color:var(--gold)">likes</code><span>Net like count (likes minus dislikes).</span>
+                  <code style="color:var(--gold)">length</code><span>Level length in English: <em>Tiny, Short, Medium, Long, XL, Platformer</em>.</span>
+                  <code style="color:var(--gold)">lengthEs</code><span>Same length label in Spanish.</span>
+                  <code style="color:var(--gold)">difficulty</code><span>Difficulty string: <em>Auto, Easy, Normal, Hard, Harder, Insane, Easy Demon … Extreme Demon, NA</em>.</span>
+                  <code style="color:var(--gold)">stars</code><span>Star rating (0 = unrated).</span>
+                  <code style="color:var(--gold)">coins</code><span>Number of coins (0–3).</span>
+                  <code style="color:var(--gold)">verifiedCoins</code><span><code>true</code> if coins are verified (silver), <code>false</code> if user coins (bronze).</span>
+                  <code style="color:var(--gold)">featured</code><span>Whether the level is featured.</span>
+                  <code style="color:var(--gold)">epic / legendary / mythic</code><span>Special rating tiers (mutually exclusive, highest wins).</span>
+                  <code style="color:var(--gold)">extras</code><span>Array of human-readable badge strings derived from the above flags, e.g. <em>["Epic", "3 coins ✓"]</em>. Useful to display badges directly.</span>
+                  <code style="color:var(--gold)">song.name</code><span>Background song title.</span>
+                  <code style="color:var(--gold)">song.author</code><span>Song artist name.</span>
+                  <code style="color:var(--gold)">urls.thumbnail</code><span>Direct URL to the level thumbnail image (WebP, served via this API's own proxy, cached 24 h).</span>
+                  <code style="color:var(--gold)">urls.diffFace</code><span>Direct URL to the difficulty face PNG matching this level's exact tier (difficulty + coins + rating).</span>
+                  <code style="color:var(--gold)">urls.card</code><span>URL to the auto-generated PNG card for this level — ready to embed in a Discord message or a webpage.</span>
+                </div>
+              </div>
+              <div style="margin-top:12px;font-size:.75rem;color:var(--red)">
+                <strong>Errors</strong> — <code style="color:var(--red)">400</code> if <code>id</code> is missing or non-numeric · <code style="color:var(--red)">404</code> if the level doesn't exist.
               </div>
             </div>
             <div class="cw">
               <div class="tabs" id="t-l1">
                 <div class="tab on" onclick="stab('l1','curl')">curl</div><div class="tab" onclick="stab('l1','js')">JavaScript</div><div class="tab" onclick="stab('l1','py')">Python</div><div class="tab" onclick="stab('l1','go')">Go</div><div class="tab" onclick="stab('l1','php')">PHP</div><div class="tab" onclick="stab('l1','ruby')">Ruby</div><div class="tab" onclick="stab('l1','cs')">C#</div><div class="tab" onclick="stab('l1','java')">Java</div><div class="tab" onclick="stab('l1','rust')">Rust</div>
               </div>
-              <div class="tp on" data-g="l1" data-l="curl"><pre>curl <span class="s">"https://thumball.liamt.xyz/api/level?id=128"</span></pre></div>
-              <div class="tp" data-g="l1" data-l="js"><pre><span class="kw">const</span> <span class="v">level</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="s">"https://thumball.liamt.xyz/api/level?id=128"</span>).<span class="fn">then</span>(<span class="v">r</span> <span class="op">=></span> <span class="v">r</span>.<span class="fn">json</span>());
+              <div class="tp on" data-g="l1" data-l="curl"><pre>curl <span class="s">"https://gd-level-api.liamt.xyz/api/level?id=128"</span></pre></div>
+              <div class="tp" data-g="l1" data-l="js"><pre><span class="kw">const</span> <span class="v">level</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/level?id=128"</span>).<span class="fn">then</span>(<span class="v">r</span> <span class="op">=></span> <span class="v">r</span>.<span class="fn">json</span>());
 <span class="fn">console</span>.<span class="fn">log</span>(<span class="v">level</span>.<span class="k">name</span>, <span class="v">level</span>.<span class="k">difficulty</span>);</pre></div>
               <div class="tp" data-g="l1" data-l="py"><pre><span class="kw">import</span> requests
-<span class="v">level</span> = requests.<span class="fn">get</span>(<span class="s">"https://thumball.liamt.xyz/api/level?id=128"</span>).<span class="fn">json</span>()
+<span class="v">level</span> = requests.<span class="fn">get</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/level?id=128"</span>).<span class="fn">json</span>()
 <span class="fn">print</span>(<span class="v">level</span>[<span class="s">"name"</span>], <span class="v">level</span>[<span class="s">"difficulty"</span>])</pre></div>
               <div class="tp" data-g="l1" data-l="go"><pre><span class="kw">var</span> <span class="v">level</span> <span class="kw">map</span>[<span class="ty">string</span>]<span class="kw">interface</span>{}
-<span class="v">resp</span>, _ := http.<span class="fn">Get</span>(<span class="s">"https://thumball.liamt.xyz/api/level?id=128"</span>)
+<span class="v">resp</span>, _ := http.<span class="fn">Get</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/level?id=128"</span>)
 json.<span class="fn">NewDecoder</span>(<span class="v">resp</span>.Body).<span class="fn">Decode</span>(&amp;<span class="v">level</span>)</pre></div>
-              <div class="tp" data-g="l1" data-l="php"><pre><span class="v">$level</span> = <span class="fn">json_decode</span>(<span class="fn">file_get_contents</span>(<span class="s">"https://thumball.liamt.xyz/api/level?id=128"</span>), <span class="b">true</span>);
+              <div class="tp" data-g="l1" data-l="php"><pre><span class="v">$level</span> = <span class="fn">json_decode</span>(<span class="fn">file_get_contents</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/level?id=128"</span>), <span class="b">true</span>);
 <span class="kw">echo</span> <span class="v">$level</span>[<span class="s">"name"</span>];</pre></div>
               <div class="tp" data-g="l1" data-l="ruby"><pre><span class="kw">require</span> <span class="s">"net/http"</span>; <span class="kw">require</span> <span class="s">"json"</span>
-<span class="v">level</span> = JSON.<span class="fn">parse</span>(Net::HTTP.<span class="fn">get</span>(URI(<span class="s">"https://thumball.liamt.xyz/api/level?id=128"</span>)))</pre></div>
+<span class="v">level</span> = JSON.<span class="fn">parse</span>(Net::HTTP.<span class="fn">get</span>(URI(<span class="s">"https://gd-level-api.liamt.xyz/api/level?id=128"</span>)))</pre></div>
               <div class="tp" data-g="l1" data-l="cs"><pre><span class="kw">var</span> <span class="v">level</span> = <span class="kw">await new</span> <span class="ty">HttpClient</span>()
-    .<span class="fn">GetFromJsonAsync</span>&lt;<span class="ty">JsonElement</span>&gt;(<span class="s">"https://thumball.liamt.xyz/api/level?id=128"</span>);</pre></div>
+    .<span class="fn">GetFromJsonAsync</span>&lt;<span class="ty">JsonElement</span>&gt;(<span class="s">"https://gd-level-api.liamt.xyz/api/level?id=128"</span>);</pre></div>
               <div class="tp" data-g="l1" data-l="java"><pre><span class="kw">var</span> <span class="v">body</span> = <span class="ty">HttpClient</span>.<span class="fn">newHttpClient</span>().<span class="fn">send</span>(
-    <span class="ty">HttpRequest</span>.<span class="fn">newBuilder</span>().<span class="fn">uri</span>(<span class="ty">URI</span>.<span class="fn">create</span>(<span class="s">"https://thumball.liamt.xyz/api/level?id=128"</span>)).<span class="fn">build</span>(),
+    <span class="ty">HttpRequest</span>.<span class="fn">newBuilder</span>().<span class="fn">uri</span>(<span class="ty">URI</span>.<span class="fn">create</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/level?id=128"</span>)).<span class="fn">build</span>(),
     <span class="ty">HttpResponse</span>.BodyHandlers.<span class="fn">ofString</span>()).<span class="fn">body</span>();</pre></div>
-              <div class="tp" data-g="l1" data-l="rust"><pre><span class="kw">let</span> <span class="v">level</span>: serde_json::<span class="ty">Value</span> = reqwest::<span class="fn">get</span>(<span class="s">"https://thumball.liamt.xyz/api/level?id=128"</span>).<span class="kw">await</span>?.<span class="fn">json</span>().<span class="kw">await</span>?;</pre></div>
+              <div class="tp" data-g="l1" data-l="rust"><pre><span class="kw">let</span> <span class="v">level</span>: serde_json::<span class="ty">Value</span> = reqwest::<span class="fn">get</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/level?id=128"</span>).<span class="kw">await</span>?.<span class="fn">json</span>().<span class="kw">await</span>?;</pre></div>
               <p class="rl">Response</p>
 <pre>{
-  <span class="k">"id"</span>: <span class="n">128</span>, <span class="k">"name"</span>: <span class="s">"1st level"</span>, <span class="k">"author"</span>: <span class="s">"real storm"</span>,
-  <span class="k">"downloads"</span>: <span class="n">4011241</span>, <span class="k">"likes"</span>: <span class="n">297981</span>, <span class="k">"difficulty"</span>: <span class="s">"Hard"</span>,
-  <span class="k">"stars"</span>: <span class="n">0</span>, <span class="k">"coins"</span>: <span class="n">0</span>, <span class="k">"featured"</span>: <span class="b">false</span>, <span class="k">"epic"</span>: <span class="b">false</span>,
-  <span class="k">"song"</span>: { <span class="k">"name"</span>: <span class="s">"Base After Base"</span>, <span class="k">"author"</span>: <span class="s">"DJVI"</span> },
-  <span class="k">"urls"</span>: { <span class="k">"thumbnail"</span>: <span class="s">"..."</span>, <span class="k">"diffFace"</span>: <span class="s">"..."</span>, <span class="k">"card"</span>: <span class="s">"..."</span> }
+  <span class="k">"id"</span>: <span class="n">128</span>,
+  <span class="k">"name"</span>: <span class="s">"1st level"</span>,
+  <span class="k">"author"</span>: <span class="s">"real storm"</span>,
+  <span class="k">"downloads"</span>: <span class="n">4012851</span>,
+  <span class="k">"likes"</span>: <span class="n">298040</span>,
+  <span class="k">"length"</span>: <span class="s">"Medium"</span>,
+  <span class="k">"lengthEs"</span>: <span class="s">"Medio"</span>,
+  <span class="k">"difficulty"</span>: <span class="s">"Hard"</span>,
+  <span class="k">"stars"</span>: <span class="n">0</span>,
+  <span class="k">"coins"</span>: <span class="n">0</span>,
+  <span class="k">"verifiedCoins"</span>: <span class="b">false</span>,
+  <span class="k">"featured"</span>: <span class="b">false</span>,
+  <span class="k">"epic"</span>: <span class="b">false</span>,
+  <span class="k">"legendary"</span>: <span class="b">false</span>,
+  <span class="k">"mythic"</span>: <span class="b">false</span>,
+  <span class="k">"extras"</span>: [],
+  <span class="k">"song"</span>: {
+    <span class="k">"name"</span>: <span class="s">"Base After Base"</span>,
+    <span class="k">"author"</span>: <span class="s">"DJVI"</span>
+  },
+  <span class="k">"urls"</span>: {
+    <span class="k">"thumbnail"</span>: <span class="s">"https://gd-level-api.liamt.xyz/thumbnail/128"</span>,
+    <span class="k">"diffFace"</span>: <span class="s">"https://autonick.github.io/diff-faces/levels/none/hard/none/none.png"</span>,
+    <span class="k">"card"</span>: <span class="s">"https://gd-level-api.liamt.xyz/api/card?id=128"</span>
+  }
 }</pre>
             </div>
           </div></div>
@@ -368,25 +469,29 @@ json.<span class="fn">NewDecoder</span>(<span class="v">resp</span>.Body).<span 
             <span class="method">GET</span><span class="ep-path">/api/levels?ids={id1,id2,...}</span><span class="chev">▼</span>
           </div>
           <div class="ep-body"><div class="ep-inner">
-            <div class="ep-desc">Returns a JSON array with multiple levels in one request. Max 10 IDs.
-              <div class="params">
-                <div class="pr"><span class="pn">ids</span><span class="req">required</span><span class="pi">Comma-separated IDs — e.g. <code style="color:var(--gold)">?ids=128,1,2</code></span></div>
+            <div class="ep-desc">
+              Fetches up to 10 levels in a single request. Returns a JSON array where each item has the same fields as <code style="color:var(--gold)">/api/level</code>. If an individual ID is not found, that item will contain <code style="color:var(--gold)">{ "id": …, "error": "No encontrado" }</code> instead of being skipped — so you always get one item per requested ID in the same order.
+              <div class="params" style="margin-top:10px">
+                <div class="pr"><span class="pn">ids</span><span class="req">required</span><span class="pi">Comma-separated level IDs, e.g. <code style="color:var(--gold)">?ids=128,1,2</code>. Duplicates are removed automatically. Max 10 IDs per call.</span></div>
+              </div>
+              <div style="margin-top:10px;font-size:.75rem;color:var(--red)">
+                <strong>Errors</strong> — <code style="color:var(--red)">400</code> if <code>ids</code> is missing or contains no valid numeric IDs.
               </div>
             </div>
             <div class="cw">
               <div class="tabs">
                 <div class="tab on" onclick="stab('l2','curl')">curl</div><div class="tab" onclick="stab('l2','js')">JavaScript</div><div class="tab" onclick="stab('l2','py')">Python</div><div class="tab" onclick="stab('l2','php')">PHP</div><div class="tab" onclick="stab('l2','go')">Go</div><div class="tab" onclick="stab('l2','java')">Java</div>
               </div>
-              <div class="tp on" data-g="l2" data-l="curl"><pre>curl <span class="s">"https://thumball.liamt.xyz/api/levels?ids=128,1,2"</span></pre></div>
-              <div class="tp" data-g="l2" data-l="js"><pre><span class="kw">const</span> <span class="v">levels</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="s">"https://thumball.liamt.xyz/api/levels?ids=128,1,2"</span>).<span class="fn">then</span>(<span class="v">r</span> <span class="op">=></span> <span class="v">r</span>.<span class="fn">json</span>());</pre></div>
+              <div class="tp on" data-g="l2" data-l="curl"><pre>curl <span class="s">"https://gd-level-api.liamt.xyz/api/levels?ids=128,1,2"</span></pre></div>
+              <div class="tp" data-g="l2" data-l="js"><pre><span class="kw">const</span> <span class="v">levels</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/levels?ids=128,1,2"</span>).<span class="fn">then</span>(<span class="v">r</span> <span class="op">=></span> <span class="v">r</span>.<span class="fn">json</span>());</pre></div>
               <div class="tp" data-g="l2" data-l="py"><pre><span class="kw">import</span> requests
-<span class="v">levels</span> = requests.<span class="fn">get</span>(<span class="s">"https://thumball.liamt.xyz/api/levels?ids=128,1,2"</span>).<span class="fn">json</span>()</pre></div>
-              <div class="tp" data-g="l2" data-l="php"><pre><span class="v">$levels</span> = <span class="fn">json_decode</span>(<span class="fn">file_get_contents</span>(<span class="s">"https://thumball.liamt.xyz/api/levels?ids=128,1,2"</span>), <span class="b">true</span>);</pre></div>
+<span class="v">levels</span> = requests.<span class="fn">get</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/levels?ids=128,1,2"</span>).<span class="fn">json</span>()</pre></div>
+              <div class="tp" data-g="l2" data-l="php"><pre><span class="v">$levels</span> = <span class="fn">json_decode</span>(<span class="fn">file_get_contents</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/levels?ids=128,1,2"</span>), <span class="b">true</span>);</pre></div>
               <div class="tp" data-g="l2" data-l="go"><pre><span class="kw">var</span> <span class="v">levels</span> []<span class="kw">map</span>[<span class="ty">string</span>]<span class="kw">interface</span>{}
-<span class="v">resp</span>, _ := http.<span class="fn">Get</span>(<span class="s">"https://thumball.liamt.xyz/api/levels?ids=128,1,2"</span>)
+<span class="v">resp</span>, _ := http.<span class="fn">Get</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/levels?ids=128,1,2"</span>)
 json.<span class="fn">NewDecoder</span>(<span class="v">resp</span>.Body).<span class="fn">Decode</span>(&amp;<span class="v">levels</span>)</pre></div>
               <div class="tp" data-g="l2" data-l="java"><pre><span class="kw">var</span> <span class="v">body</span> = <span class="ty">HttpClient</span>.<span class="fn">newHttpClient</span>().<span class="fn">send</span>(
-    <span class="ty">HttpRequest</span>.<span class="fn">newBuilder</span>().<span class="fn">uri</span>(<span class="ty">URI</span>.<span class="fn">create</span>(<span class="s">"https://thumball.liamt.xyz/api/levels?ids=128,1,2"</span>)).<span class="fn">build</span>(),
+    <span class="ty">HttpRequest</span>.<span class="fn">newBuilder</span>().<span class="fn">uri</span>(<span class="ty">URI</span>.<span class="fn">create</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/levels?ids=128,1,2"</span>)).<span class="fn">build</span>(),
     <span class="ty">HttpResponse</span>.BodyHandlers.<span class="fn">ofString</span>()).<span class="fn">body</span>();</pre></div>
             </div>
           </div></div>
@@ -398,29 +503,36 @@ json.<span class="fn">NewDecoder</span>(<span class="v">resp</span>.Body).<span 
             <span class="method">GET</span><span class="ep-path">/api/search?q={name}</span><span class="chev">▼</span>
           </div>
           <div class="ep-body"><div class="ep-inner">
-            <div class="ep-desc">Search levels by name. Returns a JSON array with resolved thumbnail, card and difficulty face URLs.
-              <div class="params">
-                <div class="pr"><span class="pn">q</span><span class="req">required</span><span class="pi">Level name or partial name</span></div>
-                <div class="pr"><span class="pn">count</span><span class="opt">optional</span><span class="pi">Number of results (default 10, max 20)</span></div>
+            <div class="ep-desc">
+              Searches Geometry Dash levels by name (powered by GDBrowser). Returns a JSON array of matching levels, each with the same fields as <code style="color:var(--gold)">/api/level</code> plus <code style="color:var(--gold)">description</code>. All URL fields (<code>thumbnail</code>, <code>diffFace</code>, <code>card</code>) are fully resolved — no extra calls needed.
+              <div class="params" style="margin-top:10px">
+                <div class="pr"><span class="pn">q</span><span class="req">required</span><span class="pi">Level name or partial name to search for.</span></div>
+                <div class="pr"><span class="pn">count</span><span class="opt">optional</span><span class="pi">How many results to return. Default <code style="color:var(--gold)">10</code>, max <code style="color:var(--gold)">20</code>.</span></div>
+              </div>
+              <div style="margin-top:10px;font-size:.75rem;color:var(--m2)">
+                Returns an empty array <code>[]</code> when there are no results. The response includes a <code style="color:var(--gold)">description</code> field (the in-game level description) which is not present in the single-level endpoint.
+              </div>
+              <div style="margin-top:8px;font-size:.75rem;color:var(--red)">
+                <strong>Errors</strong> — <code style="color:var(--red)">400</code> if <code>q</code> is missing · <code style="color:var(--red)">502</code> if the upstream search failed.
               </div>
             </div>
             <div class="cw">
               <div class="tabs">
                 <div class="tab on" onclick="stab('l3','curl')">curl</div><div class="tab" onclick="stab('l3','js')">JavaScript</div><div class="tab" onclick="stab('l3','py')">Python</div><div class="tab" onclick="stab('l3','php')">PHP</div><div class="tab" onclick="stab('l3','djs')">Discord.js</div><div class="tab" onclick="stab('l3','dpy')">Discord.py</div>
               </div>
-              <div class="tp on" data-g="l3" data-l="curl"><pre>curl <span class="s">"https://thumball.liamt.xyz/api/search?q=Bloodbath&count=5"</span></pre></div>
-              <div class="tp" data-g="l3" data-l="js"><pre><span class="kw">const</span> <span class="v">res</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="s">`https://thumball.liamt.xyz/api/search?q=<span class="op">${encodeURIComponent("Bloodbath")}</span>`</span>).<span class="fn">then</span>(<span class="v">r</span> <span class="op">=></span> <span class="v">r</span>.<span class="fn">json</span>());
+              <div class="tp on" data-g="l3" data-l="curl"><pre>curl <span class="s">"https://gd-level-api.liamt.xyz/api/search?q=Bloodbath&count=5"</span></pre></div>
+              <div class="tp" data-g="l3" data-l="js"><pre><span class="kw">const</span> <span class="v">res</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="s">`https://gd-level-api.liamt.xyz/api/search?q=<span class="op">${encodeURIComponent("Bloodbath")}</span>`</span>).<span class="fn">then</span>(<span class="v">r</span> <span class="op">=></span> <span class="v">r</span>.<span class="fn">json</span>());
 <span class="v">res</span>.<span class="fn">forEach</span>(<span class="v">l</span> <span class="op">=></span> <span class="fn">console</span>.<span class="fn">log</span>(<span class="v">l</span>.<span class="k">id</span>, <span class="v">l</span>.<span class="k">name</span>));</pre></div>
               <div class="tp" data-g="l3" data-l="py"><pre><span class="kw">import</span> requests
-<span class="v">results</span> = requests.<span class="fn">get</span>(<span class="s">"https://thumball.liamt.xyz/api/search"</span>, <span class="k">params</span>={<span class="s">"q"</span>: <span class="s">"Bloodbath"</span>}).<span class="fn">json</span>()</pre></div>
-              <div class="tp" data-g="l3" data-l="php"><pre><span class="v">$r</span> = <span class="fn">json_decode</span>(<span class="fn">file_get_contents</span>(<span class="s">"https://thumball.liamt.xyz/api/search?q=Bloodbath"</span>), <span class="b">true</span>);</pre></div>
+<span class="v">results</span> = requests.<span class="fn">get</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/search"</span>, <span class="k">params</span>={<span class="s">"q"</span>: <span class="s">"Bloodbath"</span>}).<span class="fn">json</span>()</pre></div>
+              <div class="tp" data-g="l3" data-l="php"><pre><span class="v">$r</span> = <span class="fn">json_decode</span>(<span class="fn">file_get_contents</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/search?q=Bloodbath"</span>), <span class="b">true</span>);</pre></div>
               <div class="tp" data-g="l3" data-l="djs"><pre><span class="kw">const</span> <span class="v">q</span> = <span class="v">interaction</span>.<span class="fn">options</span>.<span class="fn">getString</span>(<span class="s">"query"</span>);
-<span class="kw">const</span> <span class="v">res</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="s">`https://thumball.liamt.xyz/api/search?q=<span class="op">${encodeURIComponent(q)}</span>`</span>).<span class="fn">then</span>(<span class="v">r</span> <span class="op">=></span> <span class="v">r</span>.<span class="fn">json</span>());
+<span class="kw">const</span> <span class="v">res</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="s">`https://gd-level-api.liamt.xyz/api/search?q=<span class="op">${encodeURIComponent(q)}</span>`</span>).<span class="fn">then</span>(<span class="v">r</span> <span class="op">=></span> <span class="v">r</span>.<span class="fn">json</span>());
 <span class="kw">await</span> <span class="v">interaction</span>.<span class="fn">reply</span>(<span class="v">res</span>.<span class="fn">map</span>(<span class="v">l</span> <span class="op">=></span> <span class="s">`**<span class="op">${l.name}</span>** by <span class="op">${l.author}</span>`</span>).<span class="fn">join</span>(<span class="s">"\n"</span>));</pre></div>
               <div class="tp" data-g="l3" data-l="dpy"><pre><span class="op">@</span><span class="v">tree</span>.<span class="fn">command</span>(<span class="k">name</span>=<span class="s">"search"</span>)
 <span class="kw">async def</span> <span class="fn">search</span>(<span class="v">i</span>: discord.<span class="v">Interaction</span>, <span class="v">name</span>: <span class="fn">str</span>):
     <span class="kw">async with</span> aiohttp.<span class="fn">ClientSession</span>() <span class="kw">as</span> <span class="v">s</span>:
-        <span class="kw">async with</span> <span class="v">s</span>.<span class="fn">get</span>(<span class="s">f"https://thumball.liamt.xyz/api/search?q={name}"</span>) <span class="kw">as</span> <span class="v">r</span>:
+        <span class="kw">async with</span> <span class="v">s</span>.<span class="fn">get</span>(<span class="s">f"https://gd-level-api.liamt.xyz/api/search?q={name}"</span>) <span class="kw">as</span> <span class="v">r</span>:
             <span class="v">data</span> = <span class="kw">await</span> <span class="v">r</span>.<span class="fn">json</span>()
     <span class="kw">await</span> <span class="v">i</span>.<span class="fn">response</span>.<span class="fn">send_message</span>(<span class="s">"\n"</span>.<span class="fn">join</span>(<span class="s">f"**{l['name']}** by {l['author']}"</span> <span class="kw">for</span> <span class="v">l</span> <span class="kw">in</span> <span class="v">data</span>))</pre></div>
             </div>
@@ -433,23 +545,30 @@ json.<span class="fn">NewDecoder</span>(<span class="v">resp</span>.Body).<span 
             <span class="method">GET</span><span class="ep-path">/api/card?id={levelId}</span><span class="chev">▼</span>
           </div>
           <div class="ep-body"><div class="ep-inner">
-            <div class="ep-desc">Returns a generated <strong style="color:var(--white)">PNG image</strong> with thumbnail, difficulty icon, stats and badges. First request ~1s, cached after.
-              <div class="params">
-                <div class="pr"><span class="pn">id</span><span class="req">required</span><span class="pi">Numeric level ID</span></div>
-                <div class="pr"><span class="pn">size</span><span class="opt">optional</span><span class="pi"><code style="color:var(--gold)">normal</code> 1600×520px · <code style="color:var(--gold)">small</code> 1200×320px</span></div>
+            <div class="ep-desc">
+              Generates a <strong style="color:var(--white)">PNG image</strong> on the fly containing the level thumbnail, difficulty face icon, name, author, download/like counts, length, star rating, coin count, and special badges (Epic, Legendary, Mythic, Featured, coins). Rendered with Satori + Resvg directly in the Cloudflare Worker.
+              <div style="margin-top:10px;font-size:.77rem;color:var(--m2);line-height:1.7">
+                The card is cached in Cloudflare KV for <strong style="color:var(--white)">1 hour</strong> per ID + size combination. The first request for a level takes ~1–2 s to generate; all subsequent requests are served instantly (<code>X-Cache: HIT</code>). Use the <code>url.card</code> field returned by <code>/api/level</code> to get the pre-built URL directly.
+              </div>
+              <div class="params" style="margin-top:10px">
+                <div class="pr"><span class="pn">id</span><span class="req">required</span><span class="pi">Numeric level ID.</span></div>
+                <div class="pr"><span class="pn">size</span><span class="opt">optional</span><span class="pi"><code style="color:var(--gold)">normal</code> (default) — outputs a <strong>1600×520 px</strong> PNG · <code style="color:var(--gold)">small</code> — outputs a <strong>1200×320 px</strong> PNG. Both are @2x renders of their logical canvas.</span></div>
+              </div>
+              <div style="margin-top:10px;font-size:.75rem;color:var(--red)">
+                <strong>Errors</strong> — <code style="color:var(--red)">400</code> if <code>id</code> is invalid · <code style="color:var(--red)">404</code> if the level doesn't exist.
               </div>
             </div>
             <div class="cw">
               <div class="tabs">
                 <div class="tab on" onclick="stab('l4','html')">HTML</div><div class="tab" onclick="stab('l4','js')">JavaScript</div><div class="tab" onclick="stab('l4','py')">Python</div><div class="tab" onclick="stab('l4','php')">PHP</div><div class="tab" onclick="stab('l4','djs')">Discord.js</div><div class="tab" onclick="stab('l4','dpy')">Discord.py</div><div class="tab" onclick="stab('l4','dnet')">Discord.NET</div><div class="tab" onclick="stab('l4','jda')">JDA</div><div class="tab" onclick="stab('l4','eris')">Eris</div>
               </div>
-              <div class="tp on" data-g="l4" data-l="html"><pre>&lt;<span class="kw">img</span> <span class="k">src</span>=<span class="s">"https://thumball.liamt.xyz/api/card?id=128"</span> <span class="k">style</span>=<span class="s">"width:100%;max-width:800px"</span> /&gt;</pre></div>
-              <div class="tp" data-g="l4" data-l="js"><pre><span class="kw">const</span> <span class="v">blob</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="s">"https://thumball.liamt.xyz/api/card?id=128"</span>).<span class="fn">then</span>(<span class="v">r</span> <span class="op">=></span> <span class="v">r</span>.<span class="fn">blob</span>());
+              <div class="tp on" data-g="l4" data-l="html"><pre>&lt;<span class="kw">img</span> <span class="k">src</span>=<span class="s">"https://gd-level-api.liamt.xyz/api/card?id=128"</span> <span class="k">style</span>=<span class="s">"width:100%;max-width:800px"</span> /&gt;</pre></div>
+              <div class="tp" data-g="l4" data-l="js"><pre><span class="kw">const</span> <span class="v">blob</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/card?id=128"</span>).<span class="fn">then</span>(<span class="v">r</span> <span class="op">=></span> <span class="v">r</span>.<span class="fn">blob</span>());
 document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src = URL.<span class="fn">createObjectURL</span>(<span class="v">blob</span>);</pre></div>
               <div class="tp" data-g="l4" data-l="py"><pre><span class="kw">with</span> <span class="fn">open</span>(<span class="s">"card.png"</span>, <span class="s">"wb"</span>) <span class="kw">as</span> <span class="v">f</span>:
-    <span class="v">f</span>.<span class="fn">write</span>(requests.<span class="fn">get</span>(<span class="s">"https://thumball.liamt.xyz/api/card?id=128"</span>).content)</pre></div>
-              <div class="tp" data-g="l4" data-l="php"><pre><span class="kw">echo</span> <span class="s">'&lt;img src="https://thumball.liamt.xyz/api/card?id=128"&gt;'</span>;</pre></div>
-              <div class="tp" data-g="l4" data-l="djs"><pre><span class="kw">const</span> <span class="v">data</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="s">`https://thumball.liamt.xyz/api/level?id=<span class="op">${id}</span>`</span>).<span class="fn">then</span>(<span class="v">r</span> <span class="op">=></span> <span class="v">r</span>.<span class="fn">json</span>());
+    <span class="v">f</span>.<span class="fn">write</span>(requests.<span class="fn">get</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/card?id=128"</span>).content)</pre></div>
+              <div class="tp" data-g="l4" data-l="php"><pre><span class="kw">echo</span> <span class="s">'&lt;img src="https://gd-level-api.liamt.xyz/api/card?id=128"&gt;'</span>;</pre></div>
+              <div class="tp" data-g="l4" data-l="djs"><pre><span class="kw">const</span> <span class="v">data</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="s">`https://gd-level-api.liamt.xyz/api/level?id=<span class="op">${id}</span>`</span>).<span class="fn">then</span>(<span class="v">r</span> <span class="op">=></span> <span class="v">r</span>.<span class="fn">json</span>());
 <span class="kw">const</span> <span class="v">card</span>  = <span class="kw">new</span> <span class="ty">AttachmentBuilder</span>(<span class="v">data</span>.<span class="k">urls</span>.<span class="k">card</span>, { <span class="k">name</span>: <span class="s">'card.png'</span> });
 <span class="kw">const</span> <span class="v">embed</span> = <span class="kw">new</span> <span class="ty">EmbedBuilder</span>().<span class="fn">setTitle</span>(<span class="v">data</span>.<span class="k">name</span>).<span class="fn">setImage</span>(<span class="s">'attachment://card.png'</span>);
 <span class="kw">await</span> <span class="v">interaction</span>.<span class="fn">reply</span>({ <span class="k">embeds</span>: [<span class="v">embed</span>], <span class="k">files</span>: [<span class="v">card</span>] });</pre></div>
@@ -457,11 +576,11 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
 <span class="v">file</span>  = discord.<span class="fn">File</span>(io.<span class="fn">BytesIO</span>(<span class="v">png</span>), <span class="k">filename</span>=<span class="s">"card.png"</span>)
 <span class="v">embed</span> = discord.<span class="fn">Embed</span>(<span class="k">title</span>=<span class="v">data</span>[<span class="s">"name"</span>]).<span class="fn">set_image</span>(<span class="k">url</span>=<span class="s">"attachment://card.png"</span>)
 <span class="kw">await</span> <span class="v">i</span>.<span class="fn">response</span>.<span class="fn">send_message</span>(<span class="k">embed</span>=<span class="v">embed</span>, <span class="k">file</span>=<span class="v">file</span>)</pre></div>
-              <div class="tp" data-g="l4" data-l="dnet"><pre><span class="kw">var</span> <span class="v">png</span> = <span class="kw">await</span> <span class="v">http</span>.<span class="fn">GetByteArrayAsync</span>(<span class="s">$"https://thumball.liamt.xyz/api/card?id={id}"</span>);
+              <div class="tp" data-g="l4" data-l="dnet"><pre><span class="kw">var</span> <span class="v">png</span> = <span class="kw">await</span> <span class="v">http</span>.<span class="fn">GetByteArrayAsync</span>(<span class="s">$"https://gd-level-api.liamt.xyz/api/card?id={id}"</span>);
 <span class="kw">var</span> <span class="v">embed</span> = <span class="kw">new</span> <span class="ty">EmbedBuilder</span>().<span class="fn">WithImageUrl</span>(<span class="s">"attachment://card.png"</span>).<span class="fn">Build</span>();
 <span class="kw">await</span> <span class="v">cmd</span>.<span class="fn">RespondWithFileAsync</span>(<span class="kw">new</span> <span class="ty">MemoryStream</span>(<span class="v">png</span>), <span class="s">"card.png"</span>, <span class="k">embed</span>: <span class="v">embed</span>);</pre></div>
               <div class="tp" data-g="l4" data-l="jda"><pre><span class="kw">byte</span>[] <span class="v">png</span> = <span class="ty">HttpClient</span>.<span class="fn">newHttpClient</span>().<span class="fn">send</span>(
-    <span class="ty">HttpRequest</span>.<span class="fn">newBuilder</span>().<span class="fn">uri</span>(<span class="ty">URI</span>.<span class="fn">create</span>(<span class="s">"https://thumball.liamt.xyz/api/card?id="</span> + <span class="v">id</span>)).<span class="fn">build</span>(),
+    <span class="ty">HttpRequest</span>.<span class="fn">newBuilder</span>().<span class="fn">uri</span>(<span class="ty">URI</span>.<span class="fn">create</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/card?id="</span> + <span class="v">id</span>)).<span class="fn">build</span>(),
     <span class="ty">HttpResponse</span>.BodyHandlers.<span class="fn">ofByteArray</span>()).<span class="fn">body</span>();
 <span class="v">event</span>.<span class="fn">replyFiles</span>(<span class="ty">FileUpload</span>.<span class="fn">fromData</span>(<span class="v">png</span>, <span class="s">"card.png"</span>)).<span class="fn">queue</span>();</pre></div>
               <div class="tp" data-g="l4" data-l="eris"><pre><span class="kw">const</span> <span class="v">png</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="v">data</span>.<span class="k">urls</span>.<span class="k">card</span>).<span class="fn">then</span>(<span class="v">r</span> <span class="op">=></span> <span class="v">r</span>.<span class="fn">arrayBuffer</span>());
@@ -479,49 +598,153 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
             <span class="method">GET</span><span class="ep-path">/thumbnail/{levelId}</span><span class="chev">▼</span>
           </div>
           <div class="ep-body"><div class="ep-inner">
-            <div class="ep-desc">Proxy for the level thumbnail served from <strong style="color:var(--white)">thumball.liamt.xyz</strong>, cached for 24 hours.
-              <div class="params">
-                <div class="pr"><span class="pn">levelId</span><span class="req">required</span><span class="pi">ID in the path — e.g. <code style="color:var(--gold)">/thumbnail/128</code></span></div>
+            <div class="ep-desc">
+              Proxy that fetches the raw WebP thumbnail for a level from the upstream source (<code>levelthumbs.prevter.me</code>) and forwards it through this API. Cached for <strong style="color:var(--white)">24 hours</strong> via Cloudflare CDN. Use this instead of the upstream URL to avoid CORS issues, get consistent caching, and stay on your own domain.
+              <div style="margin-top:10px;font-size:.77rem;color:var(--m2);line-height:1.7">
+                Not all levels have a thumbnail — if none is available the upstream returns a 404 and so does this endpoint. In that case you can fall back to the <code>noThumb</code> placeholder used in the card generator.
+              </div>
+              <div class="params" style="margin-top:10px">
+                <div class="pr"><span class="pn">levelId</span><span class="req">required</span><span class="pi">Level ID in the URL path — e.g. <code style="color:var(--gold)">/thumbnail/128</code></span></div>
+              </div>
+              <div style="margin-top:10px;font-size:.75rem;color:var(--red)">
+                <strong>Errors</strong> — <code style="color:var(--red)">400</code> if ID is omitted · <code style="color:var(--red)">404</code> if no thumbnail exists for that level.
               </div>
             </div>
             <div class="cw">
               <div class="tabs">
                 <div class="tab on" onclick="stab('l5','html')">HTML</div><div class="tab" onclick="stab('l5','js')">JavaScript</div><div class="tab" onclick="stab('l5','react')">React</div><div class="tab" onclick="stab('l5','next')">Next.js</div><div class="tab" onclick="stab('l5','vue')">Vue</div><div class="tab" onclick="stab('l5','svelte')">Svelte</div><div class="tab" onclick="stab('l5','astro')">Astro</div><div class="tab" onclick="stab('l5','angular')">Angular</div><div class="tab" onclick="stab('l5','php')">PHP</div><div class="tab" onclick="stab('l5','java')">Java</div><div class="tab" onclick="stab('l5','curl')">curl</div>
               </div>
-              <div class="tp on" data-g="l5" data-l="html"><pre>&lt;<span class="kw">img</span> <span class="k">src</span>=<span class="s">"https://thumball.liamt.xyz/thumbnail/128"</span> <span class="k">style</span>=<span class="s">"width:320px;border-radius:8px"</span>/&gt;</pre></div>
+              <div class="tp on" data-g="l5" data-l="html"><pre>&lt;<span class="kw">img</span> <span class="k">src</span>=<span class="s">"https://gd-level-api.liamt.xyz/thumbnail/128"</span> <span class="k">style</span>=<span class="s">"width:320px;border-radius:8px"</span>/&gt;</pre></div>
               <div class="tp" data-g="l5" data-l="js"><pre><span class="cm">// Fetch and display thumbnail as blob URL</span>
-<span class="kw">const</span> <span class="v">res</span>  = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="s">"https://thumball.liamt.xyz/thumbnail/128"</span>);
+<span class="kw">const</span> <span class="v">res</span>  = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="s">"https://gd-level-api.liamt.xyz/thumbnail/128"</span>);
 <span class="kw">const</span> <span class="v">blob</span> = <span class="kw">await</span> <span class="v">res</span>.<span class="fn">blob</span>();
 <span class="v">document</span>.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src = <span class="ty">URL</span>.<span class="fn">createObjectURL</span>(<span class="v">blob</span>);
 
 <span class="cm">// Or load by dynamic ID</span>
 <span class="kw">function</span> <span class="fn">getThumb</span>(<span class="v">id</span>) {
-  <span class="kw">return</span> <span class="s">`https://thumball.liamt.xyz/thumbnail/<span class="op">${id}</span>`</span>;
+  <span class="kw">return</span> <span class="s">`https://gd-level-api.liamt.xyz/thumbnail/<span class="op">${id}</span>`</span>;
 }
 <span class="v">document</span>.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src = <span class="fn">getThumb</span>(<span class="n">128</span>);</pre></div>
               <div class="tp" data-g="l5" data-l="react"><pre><span class="kw">export default function</span> <span class="fn">Thumb</span>({ <span class="v">id</span> }) {
-  <span class="kw">return</span> &lt;<span class="kw">img</span> <span class="k">src</span>=<span class="op">{</span><span class="s">`https://thumball.liamt.xyz/thumbnail/<span class="op">${id}</span>`</span><span class="op">}</span> <span class="k">style</span>=<span class="op">{{</span><span class="k">width</span>:<span class="s">"320px"</span><span class="op">}}</span>/&gt;;
+  <span class="kw">return</span> &lt;<span class="kw">img</span> <span class="k">src</span>=<span class="op">{</span><span class="s">`https://gd-level-api.liamt.xyz/thumbnail/<span class="op">${id}</span>`</span><span class="op">}</span> <span class="k">style</span>=<span class="op">{{</span><span class="k">width</span>:<span class="s">"320px"</span><span class="op">}}</span>/&gt;;
 }</pre></div>
               <div class="tp" data-g="l5" data-l="next"><pre><span class="cm">// next.config.js</span>
 <span class="kw">const</span> <span class="v">nextConfig</span> = { <span class="k">images</span>: { <span class="k">remotePatterns</span>: [{ <span class="k">hostname</span>: <span class="s">"thumball.liamt.xyz"</span> }] } };
 <span class="cm">// Component</span>
 <span class="kw">import</span> <span class="ty">Image</span> <span class="kw">from</span> <span class="s">"next/image"</span>;
-&lt;<span class="ty">Image</span> <span class="k">src</span>=<span class="op">{</span><span class="s">`https://thumball.liamt.xyz/thumbnail/<span class="op">${id}</span>`</span><span class="op">}</span> <span class="k">width</span>=<span class="op">{</span><span class="n">320</span><span class="op">}</span> <span class="k">height</span>=<span class="op">{</span><span class="n">180</span><span class="op">}</span> <span class="k">alt</span>=<span class="s">""</span>/&gt;</pre></div>
-              <div class="tp" data-g="l5" data-l="vue"><pre>&lt;<span class="kw">template</span>&gt;&lt;<span class="kw">img</span> <span class="k">:src</span>=<span class="s">"`https://thumball.liamt.xyz/thumbnail/${id}`"</span>/&gt;&lt;/<span class="kw">template</span>&gt;
+&lt;<span class="ty">Image</span> <span class="k">src</span>=<span class="op">{</span><span class="s">`https://gd-level-api.liamt.xyz/thumbnail/<span class="op">${id}</span>`</span><span class="op">}</span> <span class="k">width</span>=<span class="op">{</span><span class="n">320</span><span class="op">}</span> <span class="k">height</span>=<span class="op">{</span><span class="n">180</span><span class="op">}</span> <span class="k">alt</span>=<span class="s">""</span>/&gt;</pre></div>
+              <div class="tp" data-g="l5" data-l="vue"><pre>&lt;<span class="kw">template</span>&gt;&lt;<span class="kw">img</span> <span class="k">:src</span>=<span class="s">"`https://gd-level-api.liamt.xyz/thumbnail/${id}`"</span>/&gt;&lt;/<span class="kw">template</span>&gt;
 &lt;<span class="kw">script</span> <span class="k">setup</span>&gt;<span class="fn">defineProps</span>({ <span class="k">id</span>: <span class="ty">Number</span> })&lt;/<span class="kw">script</span>&gt;</pre></div>
               <div class="tp" data-g="l5" data-l="svelte"><pre>&lt;<span class="kw">script</span>&gt;<span class="kw">export let</span> <span class="v">id</span>;&lt;/<span class="kw">script</span>&gt;
-&lt;<span class="kw">img</span> <span class="k">src</span>=<span class="op">{</span><span class="s">`https://thumball.liamt.xyz/thumbnail/<span class="op">${id}</span>`</span><span class="op">}</span> <span class="k">style</span>=<span class="s">"width:320px"</span>/&gt;</pre></div>
+&lt;<span class="kw">img</span> <span class="k">src</span>=<span class="op">{</span><span class="s">`https://gd-level-api.liamt.xyz/thumbnail/<span class="op">${id}</span>`</span><span class="op">}</span> <span class="k">style</span>=<span class="s">"width:320px"</span>/&gt;</pre></div>
               <div class="tp" data-g="l5" data-l="astro"><pre>---
 <span class="kw">const</span> { <span class="v">id</span> } = <span class="v">Astro</span>.<span class="k">props</span>;
 ---
-&lt;<span class="kw">img</span> <span class="k">src</span>=<span class="op">{</span><span class="s">`https://thumball.liamt.xyz/thumbnail/<span class="op">${id}</span>`</span><span class="op">}</span>/&gt;</pre></div>
-              <div class="tp" data-g="l5" data-l="angular"><pre><span class="op">@</span><span class="fn">Component</span>({ <span class="k">template</span>: <span class="s">`&lt;img [src]="'https://thumball.liamt.xyz/thumbnail/'+id"/&gt;`</span> })
+&lt;<span class="kw">img</span> <span class="k">src</span>=<span class="op">{</span><span class="s">`https://gd-level-api.liamt.xyz/thumbnail/<span class="op">${id}</span>`</span><span class="op">}</span>/&gt;</pre></div>
+              <div class="tp" data-g="l5" data-l="angular"><pre><span class="op">@</span><span class="fn">Component</span>({ <span class="k">template</span>: <span class="s">`&lt;img [src]="'https://gd-level-api.liamt.xyz/thumbnail/'+id"/&gt;`</span> })
 <span class="kw">export class</span> <span class="ty">ThumbComponent</span> { <span class="op">@</span><span class="fn">Input</span>() <span class="v">id</span>!: <span class="ty">number</span>; }</pre></div>
-              <div class="tp" data-g="l5" data-l="php"><pre><span class="kw">echo</span> <span class="s">"&lt;img src='https://thumball.liamt.xyz/thumbnail/{$id}'&gt;"</span>;</pre></div>
+              <div class="tp" data-g="l5" data-l="php"><pre><span class="kw">echo</span> <span class="s">"&lt;img src='https://gd-level-api.liamt.xyz/thumbnail/{$id}'&gt;"</span>;</pre></div>
               <div class="tp" data-g="l5" data-l="java"><pre><span class="kw">byte</span>[] <span class="v">img</span> = <span class="ty">HttpClient</span>.<span class="fn">newHttpClient</span>().<span class="fn">send</span>(
-    <span class="ty">HttpRequest</span>.<span class="fn">newBuilder</span>().<span class="fn">uri</span>(<span class="ty">URI</span>.<span class="fn">create</span>(<span class="s">"https://thumball.liamt.xyz/thumbnail/"</span> + <span class="v">id</span>)).<span class="fn">build</span>(),
+    <span class="ty">HttpRequest</span>.<span class="fn">newBuilder</span>().<span class="fn">uri</span>(<span class="ty">URI</span>.<span class="fn">create</span>(<span class="s">"https://gd-level-api.liamt.xyz/thumbnail/"</span> + <span class="v">id</span>)).<span class="fn">build</span>(),
     <span class="ty">HttpResponse</span>.BodyHandlers.<span class="fn">ofByteArray</span>()).<span class="fn">body</span>();</pre></div>
-              <div class="tp" data-g="l5" data-l="curl"><pre>curl <span class="s">"https://thumball.liamt.xyz/thumbnail/128"</span> --output thumb.webp</pre></div>
+              <div class="tp" data-g="l5" data-l="curl"><pre>curl <span class="s">"https://gd-level-api.liamt.xyz/thumbnail/128"</span> --output thumb.webp</pre></div>
+            </div>
+          </div></div>
+        </div>
+
+        <!-- /api/random -->
+        <div class="ep" id="ep-random">
+          <div class="ep-head" onclick="tog(this.closest('.ep'))">
+            <span class="method">GET</span><span class="ep-path">/api/random</span><span class="chev">▼</span>
+          </div>
+          <div class="ep-body"><div class="ep-inner">
+            <div class="ep-desc">
+              Returns a random <strong style="color:var(--white)">featured</strong> level. Picks a random page from the GDBrowser featured search and returns one result formatted identically to <code style="color:var(--gold)">/api/level</code>. Great for bots that show a "level of the day" or showcase random content.
+              <div style="margin-top:8px;font-size:.75rem;color:var(--m2)">No parameters required.</div>
+              <div style="margin-top:8px;font-size:.75rem;color:var(--red)"><strong>Errors</strong> — <code style="color:var(--red)">502</code> if the upstream featured search fails.</div>
+            </div>
+            <div class="cw">
+              <div class="tabs">
+                <div class="tab on" onclick="stab('lr','curl')">curl</div><div class="tab" onclick="stab('lr','js')">JavaScript</div><div class="tab" onclick="stab('lr','py')">Python</div><div class="tab" onclick="stab('lr','djs')">Discord.js</div><div class="tab" onclick="stab('lr','dpy')">Discord.py</div>
+              </div>
+              <div class="tp on" data-g="lr" data-l="curl"><pre>curl <span class="s">"https://gd-level-api.liamt.xyz/api/random"</span></pre></div>
+              <div class="tp" data-g="lr" data-l="js"><pre><span class="kw">const</span> <span class="v">level</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/random"</span>).<span class="fn">then</span>(<span class="v">r</span> <span class="op">=></span> <span class="v">r</span>.<span class="fn">json</span>());
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="v">level</span>.<span class="k">name</span>, <span class="v">level</span>.<span class="k">difficulty</span>);</pre></div>
+              <div class="tp" data-g="lr" data-l="py"><pre><span class="kw">import</span> requests
+<span class="v">level</span> = requests.<span class="fn">get</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/random"</span>).<span class="fn">json</span>()
+<span class="fn">print</span>(<span class="v">level</span>[<span class="s">"name"</span>], <span class="v">level</span>[<span class="s">"difficulty"</span>])</pre></div>
+              <div class="tp" data-g="lr" data-l="djs"><pre><span class="kw">const</span> <span class="v">level</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/random"</span>).<span class="fn">then</span>(<span class="v">r</span> <span class="op">=></span> <span class="v">r</span>.<span class="fn">json</span>());
+<span class="kw">const</span> <span class="v">card</span>  = <span class="kw">new</span> <span class="ty">AttachmentBuilder</span>(<span class="v">level</span>.<span class="k">urls</span>.<span class="k">card</span>, { <span class="k">name</span>: <span class="s">'card.png'</span> });
+<span class="kw">const</span> <span class="v">embed</span> = <span class="kw">new</span> <span class="ty">EmbedBuilder</span>().<span class="fn">setTitle</span>(<span class="v">level</span>.<span class="k">name</span>).<span class="fn">setImage</span>(<span class="s">'attachment://card.png'</span>);
+<span class="kw">await</span> <span class="v">channel</span>.<span class="fn">send</span>({ <span class="k">embeds</span>: [<span class="v">embed</span>], <span class="k">files</span>: [<span class="v">card</span>] });</pre></div>
+              <div class="tp" data-g="lr" data-l="dpy"><pre><span class="v">level</span> = (<span class="kw">await</span> <span class="v">session</span>.<span class="fn">get</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/random"</span>)).<span class="fn">json</span>()
+<span class="kw">async with</span> <span class="v">session</span>.<span class="fn">get</span>(<span class="v">level</span>[<span class="s">"urls"</span>][<span class="s">"card"</span>]) <span class="kw">as</span> <span class="v">r</span>: <span class="v">png</span> = <span class="kw">await</span> <span class="v">r</span>.<span class="fn">read</span>()
+<span class="v">file</span>  = discord.<span class="fn">File</span>(io.<span class="fn">BytesIO</span>(<span class="v">png</span>), <span class="k">filename</span>=<span class="s">"card.png"</span>)
+<span class="v">embed</span> = discord.<span class="fn">Embed</span>(<span class="k">title</span>=<span class="v">level</span>[<span class="s">"name"</span>]).<span class="fn">set_image</span>(<span class="k">url</span>=<span class="s">"attachment://card.png"</span>)
+<span class="kw">await</span> <span class="v">ctx</span>.<span class="fn">send</span>(<span class="k">embed</span>=<span class="v">embed</span>, <span class="k">file</span>=<span class="v">file</span>)</pre></div>
+            </div>
+          </div></div>
+        </div>
+
+        <!-- /api/user -->
+        <div class="ep" id="ep-user">
+          <div class="ep-head" onclick="tog(this.closest('.ep'))">
+            <span class="method">GET</span><span class="ep-path">/api/user?name={username}</span><span class="chev">▼</span>
+          </div>
+          <div class="ep-body"><div class="ep-inner">
+            <div class="ep-desc">
+              Returns profile data for a Geometry Dash player: stats (stars, diamonds, coins, demons, creator points), social links, global rank, and a ready-to-use avatar URL rendered by GDBrowser.
+              <div class="params" style="margin-top:10px">
+                <div class="pr"><span class="pn">name</span><span class="req">required</span><span class="pi">Exact GD username (case-insensitive).</span></div>
+              </div>
+              <div style="margin-top:10px;font-size:.77rem;color:var(--m2);line-height:1.8">
+                <strong style="color:var(--white);display:block;margin-bottom:5px">Response fields</strong>
+                <div style="display:grid;grid-template-columns:auto 1fr;gap:3px 16px">
+                  <code style="color:var(--gold)">username</code><span>Exact display name.</span>
+                  <code style="color:var(--gold)">rank</code><span>Global leaderboard rank, or <code>null</code> if not ranked.</span>
+                  <code style="color:var(--gold)">stars / diamonds / coins / userCoins / demons</code><span>Player stats.</span>
+                  <code style="color:var(--gold)">creatorPoints</code><span>Creator points (rated levels).</span>
+                  <code style="color:var(--gold)">socials</code><span>YouTube, Twitter/X, Twitch links (null if not set).</span>
+                  <code style="color:var(--gold)">urls.avatar</code><span>PNG icon rendered with the player's colors and glow — use directly in an <code>&lt;img&gt;</code> or Discord embed.</span>
+                </div>
+              </div>
+              <div style="margin-top:10px;font-size:.75rem;color:var(--red)"><strong>Errors</strong> — <code style="color:var(--red)">400</code> if <code>name</code> is missing · <code style="color:var(--red)">404</code> if player not found.</div>
+            </div>
+            <div class="cw">
+              <div class="tabs">
+                <div class="tab on" onclick="stab('lu','curl')">curl</div><div class="tab" onclick="stab('lu','js')">JavaScript</div><div class="tab" onclick="stab('lu','py')">Python</div><div class="tab" onclick="stab('lu','djs')">Discord.js</div><div class="tab" onclick="stab('lu','dpy')">Discord.py</div>
+              </div>
+              <div class="tp on" data-g="lu" data-l="curl"><pre>curl <span class="s">"https://gd-level-api.liamt.xyz/api/user?name=RobTop"</span></pre></div>
+              <div class="tp" data-g="lu" data-l="js"><pre><span class="kw">const</span> <span class="v">user</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/user?name=RobTop"</span>).<span class="fn">then</span>(<span class="v">r</span> <span class="op">=></span> <span class="v">r</span>.<span class="fn">json</span>());
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="v">user</span>.<span class="k">username</span>, <span class="v">user</span>.<span class="k">stars</span>);</pre></div>
+              <div class="tp" data-g="lu" data-l="py"><pre><span class="kw">import</span> requests
+<span class="v">user</span> = requests.<span class="fn">get</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/user"</span>, <span class="k">params</span>={<span class="s">"name"</span>: <span class="s">"RobTop"</span>}).<span class="fn">json</span>()</pre></div>
+              <div class="tp" data-g="lu" data-l="djs"><pre><span class="kw">const</span> <span class="v">user</span>  = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="s">`https://gd-level-api.liamt.xyz/api/user?name=<span class="op">${name}</span>`</span>).<span class="fn">then</span>(<span class="v">r</span> <span class="op">=></span> <span class="v">r</span>.<span class="fn">json</span>());
+<span class="kw">const</span> <span class="v">embed</span> = <span class="kw">new</span> <span class="ty">EmbedBuilder</span>()
+  .<span class="fn">setTitle</span>(<span class="v">user</span>.<span class="k">username</span>)
+  .<span class="fn">setThumbnail</span>(<span class="v">user</span>.<span class="k">urls</span>.<span class="k">avatar</span>)
+  .<span class="fn">addFields</span>(
+    { <span class="k">name</span>: <span class="s">'Stars'</span>,  <span class="k">value</span>: <span class="s">`★ <span class="op">${user.stars}</span>`</span>,  <span class="k">inline</span>: <span class="b">true</span> },
+    { <span class="k">name</span>: <span class="s">'Demons'</span>, <span class="k">value</span>: <span class="s">`👹 <span class="op">${user.demons}</span>`</span>, <span class="k">inline</span>: <span class="b">true</span> },
+    { <span class="k">name</span>: <span class="s">'Rank'</span>,   <span class="k">value</span>: <span class="s">`#<span class="op">${user.rank ?? 'unranked'}</span>`</span>, <span class="k">inline</span>: <span class="b">true</span> },
+  );
+<span class="kw">await</span> <span class="v">interaction</span>.<span class="fn">reply</span>({ <span class="k">embeds</span>: [<span class="v">embed</span>] });</pre></div>
+              <div class="tp" data-g="lu" data-l="dpy"><pre><span class="v">user</span> = (<span class="kw">await</span> <span class="v">session</span>.<span class="fn">get</span>(<span class="s">f"https://gd-level-api.liamt.xyz/api/user?name={name}"</span>)).<span class="fn">json</span>()
+<span class="v">embed</span> = discord.<span class="fn">Embed</span>(<span class="k">title</span>=<span class="v">user</span>[<span class="s">"username"</span>])
+<span class="v">embed</span>.<span class="fn">set_thumbnail</span>(<span class="k">url</span>=<span class="v">user</span>[<span class="s">"urls"</span>][<span class="s">"avatar"</span>])
+<span class="v">embed</span>.<span class="fn">add_field</span>(<span class="k">name</span>=<span class="s">"Stars"</span>,  <span class="k">value</span>=<span class="s">f"★ {user['stars']}"</span>,  <span class="k">inline</span>=<span class="b">True</span>)
+<span class="v">embed</span>.<span class="fn">add_field</span>(<span class="k">name</span>=<span class="s">"Demons"</span>, <span class="k">value</span>=<span class="s">f"👹 {user['demons']}"</span>, <span class="k">inline</span>=<span class="b">True</span>)
+<span class="kw">await</span> <span class="v">i</span>.<span class="fn">response</span>.<span class="fn">send_message</span>(<span class="k">embed</span>=<span class="v">embed</span>)</pre></div>
+              <p class="rl">Response</p>
+<pre>{
+  <span class="k">"username"</span>: <span class="s">"RobTop"</span>,
+  <span class="k">"playerID"</span>: <span class="s">"71"</span>, <span class="k">"accountID"</span>: <span class="s">"71"</span>,
+  <span class="k">"rank"</span>: <span class="n">1</span>, <span class="k">"stars"</span>: <span class="n">0</span>, <span class="k">"diamonds"</span>: <span class="n">0</span>,
+  <span class="k">"coins"</span>: <span class="n">0</span>, <span class="k">"userCoins"</span>: <span class="n">0</span>, <span class="k">"demons"</span>: <span class="n">0</span>,
+  <span class="k">"creatorPoints"</span>: <span class="n">0</span>,
+  <span class="k">"socials"</span>: { <span class="k">"youtube"</span>: <span class="b">null</span>, <span class="k">"twitter"</span>: <span class="b">null</span>, <span class="k">"twitch"</span>: <span class="b">null</span> },
+  <span class="k">"urls"</span>: { <span class="k">"avatar"</span>: <span class="s">"https://gdbrowser.com/icon/RobTop?form=cube&col1=0&col2=3&glow=0"</span> }
+}</pre>
             </div>
           </div></div>
         </div>
@@ -571,6 +794,21 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
           </div>
         </div>
 
+        <!-- Thumbnail -->
+        <div class="pg pg-full" id="demo-thumb">
+          <div class="pg-hd"><div class="pg-dot"></div><span class="pg-title">Thumbnail</span><span class="pg-sub">/thumbnail/:id</span></div>
+          <div class="pg-body">
+            <div class="irow">
+              <input type="number" id="thumbId" placeholder="Level ID (e.g. 128)" min="1"/>
+              <button class="btn" id="thumbBtn" onclick="runThumb()">Load</button>
+            </div>
+            <div class="lrow" id="thumbLoad"><div class="spin v"></div>Loading thumbnail...</div>
+            <div class="rc" id="thumbRes" style="max-width:480px"><img id="thumbImg" src="" alt="thumbnail" style="border-radius:0"/></div>
+            <div class="rlinks" id="thumbLinks"><a id="thumbLC" href="#" target="_blank"></a></div>
+            <div class="err" id="thumbErr"></div>
+          </div>
+        </div>
+
         <!-- Multiple levels -->
         <div class="pg pg-full" id="demo-multi">
           <div class="pg-hd"><div class="pg-dot"></div><span class="pg-title">Multiple levels</span><span class="pg-sub">/api/levels</span></div>
@@ -607,6 +845,7 @@ function stab(g, l) {
   const pane = document.querySelector(`[data-g="${g}"][data-l="${l}"]`);
   if (!pane) return;
   pane.closest('.cw').querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.getAttribute('onclick').includes(`'${l}'`)));
+  try { localStorage.setItem('pref-lang', l); } catch(e) {}
 }
 
 /* ── Hero live preview ──────── */
@@ -621,7 +860,9 @@ async function loadPreview() {
 
   const img = document.getElementById('pvImg');
   img.src = '';
+  img.style.display = 'block';
   img.className = 'preview-card-img loading';
+  document.getElementById('pvErr').classList.remove('v');
   img.src = `${BASE}/api/card?id=${id}`;
   img.onload = async () => {
     img.className = 'preview-card-img';
@@ -637,9 +878,12 @@ async function loadPreview() {
   };
   img.onerror = () => {
     img.className = 'preview-card-img loading';
+    img.style.display = 'none';
     document.getElementById('pvSpin').classList.remove('v');
     document.getElementById('pvBtn').disabled = false;
-    document.getElementById('pvErr').classList.add('v');
+    const err = document.getElementById('pvErr');
+    err.textContent = '⚠ Level not found — check the ID and try again.';
+    err.classList.add('v');
   };
 }
 loadPreview();
@@ -655,17 +899,29 @@ async function runCard() {
   show('cardLoad', true); show('cardRes', false); show('cardLinks', false); show('cardErr', false);
   const cardUrl = `${BASE}/api/card?id=${id}${size==='small'?'&size=small':''}`;
   const jsonUrl = `${BASE}/api/level?id=${id}`;
-  const img = document.getElementById('cardImg');
-  img.src = cardUrl;
-  img.onload = () => {
-    show('cardLoad', false); show('cardRes', true);
-    const lj = document.getElementById('cardLJ'); lj.href = jsonUrl; lj.textContent = jsonUrl;
-    const lc = document.getElementById('cardLC'); lc.href = cardUrl; lc.textContent = cardUrl;
-    show('cardLinks', true); btn.disabled = false;
-  };
-  img.onerror = () => {
-    show('cardLoad', false); txt('cardErr','Level not found.'); show('cardErr', true); btn.disabled = false;
-  };
+  try {
+    const res = await fetch(cardUrl);
+    if (!res.ok) {
+      const status = res.status;
+      show('cardLoad', false);
+      txt('cardErr', status === 404 ? `⚠ Level #${id} not found.`
+        : status === 429 ? '⚠ Too many requests — wait a moment and try again.'
+        : `⚠ Could not generate card (error ${status}).`);
+      show('cardErr', true); btn.disabled = false; return;
+    }
+    const blob = await res.blob();
+    const img = document.getElementById('cardImg');
+    img.src = URL.createObjectURL(blob);
+    img.onload = () => {
+      show('cardLoad', false); show('cardRes', true);
+      const lj = document.getElementById('cardLJ'); lj.href = jsonUrl; lj.textContent = jsonUrl;
+      const lc = document.getElementById('cardLC'); lc.href = cardUrl; lc.textContent = cardUrl;
+      show('cardLinks', true); btn.disabled = false;
+      updatePlaygroundUrl({ id, size });
+    };
+  } catch(e) {
+    show('cardLoad', false); txt('cardErr', '⚠ Network error — check your connection.'); show('cardErr', true); btn.disabled = false;
+  }
 }
 
 /* ── Search ─────────────────── */
@@ -684,7 +940,7 @@ async function runSearch() {
       const c = document.getElementById('srList'); c.innerHTML = '';
       data.forEach((l,i) => {
         const el = document.createElement('div'); el.className='sri'; el.style.animationDelay=`${i*35}ms`;
-        const NO_THUMB_PH = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='40' viewBox='0 0 64 40'><rect width='64' height='40' fill='%231a1a2e'/><text x='32' y='26' text-anchor='middle' font-size='18' fill='%233d3d5c' font-family='sans-serif'>?</text></svg>`;
+        const NO_THUMB_PH = `https://raw.githubusercontent.com/cdc-sys/level-thumbs-mod/main/resources/noThumb.png`;
         el.innerHTML=`<img class="sr-th" src="${BASE}/thumbnail/${l.id}" loading="lazy" onerror="this.src='${NO_THUMB_PH}'"/>
           <div class="sri-info"><div class="sri-name">${esc(l.name)}</div><div class="sri-sub">by ${esc(l.author)} · ID ${l.id}</div></div>
           ${l.stars?`<span class="sbadge st">★ ${l.stars}</span>`:''}
@@ -727,10 +983,115 @@ async function runMulti() {
   btn.disabled=false;
 }
 
+/* ── Thumbnail ──────────────── */
+async function runThumb() {
+  const id = parseInt(document.getElementById('thumbId').value);
+  if (!id || id < 1) return;
+  const btn = document.getElementById('thumbBtn');
+  btn.disabled = true;
+  show('thumbLoad', true); show('thumbRes', false); show('thumbLinks', false); show('thumbErr', false);
+  const thumbUrl = `${BASE}/thumbnail/${id}`;
+  try {
+    const res = await fetch(thumbUrl);
+    if (!res.ok) {
+      show('thumbLoad', false);
+      txt('thumbErr', res.status === 404 ? `⚠ No thumbnail for level #${id}.` : `⚠ Error ${res.status}.`);
+      show('thumbErr', true); btn.disabled = false; return;
+    }
+    const blob = await res.blob();
+    const img  = document.getElementById('thumbImg');
+    img.src = URL.createObjectURL(blob);
+    img.onload = () => {
+      show('thumbLoad', false); show('thumbRes', true);
+      const lc = document.getElementById('thumbLC'); lc.href = thumbUrl; lc.textContent = thumbUrl;
+      show('thumbLinks', true); btn.disabled = false;
+    };
+  } catch(e) { show('thumbLoad', false); txt('thumbErr','⚠ Network error.'); show('thumbErr', true); btn.disabled = false; }
+}
+
 /* keyboard */
 document.getElementById('cardId').addEventListener('keydown',  e=>{if(e.key==='Enter')runCard();});
 document.getElementById('srQ').addEventListener('keydown',     e=>{if(e.key==='Enter')runSearch();});
 document.getElementById('multiIds').addEventListener('keydown',e=>{if(e.key==='Enter')runMulti();});
+document.getElementById('thumbId').addEventListener('keydown', e=>{if(e.key==='Enter')runThumb();});
+
+/* ── Tab persistence ─────────── */
+const prefLang = localStorage.getItem('pref-lang');
+if (prefLang) {
+  ['l1','l2','l3','l4','l5','lr','lu'].forEach(g => {
+    const pane = document.querySelector(`[data-g="${g}"][data-l="${prefLang}"]`);
+    if (pane) _stabOrig(g, prefLang);
+  });
+}
+
+/* ── Copy buttons ────────────── */
+document.querySelectorAll('.cw').forEach(cw => {
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.textContent = 'Copy';
+  btn.onclick = () => {
+    const pre = cw.querySelector('.tp.on pre');
+    if (!pre) return;
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('ok');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 1600);
+    });
+  };
+  cw.appendChild(btn);
+});
+
+/* ── Gallery ─────────────────── */
+(async () => {
+  const grid = document.getElementById('galGrid');
+  const queries = ['First Race', 'Clubstep', 'Jawbreaker'];
+  let loaded = 0;
+  for (const q of queries) {
+    if (loaded >= 3) break;
+    try {
+      const results = await fetch(`${BASE}/api/search?q=${encodeURIComponent(q)}&count=5`).then(r => r.json());
+      if (!Array.isArray(results) || !results.length) continue;
+      for (const level of results.slice(0, 4)) {
+        if (loaded >= 3) break;
+        try {
+          const ctrl = new AbortController();
+          const timer = setTimeout(() => ctrl.abort(), 8000);
+          const cardRes = await fetch(`${BASE}/api/card?id=${level.id}&size=small`, { signal: ctrl.signal });
+          clearTimeout(timer);
+          if (!cardRes.ok) continue;
+          const src = URL.createObjectURL(await cardRes.blob());
+          const skeleton = grid.querySelector('.gal-skeleton');
+          if (skeleton) skeleton.remove();
+          const el = document.createElement('div');
+          el.className = 'gal-item';
+          el.innerHTML = `<img class="gal-img" src="${src}" alt="${esc(level.name)}"/>
+            <div class="gal-meta"><span class="gal-name">${esc(level.name)}</span><span class="gal-auth">by ${esc(level.author)} · ${esc(level.difficulty)}</span></div>`;
+          el.style.cursor = 'pointer';
+          el.onclick = () => { document.getElementById('cardId').value = level.id; document.getElementById('cardSize').value = 'small'; document.getElementById('demo-card').scrollIntoView({behavior:'smooth'}); setTimeout(runCard, 350); };
+          grid.appendChild(el);
+          loaded++; break;
+        } catch(e) { continue; }
+      }
+    } catch(e) {}
+  }
+  grid.querySelectorAll('.gal-skeleton').forEach(s => s.remove());
+  if (!grid.children.length) grid.style.display = 'none';
+})();
+
+/* ── Shareable playground URL ── */
+function updatePlaygroundUrl(params) {
+  const u = new URL(location.href);
+  Object.entries(params).forEach(([k,v]) => u.searchParams.set(k,v));
+  history.replaceState(null,'',u);
+}
+const initP = new URLSearchParams(location.search);
+if (initP.get('id')) {
+  const id = initP.get('id'), size = initP.get('size') || 'normal';
+  document.getElementById('cardId').value = id;
+  document.getElementById('cardSize').value = size;
+  document.getElementById('demo-card').scrollIntoView({behavior:'auto'});
+  setTimeout(runCard, 400);
+}
 </script>
 </body>
 </html>

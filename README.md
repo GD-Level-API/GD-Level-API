@@ -1,12 +1,14 @@
-# GD API
+# GD Level API
 
-API pública para obtener datos de niveles de **Geometry Dash** — JSON completo + card PNG generada al vuelo.
+Public REST API for **Geometry Dash** — full level data, PNG card generation, name search, thumbnails, random levels and user profiles. No API key, no sign-up, free forever.
 
-Hosteada en Cloudflare Workers. Base URL:
+Hosted on Cloudflare Workers. Base URL:
 
 ```
-https://thumball.liamt.xyz
+https://gd-level-api.liamt.xyz
 ```
+
+Docs & playground: **[gd-level-api.liamt.xyz](https://gd-level-api.liamt.xyz)**
 
 ---
 
@@ -14,15 +16,11 @@ https://thumball.liamt.xyz
 
 ### `GET /api/level?id={levelId}`
 
-Devuelve un JSON con todos los datos del nivel ya resueltos.
+Returns full JSON data for a level.
 
-**Parámetros**
-
-| Nombre | Tipo    | Requerido | Descripción                     |
-|--------|---------|-----------|---------------------------------|
-| `id`   | integer | ✅        | ID del nivel en Geometry Dash   |
-
-**Ejemplo**
+| Param | Type    | Required | Description          |
+|-------|---------|----------|----------------------|
+| `id`  | integer | ✅       | Geometry Dash level ID |
 
 ```
 GET /api/level?id=128
@@ -36,7 +34,6 @@ GET /api/level?id=128
   "downloads": 4011196,
   "likes": 297980,
   "length": "Medium",
-  "lengthEs": "Medio",
   "difficulty": "Normal",
   "stars": 3,
   "coins": 0,
@@ -45,15 +42,11 @@ GET /api/level?id=128
   "epic": false,
   "legendary": false,
   "mythic": false,
-  "extras": [],
-  "song": {
-    "name": "Base After Base",
-    "author": "DJVI"
-  },
+  "song": { "name": "Base After Base", "author": "DJVI" },
   "urls": {
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/128",
     "diffFace": "https://autonick.github.io/diff-faces/levels/none/normal/none/3s.png",
-    "card": "https://thumball.liamt.xyz/api/card?id=128"
+    "card": "https://gd-level-api.liamt.xyz/api/card?id=128"
   }
 }
 ```
@@ -62,40 +55,64 @@ GET /api/level?id=128
 
 ### `GET /api/card?id={levelId}`
 
-Devuelve directamente una imagen **PNG (800×260px)** con la card del nivel.
+Returns a **PNG image (800×260px)** with the level card.
 
-**Parámetros**
-
-| Nombre | Tipo    | Requerido | Descripción                     |
-|--------|---------|-----------|---------------------------------|
-| `id`   | integer | ✅        | ID del nivel en Geometry Dash   |
-
-**Uso en web**
+| Param | Type    | Required | Description          |
+|-------|---------|----------|----------------------|
+| `id`  | integer | ✅       | Geometry Dash level ID |
 
 ```html
-<img src="https://thumball.liamt.xyz/api/card?id=128" alt="GD Level Card" />
+<img src="https://gd-level-api.liamt.xyz/api/card?id=128" alt="GD Level Card" />
 ```
 
-**Uso en bot de Discord (discord.js)**
+---
 
-```js
-const { AttachmentBuilder } = require('discord.js');
+### `GET /api/search?q={query}`
 
-const res    = await fetch(`https://thumball.liamt.xyz/api/card?id=${levelId}`);
-const buffer = Buffer.from(await res.arrayBuffer());
-const file   = new AttachmentBuilder(buffer, { name: 'card.png' });
+Search levels by name. Returns a JSON array.
 
-await channel.send({ files: [file] });
-```
+| Param | Type   | Required | Description   |
+|-------|--------|----------|---------------|
+| `q`   | string | ✅       | Level name    |
+
+---
+
+### `GET /api/thumbnail?id={levelId}`
+
+Proxies the level thumbnail as a PNG.
+
+| Param | Type    | Required | Description          |
+|-------|---------|----------|----------------------|
+| `id`  | integer | ✅       | Geometry Dash level ID |
+
+---
+
+### `GET /api/random`
+
+Returns a random featured level with full data.
+
+---
+
+### `GET /api/user?name={username}`
+
+Returns profile data for a Geometry Dash player.
+
+| Param  | Type   | Required | Description    |
+|--------|--------|----------|----------------|
+| `name` | string | ✅       | GD player name |
 
 ---
 
 ## CORS
 
-Todos los endpoints incluyen `Access-Control-Allow-Origin: *`. Podés consumir la API directamente desde el browser sin configuración extra.
+All endpoints return `Access-Control-Allow-Origin: *`. Usable directly from the browser with no extra configuration.
+
+## Rate Limits
+
+Requests are rate-limited per IP to prevent abuse. Limits are generous for normal use.
 
 ---
 
-## Licencia
+## License
 
-[MIT](./LICENSE) © liamt8d
+[CC BY-NC 4.0](./LICENSE) © 2026 [GD-Level-API](https://github.com/GD-Level-API)

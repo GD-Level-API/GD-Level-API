@@ -21,7 +21,7 @@ function h(type, props, ...children) {
 // ── Constantes ────────────────────────────────────────────────────────────────
 const GD_WORKER   = 'https://royal-water-898c.lester-0f9.workers.dev/?id=';
 const THUMB_SRC   = 'https://levelthumbs.prevter.me/thumbnail/';  // fuente real, uso interno
-const THUMB_PROXY = 'https://thumball.liamt.xyz/thumbnail/';       // tu dominio, devuelto en JSON
+const THUMB_PROXY = 'https://gd-level-api.liamt.xyz/thumbnail/';       // tu dominio, devuelto en JSON
 const DIFF_API    = 'https://autonick.github.io/diff-faces/levels/';
 const NO_THUMB  = 'https://raw.githubusercontent.com/cdc-sys/level-thumbs-mod/main/resources/noThumb.png';
 const FONT_400  = 'https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.ttf';
@@ -88,6 +88,15 @@ function json(data, status = 200) {
   });
 }
 
+async function rateLimit(env, ip, bucket, limit) {
+  if (!env?.CARD_CACHE) return false;
+  const key = `rl:${bucket}:${ip}`;
+  const cur = await env.CARD_CACHE.get(key);
+  const n   = cur ? parseInt(cur) + 1 : 1;
+  await env.CARD_CACHE.put(key, String(n), { expirationTtl: 120 });
+  return n > limit;
+}
+
 function resolveLevel(level) {
   const coins     = level.coins || 0;
   const typeStr   = level.mythic ? 'mythic' : level.legendary ? 'legendary' : level.epic ? 'epic' : level.featured ? 'feature' : 'none';
@@ -109,12 +118,18 @@ function resolveLevel(level) {
 // (satori no soporta WebP).
 async function toDataUrl(url) {
   try {
-    const res = await fetch(url);
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 6000);
+    const res = await fetch(url, { signal: ctrl.signal });
+    clearTimeout(timer);
     if (!res.ok) return null;
     const mime = res.headers.get('content-type') || '';
 
     if (mime.includes('webp')) {
-      const pngRes = await fetch(`https://images.weserv.nl/?url=${encodeURIComponent(url)}&output=png`);
+      const ctrl2 = new AbortController();
+      const timer2 = setTimeout(() => ctrl2.abort(), 6000);
+      const pngRes = await fetch(`https://images.weserv.nl/?url=${encodeURIComponent(url)}&output=png`, { signal: ctrl2.signal });
+      clearTimeout(timer2);
       if (!pngRes.ok) return null;
       return bufToDataUrl(await pngRes.arrayBuffer(), 'image/png');
     }
@@ -132,10 +147,6 @@ function bufToDataUrl(buf, mime) {
   return `data:${mime};base64,${btoa(binary)}`;
 }
 
-function starsText(n) {
-  if (!n) return '';
-  return '★'.repeat(Math.min(n, 10));
-}
 
 // ── Handler: /api/level ───────────────────────────────────────────────────────
 async function handleLevel(url) {
@@ -238,7 +249,7 @@ function buildCard(level, thumbData, diffData, size, icons) {
   const H = small ? 160 : 260;
   const thumbW = small ? 160 : 240;
 
-  const [icoDl, icoLike, icoDis, icoStar, icoCoin] = icons || [];
+  const [icoDl, icoLike, , icoStar, icoCoin] = icons || [];
 
   const { coins } = resolveLevel(level);
   const duracion  = LEN_ES[level.length] || level.length || '?';
@@ -363,10 +374,15 @@ function buildCard(level, thumbData, diffData, size, icons) {
 }
 
 // ── Handler: /api/card ────────────────────────────────────────────────────────
-async function handleCard(url, env) {
+async function handleCard(url, env, request) {
   const id   = Number(url.searchParams.get('id'));
   const size = url.searchParams.get('size') === 'small' ? 'small' : 'normal';
   if (!id || id < 1) return new Response('ID inválido', { status: 400, headers: CORS });
+
+  const ip  = request.headers.get('CF-Connecting-IP') || 'unknown';
+  const min = Math.floor(Date.now() / 60000);
+  if (await rateLimit(env, ip, `card:${min}`, 15))
+    return json({ error: 'Too many requests. Try again in a minute.' }, 429);
 
   // KV cache: clave única por ID + tamaño
   const cacheKey = `card:v2:${id}:${size}`;
@@ -428,11 +444,60 @@ async function handleCard(url, env) {
   });
 }
 
+// ── Handler: /api/random ─────────────────────────────────────────────────────
+async function handleRandom(url) {
+  const page = Math.floor(Math.random() * 8);
+  const res  = await fetch(`https://gdbrowser.com/api/search/*?diff=-&featured=1&page=${page}&count=20`);
+  if (!res.ok) return json({ error: 'Could not fetch a random level' }, 502);
+  const levels = await res.json();
+  if (!Array.isArray(levels) || !levels.length) return json({ error: 'No levels found' }, 502);
+  const picked  = levels[Math.floor(Math.random() * levels.length)];
+  const fakeUrl = new URL(`${url.origin}/api/level?id=${Number(picked.id)}`);
+  return handleLevel(fakeUrl);
+}
+
+// ── Handler: /api/user ────────────────────────────────────────────────────────
+async function handleUser(url) {
+  const name = url.searchParams.get('name')?.trim();
+  if (!name) return json({ error: 'Parameter "name" required. e.g. /api/user?name=RobTop' }, 400);
+
+  const res = await fetch(`https://gdbrowser.com/api/profile/${encodeURIComponent(name)}`);
+  if (!res.ok) return json({ error: 'User not found' }, 404);
+  const u = await res.json();
+  if (!u?.username) return json({ error: 'User not found' }, 404);
+
+  return json({
+    username:      u.username,
+    playerID:      u.playerID      || null,
+    accountID:     u.accountID     || null,
+    rank:          u.globalRank    || null,
+    stars:         u.stars         || 0,
+    diamonds:      u.diamonds      || 0,
+    coins:         u.coins         || 0,
+    userCoins:     u.userCoins     || 0,
+    demons:        u.demons        || 0,
+    creatorPoints: u.cp            || 0,
+    socials: {
+      youtube: u.youtube || null,
+      twitter: u.twitter || null,
+      twitch:  u.twitch  || null,
+    },
+    urls: {
+      avatar: `https://gdbrowser.com/icon/${encodeURIComponent(u.username)}?form=${u.iconType || 'cube'}&col1=${u.col1 ?? 0}&col2=${u.col2 ?? 3}&glow=${u.glow ? 1 : 0}`,
+    },
+  });
+}
+
 // ── Handler: /api/search ─────────────────────────────────────────────────────
-async function handleSearch(url) {
+async function handleSearch(url, env, request) {
   const q     = url.searchParams.get('q')?.trim();
   const count = Math.min(Number(url.searchParams.get('count') || 10), 20);
   if (!q) return json({ error: 'Parámetro q requerido. Ej: /api/search?q=Bloodbath' }, 400);
+
+  const ip  = request.headers.get('CF-Connecting-IP') || 'unknown';
+  const min = Math.floor(Date.now() / 60000);
+  if (await rateLimit(env, ip, `search:${min}`, 30))
+    return json({ error: 'Too many requests. Try again in a minute.' }, 429);
 
   const res = await fetch(
     `https://gdbrowser.com/api/search/${encodeURIComponent(q)}?count=${count}`
@@ -480,13 +545,18 @@ async function handleSearch(url) {
 // ── Handler: /thumbnail/:id ───────────────────────────────────────────────────
 async function handleThumbnail(pathname) {
   const id = pathname.split('/')[2];
-  if (!id) return new Response('ID requerido', { status: 400, headers: CORS });
+  if (!id || !/^\d+$/.test(id)) return new Response('ID inválido', { status: 400, headers: CORS });
 
   const res = await fetch(`${THUMB_SRC}${id}`);
-  if (!res.ok) return new Response('Thumbnail no encontrado', { status: 404, headers: CORS });
+  if (!res.ok) {
+    const fallback = await fetch(NO_THUMB);
+    if (!fallback.ok) return new Response('Thumbnail no encontrado', { status: 404, headers: CORS });
+    return new Response(await fallback.arrayBuffer(), {
+      headers: { ...CORS, 'Content-Type': fallback.headers.get('content-type') || 'image/png', 'Cache-Control': 'public, max-age=86400' },
+    });
+  }
 
-  const body = await res.arrayBuffer();
-  return new Response(body, {
+  return new Response(await res.arrayBuffer(), {
     headers: {
       ...CORS,
       'Content-Type':  res.headers.get('content-type') || 'image/webp',
@@ -507,8 +577,10 @@ export default {
     try {
       if (url.pathname === '/api/level')               return await handleLevel(url);
       if (url.pathname === '/api/levels')              return await handleLevels(url);
-      if (url.pathname === '/api/search')              return await handleSearch(url);
-      if (url.pathname === '/api/card')                return await handleCard(url, env);
+      if (url.pathname === '/api/random')              return await handleRandom(url);
+      if (url.pathname === '/api/user')                return await handleUser(url);
+      if (url.pathname === '/api/search')              return await handleSearch(url, env, request);
+      if (url.pathname === '/api/card')                return await handleCard(url, env, request);
       if (url.pathname.startsWith('/thumbnail/'))      return await handleThumbnail(url.pathname);
       if (url.pathname === '/' || url.pathname === '/index.html') {
         return new Response(landingPage, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
