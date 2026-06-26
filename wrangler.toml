@@ -17,6 +17,9 @@ binding     = "DB"
 database_name = "gd-comments"
 database_id = "8b7a88a9-04d4-4306-bb1c-f3cc22c8c75d"
 
+[triggers]
+crons = ["0 * * * *"]
+
 [[rules]]
 type  = "Text"
 globs = ["**/*.html", "**/*.svg"]

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>GD Level API — Status</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#07070b;--s:#0d0d14;--card:#111119;--b1:#1a1a2e;--b2:#2a2a44;
+      --gold:#f59e0b;--cyan:#06b6d4;--blue:#6366f1;
+      --green:#22c55e;--red:#ef4444;--yellow:#f59e0b;
+      --m:#3d3d5c;--m2:#6060a0;--text:#9090c0;--white:#eeeeff;--r:12px;
+    }
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;line-height:1.6}
+    body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(99,102,241,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,.025) 1px,transparent 1px);background-size:52px 52px;pointer-events:none;z-index:0}
+
+    nav{position:sticky;top:0;z-index:100;background:rgba(7,7,11,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--b1);height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 28px}
+    .nav-logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:.92rem;color:var(--white);text-decoration:none}
+    .logo-box{width:28px;height:28px;background:linear-gradient(135deg,#f59e0b,#f97316);border-radius:6px;display:flex;align-items:center;justify-content:center}
+    .logo-box img{width:22px;height:22px;object-fit:contain}
+    .nav-r{display:flex;gap:8px;align-items:center}
+    .nlink{font-size:.76rem;color:var(--m2);text-decoration:none;padding:5px 10px;border-radius:7px;transition:color .15s}
+    .nlink:hover{color:var(--white)}
+
+    .wrap{max-width:860px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+
+    /* hero */
+    .hero{padding:56px 0 40px;text-align:center}
+    .hero h1{font-size:2.4rem;font-weight:900;color:var(--white);letter-spacing:-1.5px;margin-bottom:10px}
+    .hero p{font-size:.9rem;color:var(--m2)}
+    .overall-badge{display:inline-flex;align-items:center;gap:8px;padding:10px 24px;border-radius:99px;font-weight:700;font-size:.9rem;margin:20px 0;border:1px solid}
+    .overall-badge.up{background:#22c55e10;color:var(--green);border-color:#22c55e30}
+    .overall-badge.down{background:#ef444410;color:var(--red);border-color:#ef444430}
+    .overall-badge .dot{width:9px;height:9px;border-radius:50%;background:currentColor;animation:pulse 2s ease-in-out infinite}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+
+    /* cards */
+    .section{margin-bottom:32px}
+    .section-title{font-size:.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+    .scard{background:var(--card);border:1px solid var(--b1);border-radius:12px;padding:22px 24px;margin-bottom:12px}
+    .scard-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    .scard-name{font-size:.95rem;font-weight:700;color:var(--white)}
+    .scard-status{font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:99px}
+    .scard-status.up{background:#22c55e14;color:var(--green);border:1px solid #22c55e28}
+    .scard-status.down{background:#ef444414;color:var(--red);border:1px solid #ef444428}
+    .scard-status.degraded{background:#f59e0b14;color:var(--yellow);border:1px solid #f59e0b28}
+
+    /* uptime bars */
+    .bars{display:flex;gap:2px;align-items:flex-end;height:32px}
+    .bar{flex:1;border-radius:2px;min-height:8px;cursor:pointer;transition:opacity .15s;position:relative}
+    .bar:hover{opacity:.75}
+    .bar.up{background:var(--green)}
+    .bar.down{background:var(--red)}
+    .bar.degraded{background:var(--yellow)}
+    .bar.empty{background:var(--b2)}
+    .bars-labels{display:flex;justify-content:space-between;margin-top:6px}
+    .bars-labels span{font-size:.62rem;color:var(--m)}
+    .uptime-pct{font-size:.72rem;color:var(--m2);margin-top:8px}
+    .uptime-pct strong{color:var(--green)}
+
+    /* incident log */
+    .inc-entry{padding:14px 0;border-bottom:1px solid var(--b1)}
+    .inc-entry:last-child{border-bottom:none}
+    .inc-date{font-size:.68rem;color:var(--m);margin-bottom:4px}
+    .inc-title{font-size:.82rem;font-weight:600;color:var(--white)}
+    .inc-body{font-size:.76rem;color:var(--m2);margin-top:2px}
+
+    /* subscribe */
+    .sub-box{background:var(--card);border:1px solid var(--b1);border-radius:12px;padding:28px;text-align:center;margin-bottom:40px}
+    .sub-box h3{font-size:1rem;font-weight:700;color:var(--white);margin-bottom:6px}
+    .sub-box p{font-size:.8rem;color:var(--m2);margin-bottom:18px}
+    .sub-form{display:flex;gap:8px;max-width:400px;margin:0 auto}
+    .sub-input{flex:1;background:var(--s);border:1px solid var(--b2);border-radius:8px;padding:10px 14px;font-size:.82rem;color:var(--white);outline:none;transition:border-color .15s}
+    .sub-input:focus{border-color:var(--blue)}
+    .sub-btn{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;transition:opacity .15s}
+    .sub-btn:hover{opacity:.85}
+    .sub-msg{font-size:.75rem;margin-top:10px;min-height:18px}
+    .sub-msg.ok{color:var(--green)}
+    .sub-msg.err{color:var(--red)}
+
+    footer{border-top:1px solid var(--b1);padding:28px 0;text-align:center}
+    footer a{color:var(--m2);text-decoration:none;font-size:.75rem}
+    footer a:hover{color:var(--white)}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">
+    <div class="logo-box"><img src="/favicon.svg"/></div>
+    GD Level API
+  </a>
+  <div class="nav-r">
+    <a class="nlink" href="/">Docs</a>
+    <a class="nlink" href="https://discord.gg/wfWX2nuXw4" target="_blank">Discord</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="hero">
+    <h1>API Status</h1>
+    <p>Live uptime monitoring for GD Level API and its upstream services.</p>
+    <div class="overall-badge up" id="overallBadge">
+      <span class="dot"></span>
+      <span id="overallText">All systems operational</span>
+    </div>
+    <div style="font-size:.72rem;color:var(--m)" id="lastCheck">Checking...</div>
+  </div>
+
+  <!-- Services -->
+  <div class="section">
+    <div class="section-title">Services</div>
+
+    <div class="scard" id="card-api">
+      <div class="scard-top">
+        <span class="scard-name">GD Level API</span>
+        <span class="scard-status up" id="status-api">Checking...</span>
+      </div>
+      <div class="bars" id="bars-api"></div>
+      <div class="bars-labels"><span id="lbl-api-start">90 days ago</span><span id="uptime-api">—</span><span>Today</span></div>
+    </div>
+
+    <div class="scard" id="card-gdb">
+      <div class="scard-top">
+        <span class="scard-name">GDBrowser (upstream)</span>
+        <span class="scard-status up" id="status-gdb">Checking...</span>
+      </div>
+      <div class="bars" id="bars-gdb"></div>
+      <div class="bars-labels"><span>90 days ago</span><span id="uptime-gdb">—</span><span>Today</span></div>
+    </div>
+
+    <div class="scard">
+      <div class="scard-top">
+        <span class="scard-name">Thumbnail Service</span>
+        <span class="scard-status up" id="status-thumb">Checking...</span>
+      </div>
+      <div class="bars" id="bars-thumb"></div>
+      <div class="bars-labels"><span>90 days ago</span><span id="uptime-thumb">—</span><span>Today</span></div>
+    </div>
+  </div>
+
+  <!-- Incident log -->
+  <div class="section">
+    <div class="section-title">Incident History</div>
+    <div class="scard">
+      <div id="incidentLog">
+        <div class="inc-entry">
+          <div class="inc-date">Jun 26, 2026</div>
+          <div class="inc-title">✅ No incidents recorded</div>
+          <div class="inc-body">All systems have been operational.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Subscribe -->
+  <div class="sub-box">
+    <h3>Subscribe to updates</h3>
+    <p>Get notified by email when there's an incident or the API goes down.</p>
+    <div class="sub-form">
+      <input class="sub-input" id="subEmail" type="email" placeholder="your@email.com"/>
+      <button class="sub-btn" onclick="subscribe()">Subscribe</button>
+    </div>
+    <div class="sub-msg" id="subMsg"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <a href="/">← Back to docs</a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/GD-Level-API/GD-Level-API" target="_blank">GitHub</a>
+    &nbsp;·&nbsp;
+    <a href="https://discord.gg/wfWX2nuXw4" target="_blank">Discord</a>
+  </div>
+</footer>
+
+<script>
+const BASE = location.origin;
+
+function renderBars(containerId, history) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const days = 90;
+  el.innerHTML = '';
+  let upCount = 0, total = 0;
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const key = d.toISOString().slice(0, 10);
+    const val = history[key];
+    const bar = document.createElement('div');
+    bar.className = 'bar ' + (val === undefined ? 'empty' : val >= 0.9 ? 'up' : val >= 0.5 ? 'degraded' : 'down');
+    const h = val === undefined ? 40 : Math.max(25, Math.round(val * 100));
+    bar.style.height = h + '%';
+    bar.title = key + (val !== undefined ? ` — ${Math.round(val*100)}% uptime` : ' — No data');
+    el.appendChild(bar);
+    if (val !== undefined) { upCount += val; total++; }
+  }
+  return total > 0 ? (upCount / total * 100).toFixed(2) : null;
+}
+
+function setStatus(id, state, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.className = 'scard-status ' + state;
+  el.textContent = text;
+}
+
+async function load() {
+  try {
+    const data = await fetch(`${BASE}/api/status-history`).then(r => r.json());
+
+    const pctApi   = renderBars('bars-api',   data.api   || {});
+    const pctGdb   = renderBars('bars-gdb',   data.gdb   || {});
+    const pctThumb = renderBars('bars-thumb', data.thumb || {});
+
+    if (pctApi)   document.getElementById('uptime-api').innerHTML   = `<strong style="color:var(--green)">${pctApi}% uptime</strong>`;
+    if (pctGdb)   document.getElementById('uptime-gdb').innerHTML   = `<strong style="color:var(--green)">${pctGdb}% uptime</strong>`;
+    if (pctThumb) document.getElementById('uptime-thumb').innerHTML = `<strong style="color:var(--green)">${pctThumb}% uptime</strong>`;
+
+    const cur = data.current || {};
+    setStatus('status-api',   cur.api   ? 'up' : 'down', cur.api   ? 'Operational' : 'Down');
+    setStatus('status-gdb',   cur.gdb   ? 'up' : 'down', cur.gdb   ? 'Operational' : 'Down');
+    setStatus('status-thumb', cur.thumb ? 'up' : 'down', cur.thumb ? 'Operational' : 'Down');
+
+    const allUp = cur.api && cur.gdb && cur.thumb;
+    const badge = document.getElementById('overallBadge');
+    badge.className = 'overall-badge ' + (allUp ? 'up' : 'down');
+    document.getElementById('overallText').textContent = allUp ? 'All systems operational' : 'Partial outage detected';
+    document.getElementById('lastCheck').textContent = 'Last checked: ' + new Date(data.lastCheck || Date.now()).toLocaleString();
+
+    if (data.incidents?.length) {
+      const log = document.getElementById('incidentLog');
+      log.innerHTML = data.incidents.map(inc => `
+        <div class="inc-entry">
+          <div class="inc-date">${inc.date}</div>
+          <div class="inc-title">${inc.title}</div>
+          <div class="inc-body">${inc.body}</div>
+        </div>`).join('');
+    }
+  } catch(e) {
+    document.getElementById('overallText').textContent = 'Unable to load status';
+  }
+}
+
+async function subscribe() {
+  const email = document.getElementById('subEmail').value.trim();
+  const msg   = document.getElementById('subMsg');
+  if (!email || !email.includes('@')) { msg.className='sub-msg err'; msg.textContent='Enter a valid email.'; return; }
+  try {
+    const r = await fetch(`${BASE}/api/subscribe`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    const d = await r.json();
+    if (r.ok) { msg.className='sub-msg ok'; msg.textContent='✅ Subscribed! You\'ll be notified of any incidents.'; }
+    else       { msg.className='sub-msg err'; msg.textContent= d.error || 'Something went wrong.'; }
+  } catch { msg.className='sub-msg err'; msg.textContent='Network error.'; }
+}
+
+load();
+</script>
+</body>
+</html>

@@ -2,6 +2,7 @@ import satori from 'satori';
 import { Resvg, initWasm } from '@resvg/resvg-wasm';
 import landingPage from '../public/index.html';
 import faviconSvg from '../public/favicon.svg';
+import statusPage from '../public/status.html';
 import resvgWasm from '../node_modules/@resvg/resvg-wasm/index_bg.wasm';
 
 const REACT_ELEMENT = Symbol.for('react.element');
@@ -441,6 +442,82 @@ async function handleStatus() {
     upstream: { gdbrowser: 'up' },
     timestamp: new Date().toISOString(),
   });
+}
+
+// ── Cron: runs every hour, saves uptime to KV ─────────────────────────────────
+async function runUptimeCron(env) {
+  const today = new Date().toISOString().slice(0, 10);
+  const checks = { api: false, gdb: false, thumb: false };
+
+  await Promise.all([
+    fetch('https://gd-level-api.liamt.xyz/api/level?id=128').then(r => { checks.api = r.ok; }).catch(() => {}),
+    fetch('https://gdbrowser.com/api/level/128').then(r => { checks.gdb = r.ok; }).catch(() => {}),
+    fetch('https://levelthumbs.prevter.me/thumbnail/1').then(r => { checks.thumb = r.ok; }).catch(() => {}),
+  ]);
+
+  if (!env?.CARD_CACHE) return;
+
+  const raw = await env.CARD_CACHE.get('status:history', 'json').catch(() => ({})) || {};
+  for (const svc of ['api','gdb','thumb']) {
+    if (!raw[svc]) raw[svc] = {};
+    const prev = raw[svc][today] ?? 1;
+    raw[svc][today] = checks[svc] ? Math.min(1, prev) : 0;
+  }
+  raw.current = checks;
+  raw.lastCheck = new Date().toISOString();
+  await env.CARD_CACHE.put('status:history', JSON.stringify(raw));
+
+  // notify subscribers if any service went down
+  const anyDown = !checks.api || !checks.gdb || !checks.thumb;
+  if (anyDown && env.RESEND_KEY) {
+    const subs = await env.CARD_CACHE.get('status:subscribers', 'json').catch(() => []) || [];
+    const downList = ['api','gdb','thumb'].filter(s => !checks[s])
+      .map(s => ({ api:'GD Level API', gdb:'GDBrowser', thumb:'Thumbnail Service' })[s]);
+    for (const email of subs) {
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${env.RESEND_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          from: 'status@gd-level-api.liamt.xyz',
+          to: email,
+          subject: '🔴 GD Level API — Service disruption detected',
+          html: `<p>Hi,</p><p>We detected an issue with: <strong>${downList.join(', ')}</strong>.</p><p>Check <a href="https://gd-level-api.liamt.xyz/status">gd-level-api.liamt.xyz/status</a> for updates.</p><p style="font-size:12px;color:#666">Unsubscribe: reply with "unsubscribe"</p>`,
+        }),
+      }).catch(() => {});
+    }
+  }
+}
+
+// ── Handler: /api/status-history ─────────────────────────────────────────────
+async function handleStatusHistory(env) {
+  const raw = await env?.CARD_CACHE?.get('status:history', 'json').catch(() => null) || {};
+  return json(raw);
+}
+
+// ── Handler: /api/subscribe ───────────────────────────────────────────────────
+async function handleSubscribe(request, env) {
+  const { email } = await request.json().catch(() => ({}));
+  if (!email || !email.includes('@')) return json({ error: 'Invalid email' }, 400);
+  const subs = await env?.CARD_CACHE?.get('status:subscribers', 'json').catch(() => []) || [];
+  if (subs.includes(email)) return json({ ok: true, message: 'Already subscribed' });
+  subs.push(email);
+  await env?.CARD_CACHE?.put('status:subscribers', JSON.stringify(subs));
+
+  // welcome email
+  if (env?.RESEND_KEY) {
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${env.RESEND_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: 'status@gd-level-api.liamt.xyz',
+        to: email,
+        subject: '✅ Subscribed to GD Level API status updates',
+        html: `<p>Hi!</p><p>You're now subscribed to <strong>GD Level API</strong> status updates.</p><p>You'll receive an email if any service goes down.</p><p>Check status anytime: <a href="https://gd-level-api.liamt.xyz/status">gd-level-api.liamt.xyz/status</a></p>`,
+      }),
+    }).catch(() => {});
+  }
+
+  return json({ ok: true });
 }
 
 // ── Handler: /api/card ────────────────────────────────────────────────────────
@@ -920,6 +997,8 @@ export default {
       if (url.pathname === '/api/levels')              return await handleLevelsBatch(url, env);
       if (url.pathname === '/api/leaderboard')         return await handleLeaderboard(env);
       if (url.pathname === '/api/status')              return await handleStatus();
+      if (url.pathname === '/api/status-history')      return await handleStatusHistory(env);
+      if (url.pathname === '/api/subscribe' && request.method === 'POST') return await handleSubscribe(request, env);
       if (url.pathname === '/api/kofi-goal')           return await handleKofiGoal(env);
       if (url.pathname === '/kofi-webhook' && request.method === 'POST') return await handleKofiWebhook(request, env);
       if (url.pathname === '/api/random')              return await handleRandom(url);
@@ -944,6 +1023,9 @@ export default {
       if (url.pathname === '/' || url.pathname === '/index.html') {
         return new Response(landingPage, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
       }
+      if (url.pathname === '/status') {
+        return new Response(statusPage, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+      }
       if (url.pathname === '/favicon.svg') {
         return new Response(faviconSvg, { headers: { 'Content-Type': 'image/svg+xml', 'Cache-Control': 'public, max-age=86400' } });
       }
@@ -952,5 +1034,9 @@ export default {
     } catch (err) {
       return new Response(`Error: ${err.message}`, { status: 500 });
     }
+  },
+
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(runUptimeCron(env));
   },
 };
