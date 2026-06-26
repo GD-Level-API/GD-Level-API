@@ -1,16 +1,30 @@
 import satori from 'satori';
 import { Resvg, initWasm } from '@resvg/resvg-wasm';
-import { createElement as h } from 'react';
 import landingPage from '../public/index.html';
+import resvgWasm from '../node_modules/@resvg/resvg-wasm/index_bg.wasm';
+
+// Construye React elements sin importar React (evita conflicto de instancias en wrangler)
+const REACT_ELEMENT = Symbol.for('react.element');
+function h(type, props, ...children) {
+  const flat = children.flat(Infinity).filter(c => c !== null && c !== undefined && c !== false);
+  return {
+    $$typeof: REACT_ELEMENT,
+    type,
+    key: props?.key ?? null,
+    ref: null,
+    props: { ...props, children: flat.length === 0 ? undefined : flat.length === 1 ? flat[0] : flat },
+    _owner: null,
+    _store: {},
+  };
+}
 
 // ── Constantes ────────────────────────────────────────────────────────────────
 const GD_WORKER = 'https://royal-water-898c.lester-0f9.workers.dev/?id=';
 const THUMB_API = 'https://levelthumbs.prevter.me/thumbnail/';
 const DIFF_API  = 'https://autonick.github.io/diff-faces/levels/';
 const NO_THUMB  = 'https://raw.githubusercontent.com/cdc-sys/level-thumbs-mod/main/resources/noThumb.png';
-const RESVG_WASM = 'https://unpkg.com/@resvg/resvg-wasm@2.6.2/index_bg.wasm';
-const FONT_400   = 'https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.woff2';
-const FONT_700   = 'https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.woff2';
+const FONT_400 = 'https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.ttf';
+const FONT_700 = 'https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.ttf';
 
 const DIFF_KEY = {
   'Auto': 'auto', 'Easy': 'easy', 'Normal': 'normal', 'Hard': 'hard',
@@ -29,7 +43,7 @@ let wasmReady = null;
 let fontsReady = null;
 
 function ensureWasm() {
-  if (!wasmReady) wasmReady = initWasm(fetch(RESVG_WASM));
+  if (!wasmReady) wasmReady = initWasm(resvgWasm);
   return wasmReady;
 }
 
@@ -120,6 +134,23 @@ async function handleLevel(url) {
   });
 }
 
+// Convierte URL de imagen a data URL para que satori la renderice
+async function toDataUrl(url) {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const buf   = await res.arrayBuffer();
+    const bytes = new Uint8Array(buf);
+    const CHUNK = 8192;
+    let binary  = '';
+    for (let i = 0; i < bytes.length; i += CHUNK) {
+      binary += String.fromCharCode(...bytes.subarray(i, i + CHUNK));
+    }
+    const mime = res.headers.get('content-type') || 'image/png';
+    return `data:${mime};base64,${btoa(binary)}`;
+  } catch { return null; }
+}
+
 // ── Handler: /api/card ────────────────────────────────────────────────────────
 async function handleCard(url) {
   const id = Number(url.searchParams.get('id'));
@@ -138,33 +169,43 @@ async function handleCard(url) {
   const level = await gdRes.json();
   if (!level?.name) return new Response('Nivel no encontrado', { status: 404, headers: CORS });
 
-  const thumbUrl  = thumbRes.ok ? `${THUMB_API}${id}` : NO_THUMB;
-  const { diffUrl, extras } = resolveLevel(level, id);
-  const { coins } = resolveLevel(level, id);
+  const rawThumb  = thumbRes.ok ? `${THUMB_API}${id}` : NO_THUMB;
+  const { diffUrl, coins } = resolveLevel(level, id);
+
+  // Fetch imágenes como data URLs para que satori las renderice correctamente
+  const [thumbData, diffData] = await Promise.all([
+    toDataUrl(rawThumb),
+    toDataUrl(diffUrl),
+  ]);
 
   const duracion  = LEN_ES[level.length] || level.length || '?';
   const downloads = Number(level.downloads || 0).toLocaleString('es');
   const likes     = Number(level.likes || 0).toLocaleString('es');
 
-  const epicLabel = level.mythic ? '🔮 Mythic' : level.legendary ? '💫 Legendary' : level.epic ? '✨ Epic' : null;
+  const epicLabel = level.mythic ? 'Mythic' : level.legendary ? 'Legendary' : level.epic ? 'Epic' : null;
   const cardExtras = [
     epicLabel,
-    (!level.epic && !level.legendary && !level.mythic && level.featured) ? '⭐ Featured' : null,
-    coins > 0 ? (level.verifiedCoins ? `🥇 ${coins} coin${coins > 1 ? 's' : ''}` : `⚫ ${coins} coin${coins > 1 ? 's' : ''}`) : null,
+    (!level.epic && !level.legendary && !level.mythic && level.featured) ? 'Featured' : null,
+    coins > 0 ? `${coins} coin${coins > 1 ? 's' : ''}${level.verifiedCoins ? ' (v)' : ''}` : null,
   ].filter(Boolean);
 
   const card = h('div', {
     style: { display: 'flex', width: '800px', height: '260px', background: '#0f0f23', fontFamily: 'Inter', overflow: 'hidden' },
   },
-    h('img', { src: thumbUrl, width: 240, height: 260, style: { objectFit: 'cover', flexShrink: 0 } }),
+    // Thumbnail
+    thumbData
+      ? h('img', { src: thumbData, width: 240, height: 260, style: { objectFit: 'cover', flexShrink: 0 } })
+      : h('div', { style: { width: '240px', height: '260px', background: '#1a1a35', flexShrink: 0 } }),
     h('div', { style: { width: '1px', background: '#252545', flexShrink: 0 } }),
     h('div', {
       style: { display: 'flex', flexDirection: 'column', flex: 1, padding: '16px 20px', gap: '7px', background: '#161628', overflow: 'hidden' },
     },
-      h('div', { style: { display: 'flex', color: '#f0c94e', fontSize: '10px', fontWeight: 700, letterSpacing: '2px' } }, '★ NUEVO NIVEL PARA JUGAR'),
+      h('div', { style: { display: 'flex', color: '#f0c94e', fontSize: '10px', fontWeight: 700, letterSpacing: '2px' } }, 'NUEVO NIVEL PARA JUGAR'),
       h('div', { style: { height: '1px', background: '#252545' } }),
       h('div', { style: { display: 'flex', alignItems: 'center', gap: '12px' } },
-        h('img', { src: diffUrl, width: 54, height: 54, style: { objectFit: 'contain', flexShrink: 0 } }),
+        diffData
+          ? h('img', { src: diffData, width: 54, height: 54, style: { objectFit: 'contain', flexShrink: 0 } })
+          : h('div', { style: { width: '54px', height: '54px', flexShrink: 0 } }),
         h('div', { style: { display: 'flex', flexDirection: 'column', gap: '3px', overflow: 'hidden' } },
           h('span', { style: { color: '#ffffff', fontSize: '21px', fontWeight: 700, display: 'flex', whiteSpace: 'nowrap', overflow: 'hidden' } }, level.name),
           h('span', { style: { color: '#9999bb', fontSize: '13px', display: 'flex' } }, `por ${level.author || 'Desconocido'}`),
@@ -172,13 +213,13 @@ async function handleCard(url) {
       ),
       h('div', { style: { height: '1px', background: '#252545' } }),
       h('div', { style: { display: 'flex', gap: '20px', color: '#c8c8e0', fontSize: '13px' } },
-        h('span', { style: { display: 'flex' } }, `⬇ ${downloads}`),
-        h('span', { style: { display: 'flex' } }, `👍 ${likes}`),
-        h('span', { style: { display: 'flex' } }, `⏱ ${duracion}`),
+        h('span', { style: { display: 'flex' } }, `DL  ${downloads}`),
+        h('span', { style: { display: 'flex' } }, `+${likes} likes`),
+        h('span', { style: { display: 'flex' } }, duracion),
       ),
       h('div', { style: { flex: 1 } }),
       h('div', { style: { color: '#666688', fontSize: '12px', display: 'flex', whiteSpace: 'nowrap', overflow: 'hidden' } },
-        `🎵  ${level.songName || '?'} — ${level.songAuthor || '?'}`
+        `${level.songName || '?'} - ${level.songAuthor || '?'}`
       ),
       cardExtras.length > 0
         ? h('div', { style: { display: 'flex', gap: '5px' } },
