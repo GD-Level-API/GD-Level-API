@@ -460,7 +460,6 @@
       <a href="#ep-status">/api/status</a>
       <a href="#ep-stats">/api/stats</a>
       <a href="#ep-rate-limit">/api/rate-limit</a>
-      <a href="#ep-kofi-goal">/api/kofi-goal</a>
       <span class="slabel">Try it</span>
       <a href="#playground">Playground</a>
     </aside>
@@ -1068,32 +1067,6 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
           </div></div>
         </div>
 
-        <!-- Ko-fi goal -->
-        <div class="ep" id="ep-kofi-goal">
-          <div class="ep-head" onclick="tog(this.closest('.ep'))">
-            <span class="method">GET</span><span class="ep-path">/api/kofi-goal</span><span class="chev">▼</span>
-          </div>
-          <div class="ep-body"><div class="ep-inner">
-            <div class="ep-desc">
-              Returns the current Ko-fi donation total, goal, and percentage. Updated automatically via Ko-fi webhook on every donation.
-            </div>
-            <div class="cw">
-              <div class="tabs">
-                <div class="tab on" onclick="stab('kf','curl')">curl</div><div class="tab" onclick="stab('kf','js')">JavaScript</div>
-              </div>
-              <div class="tp on" data-g="kf" data-l="curl"><pre>curl <span class="s">"https://gd-level-api.liamt.xyz/api/kofi-goal"</span></pre></div>
-              <div class="tp" data-g="kf" data-l="js"><pre><span class="kw">const</span> <span class="v">goal</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/kofi-goal"</span>).<span class="fn">then</span>(<span class="v">r</span> <span class="op">=></span> <span class="v">r</span>.<span class="fn">json</span>());</pre></div>
-              <p class="rl">Response</p>
-<pre>{
-  <span class="k">"total"</span>: <span class="n">25.5</span>,
-  <span class="k">"goal"</span>:  <span class="n">100</span>,
-  <span class="k">"pct"</span>:   <span class="n">25</span>,
-  <span class="k">"last"</span>:  { <span class="k">"name"</span>: <span class="s">"Someone"</span>, <span class="k">"amount"</span>: <span class="n">5</span>, <span class="k">"message"</span>: <span class="s">"Keep it up!"</span>, <span class="k">"ts"</span>: <span class="n">1750000000000</span> }
-}</pre>
-            </div>
-          </div></div>
-        </div>
-
       </div>
 
       <!-- PLAYGROUND -->
@@ -1472,15 +1445,22 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
       <a href="#ep-levels">/api/levels</a>
       <a href="#ep-search">/api/search</a>
       <a href="#ep-card">/api/card</a>
-      <a href="#ep-thumb">/api/thumbnail</a>
+      <a href="#ep-thumbnail">/thumbnail/:id</a>
       <a href="#ep-random">/api/random</a>
       <a href="#ep-user">/api/user</a>
+      <a href="#ep-icon">/api/icon</a>
+      <a href="#ep-icon-composite">/api/icon/composite</a>
+      <a href="#ep-leaderboard">/api/leaderboard</a>
+      <a href="#ep-status">/api/status</a>
+      <a href="#ep-stats">/api/stats</a>
+      <a href="#ep-rate-limit">/api/rate-limit</a>
     </div>
 
     <div class="footer-col">
       <h4>Resources</h4>
       <a href="#playground">Playground</a>
       <a href="/status">API Status</a>
+      <a href="#changelog">Changelog</a>
       <a href="https://github.com/GD-Level-API/GD-Level-API" target="_blank" rel="noopener">GitHub</a>
       <a href="https://discord.gg/wfWX2nuXw4" target="_blank" rel="noopener">Discord</a>
       <a href="https://github.com/GD-Level-API/GD-Level-API/issues" target="_blank" rel="noopener">Report a bug</a>
