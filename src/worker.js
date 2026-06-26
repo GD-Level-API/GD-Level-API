@@ -511,7 +511,11 @@ async function handleIcon(url) {
   const glow = u.glow ? 1 : 0;
   const activeForm = ICON_FORMS[u.iconType] || 'cube';
 
+  const ICON_SVC = (env?.ICON_SERVICE_URL || 'https://gdbrowser.com');
   const iconUrl = (f) => {
+    if (env?.ICON_SERVICE_URL) {
+      return `${ICON_SVC}/icon?name=${encodeURIComponent(u.username)}&form=${f}`;
+    }
     const num = u[ICON_FIELD[f]] ?? 1;
     return `https://gdbrowser.com/icon/${encodeURIComponent(u.username)}?form=${f}&icon=${num}&col1=${col1}&col2=${col2}&glow=${glow}`;
   };
