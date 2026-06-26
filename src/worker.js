@@ -446,7 +446,7 @@ async function handleCard(url, env, request) {
 
 // ── Handler: /og ─────────────────────────────────────────────────────────────
 async function handleOgImage(env) {
-  const cacheKey = 'og:banner:v3';
+  const cacheKey = 'og:banner:v4';
   if (env?.CARD_CACHE) {
     const cached = await env.CARD_CACHE.get(cacheKey, 'arrayBuffer');
     if (cached) return new Response(cached, { headers: { 'Content-Type': 'image/png', 'Cache-Control': 'public, max-age=86400' } });
@@ -454,7 +454,7 @@ async function handleOgImage(env) {
 
   const [[fontRegular, fontBold], faviconData] = await Promise.all([
     ensureFonts().then(f => (ensureWasm(), f)),
-    toDataUrl('https://gd-level-api.liamt.xyz/assets/favicon.png').catch(() => null),
+    toDataUrl('https://raw.githubusercontent.com/GD-Level-API/GD-Level-API/master/public/assets/favicon.png').catch(() => null),
   ]);
   await ensureWasm();
 
