@@ -454,6 +454,13 @@
       <a href="#ep-random">/api/random</a>
       <a href="#ep-user">/api/user</a>
       <a href="#ep-icon">/api/icon</a>
+      <a href="#ep-icon-composite">/api/icon/composite</a>
+      <span class="slabel">Meta</span>
+      <a href="#ep-leaderboard">/api/leaderboard</a>
+      <a href="#ep-status">/api/status</a>
+      <a href="#ep-stats">/api/stats</a>
+      <a href="#ep-rate-limit">/api/rate-limit</a>
+      <a href="#ep-kofi-goal">/api/kofi-goal</a>
       <span class="slabel">Try it</span>
       <a href="#playground">Playground</a>
     </aside>
@@ -915,6 +922,173 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
     <span class="k">"ship"</span>:   { <span class="k">"form"</span>: <span class="s">"ship"</span>,   <span class="k">"num"</span>: <span class="n">1</span>,  <span class="k">"url"</span>: <span class="s">"/api/icon?name=RobTop&form=ship"</span>,   <span class="k">"active"</span>: <span class="b">false</span> },
     <span class="k">"..."</span>: <span class="s">"ball, ufo, wave, robot, spider, swing, jetpack"</span>
   }
+}</pre>
+            </div>
+          </div></div>
+        </div>
+
+        <!-- Icon composite -->
+        <div class="ep" id="ep-icon-composite">
+          <div class="ep-head" onclick="tog(this.closest('.ep'))">
+            <span class="method">GET</span><span class="ep-path">/api/icon/composite?name={username}</span><span class="chev">▼</span>
+          </div>
+          <div class="ep-body"><div class="ep-inner">
+            <div class="ep-desc">
+              Returns a single PNG strip with all 9 icon forms (cube, ship, ball, UFO, wave, robot, spider, swing, jetpack) rendered side by side with the player's real colors.
+              <div class="params" style="margin-top:10px">
+                <div class="pr"><span class="pn">name</span><span class="req">required</span><span class="pi">GD username.</span></div>
+              </div>
+              <div style="margin-top:10px;font-size:.77rem;color:var(--m2);line-height:1.8">
+                <strong style="color:var(--white);display:block;margin-bottom:5px">Response</strong>
+                Returns a <strong style="color:var(--white)">PNG image</strong> — a horizontal strip of all icon forms.
+              </div>
+            </div>
+            <div class="cw">
+              <div class="tabs">
+                <div class="tab on" onclick="stab('lic','curl')">curl</div><div class="tab" onclick="stab('lic','js')">JavaScript</div><div class="tab" onclick="stab('lic','py')">Python</div>
+              </div>
+              <div class="tp on" data-g="lic" data-l="curl"><pre>curl <span class="s">"https://gd-level-api.liamt.xyz/api/icon/composite?name=RobTop"</span> --output all-icons.png</pre></div>
+              <div class="tp" data-g="lic" data-l="js"><pre><span class="kw">const</span> <span class="v">url</span> = <span class="s">"https://gd-level-api.liamt.xyz/api/icon/composite?name=RobTop"</span>;
+<span class="c">// Use directly as img src</span>
+document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src = <span class="v">url</span>;</pre></div>
+              <div class="tp" data-g="lic" data-l="py"><pre><span class="kw">import</span> requests
+<span class="v">png</span> = requests.<span class="fn">get</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/icon/composite"</span>, <span class="k">params</span>={<span class="s">"name"</span>: <span class="s">"RobTop"</span>}).<span class="k">content</span>
+<span class="fn">open</span>(<span class="s">"all-icons.png"</span>, <span class="s">"wb"</span>).<span class="fn">write</span>(<span class="v">png</span>)</pre></div>
+            </div>
+          </div></div>
+        </div>
+
+        <!-- Leaderboard -->
+        <div class="ep" id="ep-leaderboard">
+          <div class="ep-head" onclick="tog(this.closest('.ep'))">
+            <span class="method">GET</span><span class="ep-path">/api/leaderboard</span><span class="chev">▼</span>
+          </div>
+          <div class="ep-body"><div class="ep-inner">
+            <div class="ep-desc">
+              Returns the top 10 most viewed GD levels through this API, ranked by view count. New levels appear as they get requested.
+              <div style="margin-top:10px;font-size:.77rem;color:var(--m2);line-height:1.8">
+                <strong style="color:var(--white);display:block;margin-bottom:5px">Response</strong>
+                Array of level objects sorted by views descending.
+              </div>
+            </div>
+            <div class="cw">
+              <div class="tabs">
+                <div class="tab on" onclick="stab('lb','curl')">curl</div><div class="tab" onclick="stab('lb','js')">JavaScript</div><div class="tab" onclick="stab('lb','py')">Python</div>
+              </div>
+              <div class="tp on" data-g="lb" data-l="curl"><pre>curl <span class="s">"https://gd-level-api.liamt.xyz/api/leaderboard"</span></pre></div>
+              <div class="tp" data-g="lb" data-l="js"><pre><span class="kw">const</span> <span class="v">top</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/leaderboard"</span>).<span class="fn">then</span>(<span class="v">r</span> <span class="op">=></span> <span class="v">r</span>.<span class="fn">json</span>());
+<span class="v">top</span>.<span class="fn">forEach</span>(<span class="v">lvl</span> <span class="op">=></span> console.<span class="fn">log</span>(<span class="v">lvl</span>.name, <span class="v">lvl</span>.views));</pre></div>
+              <div class="tp" data-g="lb" data-l="py"><pre><span class="kw">import</span> requests
+<span class="v">top</span> = requests.<span class="fn">get</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/leaderboard"</span>).<span class="fn">json</span>()</pre></div>
+              <p class="rl">Response</p>
+<pre>[
+  { <span class="k">"id"</span>: <span class="n">128</span>, <span class="k">"name"</span>: <span class="s">"1st level"</span>, <span class="k">"author"</span>: <span class="s">"real storm"</span>, <span class="k">"views"</span>: <span class="n">42</span> },
+  { <span class="k">"id"</span>: <span class="n">1</span>,   <span class="k">"name"</span>: <span class="s">"Stereo Madness"</span>, <span class="k">"author"</span>: <span class="s">"RobTop"</span>, <span class="k">"views"</span>: <span class="n">18</span> }
+]</pre>
+            </div>
+          </div></div>
+        </div>
+
+        <!-- Status -->
+        <div class="ep" id="ep-status">
+          <div class="ep-head" onclick="tog(this.closest('.ep'))">
+            <span class="method">GET</span><span class="ep-path">/api/status</span><span class="chev">▼</span>
+          </div>
+          <div class="ep-body"><div class="ep-inner">
+            <div class="ep-desc">
+              Returns the current operational status of the API and upstream services. Always responds instantly — if you get a response, the API is up.
+              <div style="margin-top:10px;font-size:.77rem;color:var(--m2);line-height:1.8">
+                <strong style="color:var(--white);display:block;margin-bottom:5px">Response</strong>
+                JSON with status string, latency in ms, and upstream service states.
+              </div>
+            </div>
+            <div class="cw">
+              <div class="tabs">
+                <div class="tab on" onclick="stab('st','curl')">curl</div><div class="tab" onclick="stab('st','js')">JavaScript</div>
+              </div>
+              <div class="tp on" data-g="st" data-l="curl"><pre>curl <span class="s">"https://gd-level-api.liamt.xyz/api/status"</span></pre></div>
+              <div class="tp" data-g="st" data-l="js"><pre><span class="kw">const</span> <span class="v">status</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/status"</span>).<span class="fn">then</span>(<span class="v">r</span> <span class="op">=></span> <span class="v">r</span>.<span class="fn">json</span>());</pre></div>
+              <p class="rl">Response</p>
+<pre>{
+  <span class="k">"status"</span>:     <span class="s">"operational"</span>,
+  <span class="k">"latency_ms"</span>: <span class="n">0</span>,
+  <span class="k">"upstream"</span>:   { <span class="k">"gdbrowser"</span>: <span class="s">"up"</span> },
+  <span class="k">"timestamp"</span>:  <span class="s">"2026-06-26T12:00:00.000Z"</span>
+}</pre>
+            </div>
+          </div></div>
+        </div>
+
+        <!-- Stats -->
+        <div class="ep" id="ep-stats">
+          <div class="ep-head" onclick="tog(this.closest('.ep'))">
+            <span class="method">GET</span><span class="ep-path">/api/stats</span><span class="chev">▼</span>
+          </div>
+          <div class="ep-body"><div class="ep-inner">
+            <div class="ep-desc">
+              Returns total API request count since launch. Incremented on every <code>/api/*</code> call.
+            </div>
+            <div class="cw">
+              <div class="tabs">
+                <div class="tab on" onclick="stab('sts','curl')">curl</div><div class="tab" onclick="stab('sts','js')">JavaScript</div>
+              </div>
+              <div class="tp on" data-g="sts" data-l="curl"><pre>curl <span class="s">"https://gd-level-api.liamt.xyz/api/stats"</span></pre></div>
+              <div class="tp" data-g="sts" data-l="js"><pre><span class="kw">const</span> <span class="v">stats</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/stats"</span>).<span class="fn">then</span>(<span class="v">r</span> <span class="op">=></span> <span class="v">r</span>.<span class="fn">json</span>());</pre></div>
+              <p class="rl">Response</p>
+<pre>{ <span class="k">"total_requests"</span>: <span class="n">12048</span>, <span class="k">"since"</span>: <span class="s">"2026-06-26"</span> }</pre>
+            </div>
+          </div></div>
+        </div>
+
+        <!-- Rate limit -->
+        <div class="ep" id="ep-rate-limit">
+          <div class="ep-head" onclick="tog(this.closest('.ep'))">
+            <span class="method">GET</span><span class="ep-path">/api/rate-limit</span><span class="chev">▼</span>
+          </div>
+          <div class="ep-body"><div class="ep-inner">
+            <div class="ep-desc">
+              Returns current rate limit usage for your IP. Limits reset every 2 minutes. The only rate-limited endpoints are <code>/api/card</code> (15/2min) and <code>/api/search</code> (30/2min).
+            </div>
+            <div class="cw">
+              <div class="tabs">
+                <div class="tab on" onclick="stab('rl','curl')">curl</div><div class="tab" onclick="stab('rl','js')">JavaScript</div>
+              </div>
+              <div class="tp on" data-g="rl" data-l="curl"><pre>curl <span class="s">"https://gd-level-api.liamt.xyz/api/rate-limit"</span></pre></div>
+              <div class="tp" data-g="rl" data-l="js"><pre><span class="kw">const</span> <span class="v">rl</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/rate-limit"</span>).<span class="fn">then</span>(<span class="v">r</span> <span class="op">=></span> <span class="v">r</span>.<span class="fn">json</span>());</pre></div>
+              <p class="rl">Response</p>
+<pre>{
+  <span class="k">"ip"</span>:             <span class="s">"152.202.***"</span>,
+  <span class="k">"window_seconds"</span>: <span class="n">120</span>,
+  <span class="k">"limits"</span>: {
+    <span class="k">"card"</span>:   { <span class="k">"used"</span>: <span class="n">2</span>, <span class="k">"limit"</span>: <span class="n">15</span>, <span class="k">"remaining"</span>: <span class="n">13</span> },
+    <span class="k">"search"</span>: { <span class="k">"used"</span>: <span class="n">0</span>, <span class="k">"limit"</span>: <span class="n">30</span>, <span class="k">"remaining"</span>: <span class="n">30</span> }
+  }
+}</pre>
+            </div>
+          </div></div>
+        </div>
+
+        <!-- Ko-fi goal -->
+        <div class="ep" id="ep-kofi-goal">
+          <div class="ep-head" onclick="tog(this.closest('.ep'))">
+            <span class="method">GET</span><span class="ep-path">/api/kofi-goal</span><span class="chev">▼</span>
+          </div>
+          <div class="ep-body"><div class="ep-inner">
+            <div class="ep-desc">
+              Returns the current Ko-fi donation total, goal, and percentage. Updated automatically via Ko-fi webhook on every donation.
+            </div>
+            <div class="cw">
+              <div class="tabs">
+                <div class="tab on" onclick="stab('kf','curl')">curl</div><div class="tab" onclick="stab('kf','js')">JavaScript</div>
+              </div>
+              <div class="tp on" data-g="kf" data-l="curl"><pre>curl <span class="s">"https://gd-level-api.liamt.xyz/api/kofi-goal"</span></pre></div>
+              <div class="tp" data-g="kf" data-l="js"><pre><span class="kw">const</span> <span class="v">goal</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="s">"https://gd-level-api.liamt.xyz/api/kofi-goal"</span>).<span class="fn">then</span>(<span class="v">r</span> <span class="op">=></span> <span class="v">r</span>.<span class="fn">json</span>());</pre></div>
+              <p class="rl">Response</p>
+<pre>{
+  <span class="k">"total"</span>: <span class="n">25.5</span>,
+  <span class="k">"goal"</span>:  <span class="n">100</span>,
+  <span class="k">"pct"</span>:   <span class="n">25</span>,
+  <span class="k">"last"</span>:  { <span class="k">"name"</span>: <span class="s">"Someone"</span>, <span class="k">"amount"</span>: <span class="n">5</span>, <span class="k">"message"</span>: <span class="s">"Keep it up!"</span>, <span class="k">"ts"</span>: <span class="n">1750000000000</span> }
 }</pre>
             </div>
           </div></div>
