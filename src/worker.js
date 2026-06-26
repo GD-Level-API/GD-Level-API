@@ -511,8 +511,10 @@ async function handleIcon(url) {
   const glow = u.glow ? 1 : 0;
   const activeForm = ICON_FORMS[u.iconType] || 'cube';
 
-  const iconUrl = (f) =>
-    `https://gdbrowser.com/icon/${encodeURIComponent(u.username)}?form=${f}&col1=${col1}&col2=${col2}&glow=${glow}`;
+  const iconUrl = (f) => {
+    const num = u[ICON_FIELD[f]] ?? 1;
+    return `https://gdbrowser.com/icon/${encodeURIComponent(u.username)}?form=${f}&icon=${num}&col1=${col1}&col2=${col2}&glow=${glow}`;
+  };
 
   const apiUrl = (f) =>
     `${url.origin}/api/icon?name=${encodeURIComponent(u.username)}&form=${f}`;
@@ -520,9 +522,10 @@ async function handleIcon(url) {
   if (all) {
     const icons = {};
     for (const f of ICON_FORMS) {
+      const num = u[ICON_FIELD[f]] ?? 1;
       icons[f] = {
         form:   f,
-        num:    u[ICON_FIELD[f]] ?? 1,
+        num,
         url:    apiUrl(f),
         active: f === activeForm,
       };
