@@ -410,6 +410,20 @@ async function handleLeaderboard(env) {
   return json(sorted.length ? sorted : POPULAR_FALLBACK);
 }
 
+// ── Handler: /api/rate-limit ──────────────────────────────────────────────────
+async function handleRateLimitInfo(request, env) {
+  const ip  = request.headers.get('CF-Connecting-IP') || 'unknown';
+  const min = Math.floor(Date.now() / 120000);
+  const limits = { card: 15, search: 30 };
+  const result = {};
+  for (const [bucket, max] of Object.entries(limits)) {
+    const key = `rl:${bucket}:${min}:${ip}`;
+    const cur = parseInt(await env?.CARD_CACHE?.get(key).catch(() => '0') || '0');
+    result[bucket] = { used: cur, limit: max, remaining: Math.max(0, max - cur) };
+  }
+  return json({ ip: ip.slice(0,8) + '***', window_seconds: 120, limits: result });
+}
+
 // ── Handler: /api/stats (request counter) ─────────────────────────────────────
 async function handleApiStats(env) {
   const total = await env?.CARD_CACHE?.get('stats:requests', 'json').catch(() => 0) || 0;
@@ -1093,7 +1107,8 @@ export default {
       if (url.pathname === '/sitemap.xml') {
         return new Response(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://gd-level-api.liamt.xyz/</loc><priority>1.0</priority></url><url><loc>https://gd-level-api.liamt.xyz/status</loc><priority>0.8</priority></url></urlset>`, { headers: { 'Content-Type': 'application/xml' } });
       }
-      if (url.pathname === '/api/stats')  return await handleApiStats(env);
+      if (url.pathname === '/api/stats')       return await handleApiStats(env);
+      if (url.pathname === '/api/rate-limit')  return await handleRateLimitInfo(request, env);
       if (url.pathname === '/api/notify-changelog' && request.method === 'POST') return await handleNotifyChangelog(request, env);
       return new Response(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>404 — GD Level API</title><link rel="icon" href="/favicon.svg"><style>*{box-sizing:border-box;margin:0;padding:0}body{background:#07070b;color:#9090c0;font-family:'Segoe UI',sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:16px;text-align:center}h1{font-size:6rem;font-weight:900;color:#eeeeff;letter-spacing:-4px;line-height:1}p{font-size:1rem;color:#6060a0}a{color:#f59e0b;text-decoration:none;font-weight:700;padding:10px 24px;border:1px solid #f59e0b40;border-radius:8px;margin-top:8px;display:inline-block;transition:background .15s}a:hover{background:#f59e0b15}.sub{font-size:.8rem;color:#3d3d5c;margin-top:4px}</style></head><body><h1>404</h1><p>This page doesn't exist.</p><p class="sub">If you're looking for an endpoint, check the docs.</p><a href="/">← Back to docs</a></body></html>`, { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     } catch (err) {

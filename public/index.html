@@ -1190,6 +1190,25 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
       <div class="status-val" id="st-gdb">—</div>
     </div>
   </div>
+
+  <div style="margin-top:24px;background:var(--card);border:1px solid var(--b1);border-radius:12px;padding:20px 24px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <span style="font-size:.8rem;font-weight:700;color:var(--white)">Your rate limits <span style="font-size:.68rem;font-weight:400;color:var(--m)">(resets every 2 min)</span></span>
+      <span id="rl-ip" style="font-size:.68rem;color:var(--m);font-family:'Courier New',monospace"></span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" id="rl-grid">
+      <div style="text-align:center;padding:10px;background:var(--s);border-radius:8px;border:1px solid var(--b1)">
+        <div style="font-size:.68rem;color:var(--m);margin-bottom:4px">Card</div>
+        <div id="rl-card" style="font-size:1.1rem;font-weight:800;color:var(--green)">—</div>
+        <div style="font-size:.62rem;color:var(--m)">of 15 remaining</div>
+      </div>
+      <div style="text-align:center;padding:10px;background:var(--s);border-radius:8px;border:1px solid var(--b1)">
+        <div style="font-size:.68rem;color:var(--m);margin-bottom:4px">Search</div>
+        <div id="rl-search" style="font-size:1.1rem;font-weight:800;color:var(--green)">—</div>
+        <div style="font-size:.62rem;color:var(--m)">of 30 remaining</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ── CHANGELOG ──────────────────────────── -->
@@ -1707,6 +1726,28 @@ fetch(`${BASE}/api/stats`).then(r => r.json()).then(d => {
   const el = document.getElementById('reqCount');
   if (el) el.textContent = (d.total_requests || 0).toLocaleString();
 }).catch(() => { const el = document.getElementById('reqCount'); if(el) el.closest('#reqCounter').style.display='none'; });
+
+/* ── Rate limit info ─────────── */
+function loadRateLimit() {
+  fetch(`${BASE}/api/rate-limit`).then(r => r.json()).then(d => {
+    const ip = document.getElementById('rl-ip');
+    if (ip) ip.textContent = `IP: ${d.ip}`;
+    const card = document.getElementById('rl-card');
+    const search = document.getElementById('rl-search');
+    if (card) {
+      const rem = d.limits?.card?.remaining ?? '—';
+      card.textContent = rem;
+      card.style.color = rem < 5 ? 'var(--red)' : rem < 10 ? 'var(--gold)' : 'var(--green)';
+    }
+    if (search) {
+      const rem = d.limits?.search?.remaining ?? '—';
+      search.textContent = rem;
+      search.style.color = rem < 5 ? 'var(--red)' : rem < 15 ? 'var(--gold)' : 'var(--green)';
+    }
+  }).catch(() => {});
+}
+loadRateLimit();
+setInterval(loadRateLimit, 30000);
 
 /* ── Shareable playground URL ── */
 function updatePlaygroundUrl(params) {
