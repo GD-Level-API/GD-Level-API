@@ -31,10 +31,9 @@
       align-items: center;
     }
 
-    /* ── Layout ─────────────────────────────────────────── */
     .page { width: 100%; max-width: 820px; }
 
-    /* ── Hero ───────────────────────────────────────────── */
+    /* ── Hero ─────────────────────────────────────────── */
     .hero { text-align: center; margin-bottom: 60px; }
     .chip {
       display: inline-block;
@@ -53,7 +52,6 @@
       color: var(--white);
       letter-spacing: -1px;
       margin-bottom: 10px;
-      line-height: 1.1;
     }
     .hero h1 span { color: var(--gold); }
     .hero p { color: var(--muted); font-size: 1rem; line-height: 1.6; }
@@ -69,7 +67,6 @@
       border-radius: 8px;
     }
 
-    /* ── Section titles ──────────────────────────────────── */
     .section-title {
       font-size: 0.7rem;
       font-weight: 700;
@@ -80,7 +77,7 @@
       margin-top: 52px;
     }
 
-    /* ── Endpoint cards ──────────────────────────────────── */
+    /* ── Endpoints ────────────────────────────────────── */
     .ep-list { display: flex; flex-direction: column; gap: 20px; }
 
     .ep {
@@ -112,16 +109,9 @@
       flex-shrink: 0;
     }
 
-    .ep-path {
-      font-family: 'Courier New', monospace;
-      font-size: 0.9rem;
-      color: var(--white);
-      flex: 1;
-    }
-
+    .ep-path { font-family: 'Courier New', monospace; font-size: 0.9rem; color: var(--white); flex: 1; }
     .ep-toggle { color: var(--muted); font-size: 0.8rem; transition: transform .2s; }
     .ep.open .ep-toggle { transform: rotate(180deg); }
-
     .ep-body { display: none; }
     .ep.open .ep-body { display: block; }
 
@@ -148,7 +138,7 @@
     .opt { color: var(--muted); font-size: 0.7rem; margin-left: -4px; }
     .param-info { font-size: 0.82rem; color: var(--muted); }
 
-    /* ── Code tabs ───────────────────────────────────────── */
+    /* ── Code tabs ────────────────────────────────────── */
     .code-block { background: #0d0d1e; }
 
     .tabs {
@@ -157,13 +147,15 @@
       padding: 10px 20px 0;
       border-bottom: 1px solid var(--border);
       overflow-x: auto;
+      scrollbar-width: none;
     }
+    .tabs::-webkit-scrollbar { display: none; }
 
     .tab {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 600;
       color: var(--muted);
-      padding: 6px 12px;
+      padding: 6px 11px;
       border-radius: 6px 6px 0 0;
       cursor: pointer;
       border: 1px solid transparent;
@@ -173,11 +165,7 @@
       transition: color .15s;
     }
     .tab:hover { color: var(--text); }
-    .tab.active {
-      color: var(--white);
-      background: #111124;
-      border-color: var(--border);
-    }
+    .tab.active { color: var(--white); background: #111124; border-color: var(--border); }
 
     .tab-pane { display: none; }
     .tab-pane.active { display: block; }
@@ -192,7 +180,6 @@
       white-space: pre;
     }
 
-    /* Syntax highlight classes */
     .c-key  { color: #9eceff; }
     .c-str  { color: #ce9178; }
     .c-num  { color: #b5cea8; }
@@ -202,8 +189,8 @@
     .c-cmt  { color: #6a9955; }
     .c-var  { color: #9cdcfe; }
     .c-op   { color: #d4d4d4; }
+    .c-type { color: #4ec9b0; }
 
-    /* ── Response preview ────────────────────────────────── */
     .resp-label {
       font-size: 0.68rem;
       font-weight: 700;
@@ -213,7 +200,7 @@
       padding: 10px 20px 0;
     }
 
-    /* ── Live demo ───────────────────────────────────────── */
+    /* ── Demo ─────────────────────────────────────────── */
     .demo-box {
       background: var(--card);
       border: 1px solid var(--border);
@@ -223,7 +210,7 @@
 
     .demo-row { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
 
-    input[type="number"], input[type="text"] {
+    input[type="number"] {
       flex: 1;
       min-width: 120px;
       padding: 10px 14px;
@@ -264,21 +251,11 @@
     button:hover { background: #4752c4; }
     button:disabled { opacity: .45; cursor: not-allowed; }
 
-    .card-wrap {
-      border-radius: 10px;
-      overflow: hidden;
-      display: none;
-      border: 1px solid var(--border);
-    }
+    .card-wrap { border-radius: 10px; overflow: hidden; display: none; border: 1px solid var(--border); }
     .card-wrap.visible { display: block; }
     .card-wrap img { width: 100%; display: block; }
 
-    .demo-links {
-      margin-top: 12px;
-      display: none;
-      flex-direction: column;
-      gap: 6px;
-    }
+    .demo-links { margin-top: 12px; display: none; flex-direction: column; gap: 6px; }
     .demo-links.visible { display: flex; }
     .demo-links a {
       font-family: monospace;
@@ -298,20 +275,13 @@
     .err { color: #f04747; font-size: 0.85rem; margin-top: 10px; display: none; }
     .err.visible { display: block; }
 
-    /* ── Footer ─────────────────────────────────────────── */
-    footer {
-      margin-top: 70px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.8rem;
-    }
+    footer { margin-top: 70px; text-align: center; color: var(--muted); font-size: 0.8rem; }
     footer a { color: var(--muted); }
   </style>
 </head>
 <body>
 <div class="page">
 
-  <!-- Hero -->
   <div class="hero">
     <div class="chip">API PÚBLICA · GRATUITA · SIN AUTH</div>
     <h1>GD Level <span>API</span></h1>
@@ -319,11 +289,10 @@
     <div class="base-url">https://thumball.liamt.xyz</div>
   </div>
 
-  <!-- ── ENDPOINTS ─────────────────────────────────────── -->
   <p class="section-title">Endpoints</p>
   <div class="ep-list">
 
-    <!-- /api/level -->
+    <!-- ── /api/level ─────────────────────────────────── -->
     <div class="ep open" id="ep1">
       <div class="ep-head" onclick="toggleEp('ep1')">
         <span class="method">GET</span>
@@ -346,11 +315,18 @@
             <div class="tab active" onclick="switchTab('ep1','curl')">curl</div>
             <div class="tab" onclick="switchTab('ep1','js')">JavaScript</div>
             <div class="tab" onclick="switchTab('ep1','py')">Python</div>
+            <div class="tab" onclick="switchTab('ep1','go')">Go</div>
+            <div class="tab" onclick="switchTab('ep1','php')">PHP</div>
+            <div class="tab" onclick="switchTab('ep1','ruby')">Ruby</div>
+            <div class="tab" onclick="switchTab('ep1','cs')">C#</div>
+            <div class="tab" onclick="switchTab('ep1','java')">Java</div>
+            <div class="tab" onclick="switchTab('ep1','rust')">Rust</div>
           </div>
 
           <div class="tab-pane active" data-ep="ep1" data-lang="curl">
 <pre>curl <span class="c-str">"https://thumball.liamt.xyz/api/level?id=128"</span></pre>
           </div>
+
           <div class="tab-pane" data-ep="ep1" data-lang="js">
 <pre><span class="c-kw">const</span> <span class="c-var">res</span>   = <span class="c-kw">await</span> <span class="c-fn">fetch</span>(<span class="c-str">"https://thumball.liamt.xyz/api/level?id=128"</span>);
 <span class="c-kw">const</span> <span class="c-var">level</span> = <span class="c-kw">await</span> <span class="c-var">res</span>.<span class="c-fn">json</span>();
@@ -359,15 +335,109 @@
 <span class="c-fn">console</span>.<span class="c-fn">log</span>(<span class="c-var">level</span>.<span class="c-key">difficulty</span>); <span class="c-cmt">// "Hard"</span>
 <span class="c-fn">console</span>.<span class="c-fn">log</span>(<span class="c-var">level</span>.<span class="c-key">urls</span>.<span class="c-key">card</span>);    <span class="c-cmt">// URL de la card PNG</span></pre>
           </div>
+
           <div class="tab-pane" data-ep="ep1" data-lang="py">
 <pre><span class="c-kw">import</span> requests
 
-<span class="c-var">res</span>   = requests.<span class="c-fn">get</span>(<span class="c-str">"https://thumball.liamt.xyz/api/level?id=128"</span>)
-<span class="c-var">level</span> = <span class="c-var">res</span>.<span class="c-fn">json</span>()
+<span class="c-var">level</span> = requests.<span class="c-fn">get</span>(<span class="c-str">"https://thumball.liamt.xyz/api/level?id=128"</span>).<span class="c-fn">json</span>()
 
-<span class="c-fn">print</span>(<span class="c-var">level</span>[<span class="c-str">"name"</span>])       <span class="c-cmt"># "1st level"</span>
-<span class="c-fn">print</span>(<span class="c-var">level</span>[<span class="c-str">"difficulty"</span>]) <span class="c-cmt"># "Hard"</span>
-<span class="c-fn">print</span>(<span class="c-var">level</span>[<span class="c-str">"urls"</span>][<span class="c-str">"card"</span>]) <span class="c-cmt"># URL de la card PNG</span></pre>
+<span class="c-fn">print</span>(<span class="c-var">level</span>[<span class="c-str">"name"</span>])            <span class="c-cmt"># "1st level"</span>
+<span class="c-fn">print</span>(<span class="c-var">level</span>[<span class="c-str">"difficulty"</span>])      <span class="c-cmt"># "Hard"</span>
+<span class="c-fn">print</span>(<span class="c-var">level</span>[<span class="c-str">"urls"</span>][<span class="c-str">"card"</span>])   <span class="c-cmt"># URL de la card PNG</span></pre>
+          </div>
+
+          <div class="tab-pane" data-ep="ep1" data-lang="go">
+<pre><span class="c-kw">package</span> main
+
+<span class="c-kw">import</span> (
+    <span class="c-str">"encoding/json"</span>
+    <span class="c-str">"fmt"</span>
+    <span class="c-str">"net/http"</span>
+)
+
+<span class="c-kw">type</span> <span class="c-type">Level</span> <span class="c-kw">struct</span> {
+    Name       <span class="c-type">string</span> <span class="c-str">`json:"name"`</span>
+    Author     <span class="c-type">string</span> <span class="c-str">`json:"author"`</span>
+    Difficulty <span class="c-type">string</span> <span class="c-str">`json:"difficulty"`</span>
+    Stars      <span class="c-type">int</span>    <span class="c-str">`json:"stars"`</span>
+}
+
+<span class="c-kw">func</span> <span class="c-fn">main</span>() {
+    <span class="c-var">resp</span>, _ := http.<span class="c-fn">Get</span>(<span class="c-str">"https://thumball.liamt.xyz/api/level?id=128"</span>)
+    <span class="c-kw">defer</span> <span class="c-var">resp</span>.Body.<span class="c-fn">Close</span>()
+
+    <span class="c-kw">var</span> <span class="c-var">level</span> <span class="c-type">Level</span>
+    json.<span class="c-fn">NewDecoder</span>(<span class="c-var">resp</span>.Body).<span class="c-fn">Decode</span>(&amp;<span class="c-var">level</span>)
+
+    fmt.<span class="c-fn">Println</span>(<span class="c-var">level</span>.Name, <span class="c-var">level</span>.Difficulty)
+}</pre>
+          </div>
+
+          <div class="tab-pane" data-ep="ep1" data-lang="php">
+<pre><span class="c-var">$json</span>  = <span class="c-fn">file_get_contents</span>(<span class="c-str">"https://thumball.liamt.xyz/api/level?id=128"</span>);
+<span class="c-var">$level</span> = <span class="c-fn">json_decode</span>(<span class="c-var">$json</span>, <span class="c-bool">true</span>);
+
+<span class="c-kw">echo</span> <span class="c-var">$level</span>[<span class="c-str">"name"</span>];         <span class="c-cmt">// "1st level"</span>
+<span class="c-kw">echo</span> <span class="c-var">$level</span>[<span class="c-str">"difficulty"</span>];   <span class="c-cmt">// "Hard"</span>
+<span class="c-kw">echo</span> <span class="c-var">$level</span>[<span class="c-str">"urls"</span>][<span class="c-str">"card"</span>]; <span class="c-cmt">// URL de la card</span></pre>
+          </div>
+
+          <div class="tab-pane" data-ep="ep1" data-lang="ruby">
+<pre><span class="c-kw">require</span> <span class="c-str">"net/http"</span>
+<span class="c-kw">require</span> <span class="c-str">"json"</span>
+
+<span class="c-var">uri</span>   = URI(<span class="c-str">"https://thumball.liamt.xyz/api/level?id=128"</span>)
+<span class="c-var">level</span> = JSON.<span class="c-fn">parse</span>(Net::HTTP.<span class="c-fn">get</span>(<span class="c-var">uri</span>))
+
+<span class="c-fn">puts</span> <span class="c-var">level</span>[<span class="c-str">"name"</span>]            <span class="c-cmt"># "1st level"</span>
+<span class="c-fn">puts</span> <span class="c-var">level</span>[<span class="c-str">"difficulty"</span>]      <span class="c-cmt"># "Hard"</span>
+<span class="c-fn">puts</span> <span class="c-var">level</span>[<span class="c-str">"urls"</span>][<span class="c-str">"card"</span>]   <span class="c-cmt"># URL de la card</span></pre>
+          </div>
+
+          <div class="tab-pane" data-ep="ep1" data-lang="cs">
+<pre><span class="c-kw">using</span> System.Net.Http.Json;
+
+<span class="c-kw">var</span> <span class="c-var">http</span>  = <span class="c-kw">new</span> <span class="c-type">HttpClient</span>();
+<span class="c-kw">var</span> <span class="c-var">level</span> = <span class="c-kw">await</span> <span class="c-var">http</span>.<span class="c-fn">GetFromJsonAsync</span>&lt;<span class="c-type">JsonElement</span>&gt;(
+    <span class="c-str">"https://thumball.liamt.xyz/api/level?id=128"</span>
+);
+
+<span class="c-fn">Console</span>.<span class="c-fn">WriteLine</span>(<span class="c-var">level</span>.<span class="c-fn">GetProperty</span>(<span class="c-str">"name"</span>).<span class="c-fn">GetString</span>());
+<span class="c-fn">Console</span>.<span class="c-fn">WriteLine</span>(<span class="c-var">level</span>.<span class="c-fn">GetProperty</span>(<span class="c-str">"difficulty"</span>).<span class="c-fn">GetString</span>());</pre>
+          </div>
+
+          <div class="tab-pane" data-ep="ep1" data-lang="java">
+<pre><span class="c-kw">import</span> java.net.http.*;
+<span class="c-kw">import</span> java.net.URI;
+
+<span class="c-kw">var</span> <span class="c-var">client</span> = <span class="c-type">HttpClient</span>.<span class="c-fn">newHttpClient</span>();
+<span class="c-kw">var</span> <span class="c-var">req</span>    = <span class="c-type">HttpRequest</span>.<span class="c-fn">newBuilder</span>()
+    .<span class="c-fn">uri</span>(<span class="c-type">URI</span>.<span class="c-fn">create</span>(<span class="c-str">"https://thumball.liamt.xyz/api/level?id=128"</span>))
+    .<span class="c-fn">build</span>();
+
+<span class="c-kw">var</span> <span class="c-var">body</span> = <span class="c-var">client</span>
+    .<span class="c-fn">send</span>(<span class="c-var">req</span>, <span class="c-type">HttpResponse</span>.BodyHandlers.<span class="c-fn">ofString</span>())
+    .<span class="c-fn">body</span>(); <span class="c-cmt">// JSON string — parsealo con Gson o Jackson</span>
+
+<span class="c-fn">System</span>.out.<span class="c-fn">println</span>(<span class="c-var">body</span>);</pre>
+          </div>
+
+          <div class="tab-pane" data-ep="ep1" data-lang="rust">
+<pre><span class="c-cmt">// Cargo.toml: reqwest = { version = "0.12", features = ["json"] }</span>
+<span class="c-cmt">// tokio = { version = "1", features = ["full"] }</span>
+
+<span class="c-kw">use</span> serde_json::Value;
+
+<span class="c-op">#[</span>tokio::main<span class="c-op">]</span>
+<span class="c-kw">async fn</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">let</span> <span class="c-var">level</span>: <span class="c-type">Value</span> = reqwest::<span class="c-fn">get</span>(
+        <span class="c-str">"https://thumball.liamt.xyz/api/level?id=128"</span>
+    ).<span class="c-kw">await</span>.unwrap()
+     .<span class="c-fn">json</span>().<span class="c-kw">await</span>.unwrap();
+
+    <span class="c-fn">println!</span>(<span class="c-str">"{}"</span>, <span class="c-var">level</span>[<span class="c-str">"name"</span>]);
+    <span class="c-fn">println!</span>(<span class="c-str">"{}"</span>, <span class="c-var">level</span>[<span class="c-str">"difficulty"</span>]);
+}</pre>
           </div>
 
           <p class="resp-label">Respuesta</p>
@@ -391,15 +461,15 @@
   <span class="c-key">"song"</span>: { <span class="c-key">"name"</span>: <span class="c-str">"Base After Base"</span>, <span class="c-key">"author"</span>: <span class="c-str">"DJVI"</span> },
   <span class="c-key">"urls"</span>: {
     <span class="c-key">"thumbnail"</span>: <span class="c-str">"https://levelthumbs.prevter.me/thumbnail/128"</span>,
-    <span class="c-key">"diffFace"</span>: <span class="c-str">"https://autonick.github.io/diff-faces/..."</span>,
-    <span class="c-key">"card"</span>: <span class="c-str">"https://thumball.liamt.xyz/api/card?id=128"</span>
+    <span class="c-key">"diffFace"</span>:  <span class="c-str">"https://autonick.github.io/diff-faces/..."</span>,
+    <span class="c-key">"card"</span>:      <span class="c-str">"https://thumball.liamt.xyz/api/card?id=128"</span>
   }
 }</pre>
         </div>
       </div>
     </div>
 
-    <!-- /api/levels -->
+    <!-- ── /api/levels ─────────────────────────────────── -->
     <div class="ep" id="ep2">
       <div class="ep-head" onclick="toggleEp('ep2')">
         <span class="method">GET</span>
@@ -408,7 +478,7 @@
       </div>
       <div class="ep-body">
         <div class="ep-desc">
-          Devuelve un <strong style="color:var(--white)">array JSON</strong> con datos de múltiples niveles en una sola request. Máximo 10 IDs por request.
+          Devuelve un <strong style="color:var(--white)">array JSON</strong> con datos de múltiples niveles en una sola request. Máximo 10 IDs.
           <div class="params">
             <div class="param-row">
               <span class="param-name">ids</span><span class="req">*</span>
@@ -422,30 +492,88 @@
             <div class="tab active" onclick="switchTab('ep2','curl')">curl</div>
             <div class="tab" onclick="switchTab('ep2','js')">JavaScript</div>
             <div class="tab" onclick="switchTab('ep2','py')">Python</div>
+            <div class="tab" onclick="switchTab('ep2','go')">Go</div>
+            <div class="tab" onclick="switchTab('ep2','php')">PHP</div>
+            <div class="tab" onclick="switchTab('ep2','ruby')">Ruby</div>
+            <div class="tab" onclick="switchTab('ep2','cs')">C#</div>
           </div>
 
           <div class="tab-pane active" data-ep="ep2" data-lang="curl">
 <pre>curl <span class="c-str">"https://thumball.liamt.xyz/api/levels?ids=128,1,2"</span></pre>
           </div>
+
           <div class="tab-pane" data-ep="ep2" data-lang="js">
-<pre><span class="c-kw">const</span> <span class="c-var">res</span>    = <span class="c-kw">await</span> <span class="c-fn">fetch</span>(<span class="c-str">"https://thumball.liamt.xyz/api/levels?ids=128,1,2"</span>);
-<span class="c-kw">const</span> <span class="c-var">levels</span> = <span class="c-kw">await</span> <span class="c-var">res</span>.<span class="c-fn">json</span>(); <span class="c-cmt">// array de niveles</span>
+<pre><span class="c-kw">const</span> <span class="c-var">levels</span> = <span class="c-kw">await</span> <span class="c-fn">fetch</span>(
+    <span class="c-str">"https://thumball.liamt.xyz/api/levels?ids=128,1,2"</span>
+).<span class="c-fn">then</span>(<span class="c-var">r</span> <span class="c-op">=></span> <span class="c-var">r</span>.<span class="c-fn">json</span>());
 
 <span class="c-var">levels</span>.<span class="c-fn">forEach</span>(<span class="c-var">l</span> <span class="c-op">=></span> <span class="c-fn">console</span>.<span class="c-fn">log</span>(<span class="c-var">l</span>.<span class="c-key">name</span>, <span class="c-var">l</span>.<span class="c-key">difficulty</span>));</pre>
           </div>
+
           <div class="tab-pane" data-ep="ep2" data-lang="py">
 <pre><span class="c-kw">import</span> requests
 
-<span class="c-var">levels</span> = requests.<span class="c-fn">get</span>(<span class="c-str">"https://thumball.liamt.xyz/api/levels?ids=128,1,2"</span>).<span class="c-fn">json</span>()
+<span class="c-var">levels</span> = requests.<span class="c-fn">get</span>(
+    <span class="c-str">"https://thumball.liamt.xyz/api/levels?ids=128,1,2"</span>
+).<span class="c-fn">json</span>()
 
 <span class="c-kw">for</span> <span class="c-var">l</span> <span class="c-kw">in</span> <span class="c-var">levels</span>:
     <span class="c-fn">print</span>(<span class="c-var">l</span>[<span class="c-str">"name"</span>], <span class="c-var">l</span>[<span class="c-str">"difficulty"</span>])</pre>
+          </div>
+
+          <div class="tab-pane" data-ep="ep2" data-lang="go">
+<pre><span class="c-kw">import</span> (
+    <span class="c-str">"encoding/json"</span>
+    <span class="c-str">"net/http"</span>
+    <span class="c-str">"fmt"</span>
+)
+
+<span class="c-kw">var</span> <span class="c-var">levels</span> []<span class="c-kw">map</span>[<span class="c-type">string</span>]<span class="c-kw">interface</span>{}
+<span class="c-var">resp</span>, _ := http.<span class="c-fn">Get</span>(<span class="c-str">"https://thumball.liamt.xyz/api/levels?ids=128,1,2"</span>)
+json.<span class="c-fn">NewDecoder</span>(<span class="c-var">resp</span>.Body).<span class="c-fn">Decode</span>(&amp;<span class="c-var">levels</span>)
+
+<span class="c-kw">for</span> _, <span class="c-var">l</span> := <span class="c-kw">range</span> <span class="c-var">levels</span> {
+    fmt.<span class="c-fn">Println</span>(<span class="c-var">l</span>[<span class="c-str">"name"</span>], <span class="c-var">l</span>[<span class="c-str">"difficulty"</span>])
+}</pre>
+          </div>
+
+          <div class="tab-pane" data-ep="ep2" data-lang="php">
+<pre><span class="c-var">$levels</span> = <span class="c-fn">json_decode</span>(
+    <span class="c-fn">file_get_contents</span>(<span class="c-str">"https://thumball.liamt.xyz/api/levels?ids=128,1,2"</span>),
+    <span class="c-bool">true</span>
+);
+
+<span class="c-kw">foreach</span> (<span class="c-var">$levels</span> <span class="c-kw">as</span> <span class="c-var">$l</span>) {
+    <span class="c-kw">echo</span> <span class="c-var">$l</span>[<span class="c-str">"name"</span>] . <span class="c-str">" - "</span> . <span class="c-var">$l</span>[<span class="c-str">"difficulty"</span>] . <span class="c-str">"\n"</span>;
+}</pre>
+          </div>
+
+          <div class="tab-pane" data-ep="ep2" data-lang="ruby">
+<pre><span class="c-kw">require</span> <span class="c-str">"net/http"</span>; <span class="c-kw">require</span> <span class="c-str">"json"</span>
+
+<span class="c-var">levels</span> = JSON.<span class="c-fn">parse</span>(
+    Net::HTTP.<span class="c-fn">get</span>(URI(<span class="c-str">"https://thumball.liamt.xyz/api/levels?ids=128,1,2"</span>))
+)
+
+<span class="c-var">levels</span>.<span class="c-fn">each</span> { |<span class="c-var">l</span>| <span class="c-fn">puts</span> <span class="c-str">"#{l["name"]} - #{l["difficulty"]}"</span> }</pre>
+          </div>
+
+          <div class="tab-pane" data-ep="ep2" data-lang="cs">
+<pre><span class="c-kw">using</span> System.Net.Http.Json;
+
+<span class="c-kw">var</span> <span class="c-var">http</span>   = <span class="c-kw">new</span> <span class="c-type">HttpClient</span>();
+<span class="c-kw">var</span> <span class="c-var">levels</span> = <span class="c-kw">await</span> <span class="c-var">http</span>.<span class="c-fn">GetFromJsonAsync</span>&lt;<span class="c-type">JsonElement[]</span>&gt;(
+    <span class="c-str">"https://thumball.liamt.xyz/api/levels?ids=128,1,2"</span>
+);
+
+<span class="c-kw">foreach</span> (<span class="c-kw">var</span> <span class="c-var">l</span> <span class="c-kw">in</span> <span class="c-var">levels</span>)
+    <span class="c-fn">Console</span>.<span class="c-fn">WriteLine</span>(<span class="c-var">l</span>.<span class="c-fn">GetProperty</span>(<span class="c-str">"name"</span>).<span class="c-fn">GetString</span>());</pre>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- /api/card -->
+    <!-- ── /api/card ───────────────────────────────────── -->
     <div class="ep" id="ep3">
       <div class="ep-head" onclick="toggleEp('ep3')">
         <span class="method">GET</span>
@@ -454,7 +582,7 @@
       </div>
       <div class="ep-body">
         <div class="ep-desc">
-          Devuelve una imagen <strong style="color:var(--white)">PNG</strong> con la card del nivel — thumbnail, ícono de dificultad, estadísticas y badges. La primera request genera la imagen (~1s), las siguientes son cacheadas y son instantáneas.
+          Devuelve una imagen <strong style="color:var(--white)">PNG</strong> con la card del nivel. Primera request ~1s, las siguientes son cacheadas e instantáneas.
           <div class="params">
             <div class="param-row">
               <span class="param-name">id</span><span class="req">*</span>
@@ -462,7 +590,7 @@
             </div>
             <div class="param-row">
               <span class="param-name">size</span><span class="opt"> opcional</span>
-              <span class="param-info"><code style="color:var(--gold)">normal</code> (1600×520px, por defecto) · <code style="color:var(--gold)">small</code> (1200×320px)</span>
+              <span class="param-info"><code style="color:var(--gold)">normal</code> (1600×520 px, default) · <code style="color:var(--gold)">small</code> (1200×320 px)</span>
             </div>
           </div>
         </div>
@@ -472,27 +600,35 @@
             <div class="tab active" onclick="switchTab('ep3','html')">HTML</div>
             <div class="tab" onclick="switchTab('ep3','js')">JavaScript</div>
             <div class="tab" onclick="switchTab('ep3','py')">Python</div>
+            <div class="tab" onclick="switchTab('ep3','php')">PHP</div>
             <div class="tab" onclick="switchTab('ep3','djs')">Discord.js</div>
             <div class="tab" onclick="switchTab('ep3','dpy')">Discord.py</div>
+            <div class="tab" onclick="switchTab('ep3','dnet')">Discord.NET</div>
+            <div class="tab" onclick="switchTab('ep3','jda')">JDA (Java)</div>
+            <div class="tab" onclick="switchTab('ep3','eris')">Eris</div>
           </div>
 
           <div class="tab-pane active" data-ep="ep3" data-lang="html">
-<pre><span class="c-cmt">&lt;!-- Embed directo como imagen --&gt;</span>
-&lt;<span class="c-kw">img</span> <span class="c-key">src</span>=<span class="c-str">"https://thumball.liamt.xyz/api/card?id=128"</span>
-     <span class="c-key">alt</span>=<span class="c-str">"GD Level Card"</span>
-     <span class="c-key">style</span>=<span class="c-str">"width:100%;max-width:800px;border-radius:8px"</span> /&gt;
+<pre><span class="c-cmt">&lt;!-- Embed directo —  funciona en cualquier web --&gt;</span>
+&lt;<span class="c-kw">img</span>
+  <span class="c-key">src</span>=<span class="c-str">"https://thumball.liamt.xyz/api/card?id=128"</span>
+  <span class="c-key">alt</span>=<span class="c-str">"GD Level Card"</span>
+  <span class="c-key">style</span>=<span class="c-str">"width:100%;max-width:800px;border-radius:8px"</span>
+/&gt;
 
 <span class="c-cmt">&lt;!-- Card pequeña --&gt;</span>
 &lt;<span class="c-kw">img</span> <span class="c-key">src</span>=<span class="c-str">"https://thumball.liamt.xyz/api/card?id=128&amp;size=small"</span> /&gt;</pre>
           </div>
 
           <div class="tab-pane" data-ep="ep3" data-lang="js">
-<pre><span class="c-cmt">// Descargar la imagen como Blob</span>
-<span class="c-kw">const</span> <span class="c-var">res</span>  = <span class="c-kw">await</span> <span class="c-fn">fetch</span>(<span class="c-str">"https://thumball.liamt.xyz/api/card?id=128"</span>);
-<span class="c-kw">const</span> <span class="c-var">blob</span> = <span class="c-kw">await</span> <span class="c-var">res</span>.<span class="c-fn">blob</span>(); <span class="c-cmt">// image/png</span>
+<pre><span class="c-cmt">// Mostrar en &lt;img&gt;</span>
+<span class="c-kw">const</span> <span class="c-var">img</span> = document.<span class="c-fn">querySelector</span>(<span class="c-str">"img"</span>);
+<span class="c-var">img</span>.<span class="c-key">src</span> = <span class="c-str">`https://thumball.liamt.xyz/api/card?id=128`</span>;
 
-<span class="c-cmt">// Mostrar en &lt;img&gt;</span>
-<span class="c-var">document</span>.<span class="c-fn">querySelector</span>(<span class="c-str">"img"</span>).<span class="c-key">src</span> = <span class="c-var">URL</span>.<span class="c-fn">createObjectURL</span>(<span class="c-var">blob</span>);</pre>
+<span class="c-cmt">// O descargar como Blob</span>
+<span class="c-kw">const</span> <span class="c-var">blob</span> = <span class="c-kw">await</span> <span class="c-fn">fetch</span>(<span class="c-str">"https://thumball.liamt.xyz/api/card?id=128"</span>)
+    .<span class="c-fn">then</span>(<span class="c-var">r</span> <span class="c-op">=></span> <span class="c-var">r</span>.<span class="c-fn">blob</span>());
+<span class="c-var">img</span>.<span class="c-key">src</span> = <span class="c-var">URL</span>.<span class="c-fn">createObjectURL</span>(<span class="c-var">blob</span>);</pre>
           </div>
 
           <div class="tab-pane" data-ep="ep3" data-lang="py">
@@ -505,17 +641,22 @@
     <span class="c-var">f</span>.<span class="c-fn">write</span>(<span class="c-var">res</span>.<span class="c-key">content</span>)</pre>
           </div>
 
+          <div class="tab-pane" data-ep="ep3" data-lang="php">
+<pre><span class="c-cmt">// Mostrar en HTML dinámico</span>
+<span class="c-kw">echo</span> <span class="c-str">'&lt;img src="https://thumball.liamt.xyz/api/card?id=128"&gt;'</span>;
+
+<span class="c-cmt">// O guardar el PNG</span>
+<span class="c-kw">file_put_contents</span>(<span class="c-str">"card.png"</span>,
+    <span class="c-fn">file_get_contents</span>(<span class="c-str">"https://thumball.liamt.xyz/api/card?id=128"</span>)
+);</pre>
+          </div>
+
           <div class="tab-pane" data-ep="ep3" data-lang="djs">
 <pre><span class="c-kw">const</span> { <span class="c-var">EmbedBuilder</span>, <span class="c-var">AttachmentBuilder</span> } = <span class="c-fn">require</span>(<span class="c-str">'discord.js'</span>);
 
-<span class="c-cmt">// Slash command handler</span>
 <span class="c-kw">async</span> <span class="c-fn">execute</span>(<span class="c-var">interaction</span>) {
-  <span class="c-kw">const</span> <span class="c-var">id</span> = <span class="c-var">interaction</span>.<span class="c-fn">options</span>.<span class="c-fn">getInteger</span>(<span class="c-str">'id'</span>);
-
-  <span class="c-cmt">// Cargar datos y card en paralelo</span>
-  <span class="c-kw">const</span> [<span class="c-var">data</span>] = <span class="c-kw">await</span> Promise.<span class="c-fn">all</span>([
-    <span class="c-fn">fetch</span>(<span class="c-str">`https://thumball.liamt.xyz/api/level?id=</span><span class="c-op">${</span><span class="c-var">id</span><span class="c-op">}</span><span class="c-str">`</span>).<span class="c-fn">then</span>(<span class="c-var">r</span> <span class="c-op">=></span> <span class="c-var">r</span>.<span class="c-fn">json</span>()),
-  ]);
+  <span class="c-kw">const</span> <span class="c-var">id</span>    = <span class="c-var">interaction</span>.<span class="c-fn">options</span>.<span class="c-fn">getInteger</span>(<span class="c-str">'id'</span>);
+  <span class="c-kw">const</span> <span class="c-var">data</span>  = <span class="c-kw">await</span> <span class="c-fn">fetch</span>(<span class="c-str">`https://thumball.liamt.xyz/api/level?id=</span><span class="c-op">${</span><span class="c-var">id</span><span class="c-op">}</span><span class="c-str">`</span>).<span class="c-fn">then</span>(<span class="c-var">r</span> <span class="c-op">=></span> <span class="c-var">r</span>.<span class="c-fn">json</span>());
 
   <span class="c-kw">if</span> (<span class="c-var">data</span>.<span class="c-key">error</span>) <span class="c-kw">return</span> <span class="c-var">interaction</span>.<span class="c-fn">reply</span>({ <span class="c-key">content</span>: <span class="c-str">'Nivel no encontrado'</span>, <span class="c-key">ephemeral</span>: <span class="c-bool">true</span> });
 
@@ -531,15 +672,12 @@
           </div>
 
           <div class="tab-pane" data-ep="ep3" data-lang="dpy">
-<pre><span class="c-kw">import</span> discord
+<pre><span class="c-kw">import</span> discord, aiohttp, io
 <span class="c-kw">from</span> discord <span class="c-kw">import</span> app_commands
-<span class="c-kw">import</span> aiohttp
-<span class="c-kw">import</span> io
 
-<span class="c-op">@</span><span class="c-var">tree</span>.<span class="c-fn">command</span>(<span class="c-key">name</span>=<span class="c-str">"nivel"</span>, <span class="c-key">description</span>=<span class="c-str">"Info de un nivel GD"</span>)
+<span class="c-op">@</span><span class="c-var">tree</span>.<span class="c-fn">command</span>(<span class="c-key">name</span>=<span class="c-str">"nivel"</span>)
 <span class="c-kw">async def</span> <span class="c-fn">nivel</span>(<span class="c-var">interaction</span>: discord.<span class="c-var">Interaction</span>, <span class="c-var">id</span>: <span class="c-fn">int</span>):
     <span class="c-kw">async with</span> aiohttp.<span class="c-fn">ClientSession</span>() <span class="c-kw">as</span> <span class="c-var">s</span>:
-        <span class="c-cmt"># Datos y card en paralelo</span>
         <span class="c-kw">async with</span> <span class="c-var">s</span>.<span class="c-fn">get</span>(<span class="c-str">f"https://thumball.liamt.xyz/api/level?id=</span><span class="c-op">{</span><span class="c-var">id</span><span class="c-op">}</span><span class="c-str">"</span>) <span class="c-kw">as</span> <span class="c-var">r</span>:
             <span class="c-var">data</span> = <span class="c-kw">await</span> <span class="c-var">r</span>.<span class="c-fn">json</span>()
         <span class="c-kw">async with</span> <span class="c-var">s</span>.<span class="c-fn">get</span>(<span class="c-var">data</span>[<span class="c-str">"urls"</span>][<span class="c-str">"card"</span>]) <span class="c-kw">as</span> <span class="c-var">r</span>:
@@ -553,11 +691,91 @@
     ).<span class="c-fn">set_image</span>(<span class="c-key">url</span>=<span class="c-str">"attachment://card.png"</span>)
     <span class="c-kw">await</span> <span class="c-var">interaction</span>.<span class="c-fn">response</span>.<span class="c-fn">send_message</span>(<span class="c-key">embed</span>=<span class="c-var">embed</span>, <span class="c-key">file</span>=<span class="c-var">file</span>)</pre>
           </div>
+
+          <div class="tab-pane" data-ep="ep3" data-lang="dnet">
+<pre><span class="c-cmt">// Discord.NET (C#) — SlashCommand handler</span>
+<span class="c-kw">using</span> Discord;
+<span class="c-kw">using</span> Discord.WebSocket;
+<span class="c-kw">using</span> System.Net.Http.Json;
+
+<span class="c-kw">private async</span> <span class="c-type">Task</span> <span class="c-fn">HandleNivel</span>(<span class="c-type">SocketSlashCommand</span> <span class="c-var">cmd</span>) {
+    <span class="c-kw">var</span> <span class="c-var">id</span>   = (<span class="c-type">long</span>)<span class="c-var">cmd</span>.Data.Options.First().Value;
+    <span class="c-kw">var</span> <span class="c-var">http</span> = <span class="c-kw">new</span> <span class="c-type">HttpClient</span>();
+
+    <span class="c-kw">var</span> <span class="c-var">data</span> = <span class="c-kw">await</span> <span class="c-var">http</span>.<span class="c-fn">GetFromJsonAsync</span>&lt;<span class="c-type">JsonElement</span>&gt;(
+        <span class="c-str">$"https://thumball.liamt.xyz/api/level?id={id}"</span>
+    );
+    <span class="c-kw">var</span> <span class="c-var">png</span> = <span class="c-kw">await</span> <span class="c-var">http</span>.<span class="c-fn">GetByteArrayAsync</span>(
+        <span class="c-var">data</span>.<span class="c-fn">GetProperty</span>(<span class="c-str">"urls"</span>).<span class="c-fn">GetProperty</span>(<span class="c-str">"card"</span>).<span class="c-fn">GetString</span>()
+    );
+
+    <span class="c-kw">var</span> <span class="c-var">embed</span> = <span class="c-kw">new</span> <span class="c-type">EmbedBuilder</span>()
+        .<span class="c-fn">WithTitle</span>(<span class="c-var">data</span>.<span class="c-fn">GetProperty</span>(<span class="c-str">"name"</span>).<span class="c-fn">GetString</span>())
+        .<span class="c-fn">WithImageUrl</span>(<span class="c-str">"attachment://card.png"</span>)
+        .<span class="c-fn">WithColor</span>(<span class="c-kw">new</span> <span class="c-type">Color</span>(<span class="c-num">0xf0c94e</span>));
+
+    <span class="c-kw">await</span> <span class="c-var">cmd</span>.<span class="c-fn">RespondWithFileAsync</span>(
+        <span class="c-kw">new</span> <span class="c-type">MemoryStream</span>(<span class="c-var">png</span>), <span class="c-str">"card.png"</span>,
+        <span class="c-key">embed</span>: <span class="c-var">embed</span>.<span class="c-fn">Build</span>()
+    );
+}</pre>
+          </div>
+
+          <div class="tab-pane" data-ep="ep3" data-lang="jda">
+<pre><span class="c-cmt">// JDA (Java) — SlashCommandInteractionEvent</span>
+<span class="c-op">@</span><span class="c-type">Override</span>
+<span class="c-kw">public void</span> <span class="c-fn">onSlashCommandInteraction</span>(<span class="c-type">SlashCommandInteractionEvent</span> <span class="c-var">event</span>) {
+    <span class="c-kw">long</span> <span class="c-var">id</span> = <span class="c-var">event</span>.<span class="c-fn">getOption</span>(<span class="c-str">"id"</span>).<span class="c-fn">getAsLong</span>();
+
+    <span class="c-kw">var</span> <span class="c-var">client</span> = <span class="c-type">HttpClient</span>.<span class="c-fn">newHttpClient</span>();
+
+    <span class="c-cmt">// Fetch JSON</span>
+    <span class="c-kw">var</span> <span class="c-var">jsonBody</span> = <span class="c-var">client</span>
+        .<span class="c-fn">send</span>(<span class="c-type">HttpRequest</span>.<span class="c-fn">newBuilder</span>()
+            .<span class="c-fn">uri</span>(<span class="c-type">URI</span>.<span class="c-fn">create</span>(<span class="c-str">"https://thumball.liamt.xyz/api/level?id="</span> + <span class="c-var">id</span>))
+            .<span class="c-fn">build</span>(),
+            <span class="c-type">HttpResponse</span>.BodyHandlers.<span class="c-fn">ofString</span>())
+        .<span class="c-fn">body</span>();
+
+    <span class="c-cmt">// Fetch card PNG</span>
+    <span class="c-kw">byte</span>[] <span class="c-var">png</span> = <span class="c-var">client</span>
+        .<span class="c-fn">send</span>(<span class="c-type">HttpRequest</span>.<span class="c-fn">newBuilder</span>()
+            .<span class="c-fn">uri</span>(<span class="c-type">URI</span>.<span class="c-fn">create</span>(<span class="c-str">"https://thumball.liamt.xyz/api/card?id="</span> + <span class="c-var">id</span>))
+            .<span class="c-fn">build</span>(),
+            <span class="c-type">HttpResponse</span>.BodyHandlers.<span class="c-fn">ofByteArray</span>())
+        .<span class="c-fn">body</span>();
+
+    <span class="c-var">event</span>.<span class="c-fn">replyFiles</span>(<span class="c-type">FileUpload</span>.<span class="c-fn">fromData</span>(<span class="c-var">png</span>, <span class="c-str">"card.png"</span>))
+        .<span class="c-fn">addEmbeds</span>(<span class="c-type">EmbedBuilder</span>.<span class="c-fn">fromData</span>(<span class="c-var">jsonBody</span>))
+        .<span class="c-fn">queue</span>();
+}</pre>
+          </div>
+
+          <div class="tab-pane" data-ep="ep3" data-lang="eris">
+<pre><span class="c-cmt">// Eris (JS alternativo a Discord.js)</span>
+<span class="c-kw">const</span> <span class="c-var">Eris</span> = <span class="c-fn">require</span>(<span class="c-str">"eris"</span>);
+<span class="c-kw">const</span> <span class="c-var">bot</span>  = <span class="c-kw">new</span> <span class="c-var">Eris</span>(<span class="c-str">"TOKEN"</span>);
+
+<span class="c-var">bot</span>.<span class="c-fn">on</span>(<span class="c-str">"interactionCreate"</span>, <span class="c-kw">async</span> (<span class="c-var">interaction</span>) => {
+  <span class="c-kw">if</span> (<span class="c-var">interaction</span>.<span class="c-key">data</span>.<span class="c-key">name</span> !== <span class="c-str">"nivel"</span>) <span class="c-kw">return</span>;
+
+  <span class="c-kw">const</span> <span class="c-var">id</span>   = <span class="c-var">interaction</span>.<span class="c-key">data</span>.<span class="c-key">options</span>[<span class="c-num">0</span>].<span class="c-key">value</span>;
+  <span class="c-kw">const</span> <span class="c-var">data</span> = <span class="c-kw">await</span> <span class="c-fn">fetch</span>(<span class="c-str">`https://thumball.liamt.xyz/api/level?id=</span><span class="c-op">${</span><span class="c-var">id</span><span class="c-op">}</span><span class="c-str">`</span>)
+                       .<span class="c-fn">then</span>(<span class="c-var">r</span> <span class="c-op">=></span> <span class="c-var">r</span>.<span class="c-fn">json</span>());
+  <span class="c-kw">const</span> <span class="c-var">png</span>  = <span class="c-kw">await</span> <span class="c-fn">fetch</span>(<span class="c-var">data</span>.<span class="c-key">urls</span>.<span class="c-key">card</span>)
+                       .<span class="c-fn">then</span>(<span class="c-var">r</span> <span class="c-op">=></span> <span class="c-var">r</span>.<span class="c-fn">arrayBuffer</span>());
+
+  <span class="c-kw">await</span> <span class="c-var">interaction</span>.<span class="c-fn">createMessage</span>({
+    <span class="c-key">embeds</span>: [{ <span class="c-key">title</span>: <span class="c-var">data</span>.<span class="c-key">name</span>, <span class="c-key">image</span>: { <span class="c-key">url</span>: <span class="c-str">"attachment://card.png"</span> } }],
+    <span class="c-key">files</span>:  [{ <span class="c-key">name</span>: <span class="c-str">"card.png"</span>, <span class="c-key">file</span>: <span class="c-type">Buffer</span>.<span class="c-fn">from</span>(<span class="c-var">png</span>) }],
+  });
+});</pre>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- /thumbnail/:id -->
+    <!-- ── /thumbnail/:id ──────────────────────────────── -->
     <div class="ep" id="ep4">
       <div class="ep-head" onclick="toggleEp('ep4')">
         <span class="method">GET</span>
@@ -566,7 +784,7 @@
       </div>
       <div class="ep-body">
         <div class="ep-desc">
-          Proxy del thumbnail del nivel. Devuelve la imagen en <strong style="color:var(--white)">WebP</strong> directamente desde tu dominio, cacheada 24 horas.
+          Proxy del thumbnail del nivel en WebP desde tu dominio, cacheado 24 horas.
           <div class="params">
             <div class="param-row">
               <span class="param-name">levelId</span><span class="req">*</span>
@@ -578,15 +796,18 @@
         <div class="code-block">
           <div class="tabs">
             <div class="tab active" onclick="switchTab('ep4','html')">HTML</div>
-            <div class="tab" onclick="switchTab('ep4','react')">React / JSX</div>
+            <div class="tab" onclick="switchTab('ep4','react')">React</div>
+            <div class="tab" onclick="switchTab('ep4','next')">Next.js</div>
             <div class="tab" onclick="switchTab('ep4','astro')">Astro</div>
             <div class="tab" onclick="switchTab('ep4','vue')">Vue</div>
+            <div class="tab" onclick="switchTab('ep4','svelte')">Svelte</div>
+            <div class="tab" onclick="switchTab('ep4','angular')">Angular</div>
+            <div class="tab" onclick="switchTab('ep4','php')">PHP</div>
             <div class="tab" onclick="switchTab('ep4','curl')">curl</div>
           </div>
 
           <div class="tab-pane active" data-ep="ep4" data-lang="html">
-<pre><span class="c-cmt">&lt;!-- Cualquier HTML plano, sin frameworks --&gt;</span>
-&lt;<span class="c-kw">img</span>
+<pre>&lt;<span class="c-kw">img</span>
   <span class="c-key">src</span>=<span class="c-str">"https://thumball.liamt.xyz/thumbnail/128"</span>
   <span class="c-key">alt</span>=<span class="c-str">"thumbnail nivel 128"</span>
   <span class="c-key">style</span>=<span class="c-str">"width:320px;border-radius:8px"</span>
@@ -594,7 +815,7 @@
           </div>
 
           <div class="tab-pane" data-ep="ep4" data-lang="react">
-<pre><span class="c-cmt">// React / Next.js — componente funcional</span>
+<pre><span class="c-cmt">// React / React Native (web)</span>
 <span class="c-kw">export default function</span> <span class="c-fn">LevelThumb</span>({ <span class="c-var">id</span> }) {
   <span class="c-kw">return</span> (
     &lt;<span class="c-kw">img</span>
@@ -605,7 +826,31 @@
   );
 }
 
-<span class="c-cmt">// Uso: &lt;LevelThumb id={128} /&gt;</span></pre>
+<span class="c-cmt">// &lt;LevelThumb id={128} /&gt;</span></pre>
+          </div>
+
+          <div class="tab-pane" data-ep="ep4" data-lang="next">
+<pre><span class="c-cmt">// Next.js — next.config.js (permitir el dominio)</span>
+<span class="c-kw">const</span> <span class="c-var">nextConfig</span> = {
+  <span class="c-key">images</span>: {
+    <span class="c-key">remotePatterns</span>: [{ <span class="c-key">hostname</span>: <span class="c-str">"thumball.liamt.xyz"</span> }],
+  },
+};
+<span class="c-kw">export default</span> <span class="c-var">nextConfig</span>;
+
+<span class="c-cmt">// Componente</span>
+<span class="c-kw">import</span> <span class="c-type">Image</span> <span class="c-kw">from</span> <span class="c-str">"next/image"</span>;
+
+<span class="c-kw">export default function</span> <span class="c-fn">LevelThumb</span>({ <span class="c-var">id</span> }) {
+  <span class="c-kw">return</span> (
+    &lt;<span class="c-type">Image</span>
+      <span class="c-key">src</span>=<span class="c-op">{</span><span class="c-str">`https://thumball.liamt.xyz/thumbnail/</span><span class="c-op">${</span><span class="c-var">id</span><span class="c-op">}</span><span class="c-str">`</span><span class="c-op">}</span>
+      <span class="c-key">alt</span>=<span class="c-str">"thumbnail"</span>
+      <span class="c-key">width</span>=<span class="c-op">{</span><span class="c-num">320</span><span class="c-op">}</span>
+      <span class="c-key">height</span>=<span class="c-op">{</span><span class="c-num">180</span><span class="c-op">}</span>
+    /&gt;
+  );
+}</pre>
           </div>
 
           <div class="tab-pane" data-ep="ep4" data-lang="astro">
@@ -613,15 +858,13 @@
 ---
 <span class="c-kw">const</span> { <span class="c-var">id</span> } = <span class="c-var">Astro</span>.<span class="c-key">props</span>;
 ---
-
 &lt;<span class="c-kw">img</span>
   <span class="c-key">src</span>=<span class="c-op">{</span><span class="c-str">`https://thumball.liamt.xyz/thumbnail/</span><span class="c-op">${</span><span class="c-var">id</span><span class="c-op">}</span><span class="c-str">`</span><span class="c-op">}</span>
   <span class="c-key">alt</span>=<span class="c-str">"thumbnail"</span>
   <span class="c-key">style</span>=<span class="c-str">"width:320px;border-radius:8px"</span>
 /&gt;
 
-<span class="c-cmt">&lt;!-- Uso en otra página --&gt;</span>
-<span class="c-cmt">&lt;!-- &lt;LevelThumb id={128} /&gt; --&gt;</span></pre>
+<span class="c-cmt">&lt;!-- Uso: &lt;LevelThumb id={128} /&gt; --&gt;</span></pre>
           </div>
 
           <div class="tab-pane" data-ep="ep4" data-lang="vue">
@@ -635,10 +878,53 @@
 &lt;/<span class="c-kw">template</span>&gt;
 
 &lt;<span class="c-kw">script</span> <span class="c-key">setup</span>&gt;
-<span class="c-fn">defineProps</span>({ <span class="c-key">id</span>: <span class="c-var">Number</span> })
+<span class="c-fn">defineProps</span>({ <span class="c-key">id</span>: <span class="c-type">Number</span> })
 &lt;/<span class="c-kw">script</span>&gt;
 
-<span class="c-cmt">&lt;!-- Uso: &lt;LevelThumb :id="128" /&gt; --&gt;</span></pre>
+<span class="c-cmt">&lt;!-- &lt;LevelThumb :id="128" /&gt; --&gt;</span></pre>
+          </div>
+
+          <div class="tab-pane" data-ep="ep4" data-lang="svelte">
+<pre><span class="c-cmt">&lt;!-- src/lib/LevelThumb.svelte --&gt;</span>
+&lt;<span class="c-kw">script</span>&gt;
+  <span class="c-kw">export let</span> <span class="c-var">id</span>;
+&lt;/<span class="c-kw">script</span>&gt;
+
+&lt;<span class="c-kw">img</span>
+  <span class="c-key">src</span>=<span class="c-op">{</span><span class="c-str">`https://thumball.liamt.xyz/thumbnail/</span><span class="c-op">${</span><span class="c-var">id</span><span class="c-op">}</span><span class="c-str">`</span><span class="c-op">}</span>
+  <span class="c-key">alt</span>=<span class="c-str">"thumbnail"</span>
+  <span class="c-key">style</span>=<span class="c-str">"width:320px;border-radius:8px"</span>
+/&gt;
+
+<span class="c-cmt">&lt;!-- Uso: &lt;LevelThumb id={128} /&gt; --&gt;</span></pre>
+          </div>
+
+          <div class="tab-pane" data-ep="ep4" data-lang="angular">
+<pre><span class="c-cmt">// level-thumb.component.ts</span>
+<span class="c-kw">import</span> { <span class="c-type">Component</span>, <span class="c-type">Input</span> } <span class="c-kw">from</span> <span class="c-str">'@angular/core'</span>;
+
+<span class="c-op">@</span><span class="c-fn">Component</span>({
+  <span class="c-key">selector</span>: <span class="c-str">'app-level-thumb'</span>,
+  <span class="c-key">template</span>: <span class="c-str">`
+    &lt;img
+      [src]="'https://thumball.liamt.xyz/thumbnail/' + id"
+      [alt]="'thumbnail ' + id"
+      style="width:320px;border-radius:8px"
+    /&gt;
+  `</span>,
+})
+<span class="c-kw">export class</span> <span class="c-type">LevelThumbComponent</span> {
+  <span class="c-op">@</span><span class="c-fn">Input</span>() <span class="c-var">id</span>!: <span class="c-type">number</span>;
+}
+
+<span class="c-cmt">&lt;!-- Uso: &lt;app-level-thumb [id]="128"&gt;&lt;/app-level-thumb&gt; --&gt;</span></pre>
+          </div>
+
+          <div class="tab-pane" data-ep="ep4" data-lang="php">
+<pre><span class="c-cmt">&lt;?php</span>
+<span class="c-var">$id</span> = <span class="c-num">128</span>; <span class="c-cmt">// o desde $_GET['id']</span>
+<span class="c-kw">echo</span> <span class="c-str">"&lt;img src='https://thumball.liamt.xyz/thumbnail/{$id}'
+     alt='thumbnail' style='width:320px;border-radius:8px'&gt;"</span>;</pre>
           </div>
 
           <div class="tab-pane" data-ep="ep4" data-lang="curl">
@@ -650,7 +936,7 @@
 
   </div><!-- /ep-list -->
 
-  <!-- ── DEMO ──────────────────────────────────────────── -->
+  <!-- ── DEMO ─────────────────────────────────────────── -->
   <p class="section-title" style="margin-top:60px">Demo en vivo</p>
   <div class="demo-box">
     <div class="demo-row">
@@ -678,25 +964,23 @@
     <p>thumball.liamt.xyz · <a href="https://github.com/liamt8d/gd-api" target="_blank">GitHub</a> · Gratis, sin auth</p>
   </footer>
 
-</div><!-- /page -->
+</div>
 
 <script>
-  // ── Acordeón endpoints ────────────────────────────────
   function toggleEp(id) {
     document.getElementById(id).classList.toggle('open');
   }
 
-  // ── Tabs de código ────────────────────────────────────
   function switchTab(ep, lang) {
-    const panes = document.querySelectorAll(`[data-ep="${ep}"]`);
-    const tabs  = document.querySelectorAll(`#${ep} .tab`);
-    panes.forEach(p => p.classList.toggle('active', p.dataset.lang === lang));
-    tabs.forEach(t  => t.classList.toggle('active', t.textContent.toLowerCase().replace('.','') === lang || t.onclick.toString().includes(`'${lang}'`)));
+    document.querySelectorAll(`[data-ep="${ep}"]`).forEach(p =>
+      p.classList.toggle('active', p.dataset.lang === lang)
+    );
+    document.querySelectorAll(`#${ep} .tab`).forEach(t =>
+      t.classList.toggle('active', t.getAttribute('onclick').includes(`'${lang}'`))
+    );
   }
 
-  // ── Demo ──────────────────────────────────────────────
   const BASE = window.location.origin;
-
   function show(id, v) { document.getElementById(id).classList.toggle('visible', v); }
 
   async function runDemo() {
@@ -716,7 +1000,6 @@
 
     const img = document.getElementById('demoImg');
     img.src = cardUrl;
-
     img.onload = () => {
       show('demoCard', true);
       const lj = document.getElementById('demoLinkJson');
@@ -726,9 +1009,8 @@
       show('demoLinks', true);
       btn.disabled = false; btn.textContent = 'Ver card';
     };
-
     img.onerror = () => {
-      document.getElementById('demoErr').textContent = '❌ Nivel no encontrado o error al generar.';
+      document.getElementById('demoErr').textContent = '❌ Nivel no encontrado o error.';
       show('demoErr', true);
       btn.disabled = false; btn.textContent = 'Ver card';
     };
