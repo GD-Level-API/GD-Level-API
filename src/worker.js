@@ -460,8 +460,7 @@ async function runUptimeCron(env) {
   const raw = await env.CARD_CACHE.get('status:history', 'json').catch(() => ({})) || {};
   for (const svc of ['api','gdb','thumb']) {
     if (!raw[svc]) raw[svc] = {};
-    const prev = raw[svc][today] ?? 1;
-    raw[svc][today] = checks[svc] ? Math.min(1, prev) : 0;
+    raw[svc][today] = checks[svc] ? 1 : 0;
   }
   raw.current = checks;
   raw.lastCheck = new Date().toISOString();
