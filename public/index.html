@@ -832,6 +832,42 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
   </div>
 </div>
 
+<!-- ── COMMENTS ──────────────────────────────── -->
+<div class="wrap" style="padding-bottom:80px">
+  <div class="sec-head" style="margin-bottom:20px">
+    <span class="sec-ey">Community</span>
+    <h2 style="font-size:1.4rem;font-weight:800;color:var(--white)">Comments & Bug Reports</h2>
+  </div>
+
+  <!-- Auth bar -->
+  <div id="authBar" style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+    <div id="authLoading" style="font-size:.78rem;color:var(--m)">Loading...</div>
+    <a id="loginBtn" href="/auth/discord" style="display:none;align-items:center;gap:7px;padding:7px 16px;border-radius:7px;background:#5865F2;color:#fff;font-size:.78rem;font-weight:700;text-decoration:none">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+      Login with Discord
+    </a>
+    <div id="userInfo" style="display:none;align-items:center;gap:8px">
+      <img id="userAvatar" src="" style="width:28px;height:28px;border-radius:50%"/>
+      <span id="userName" style="font-size:.82rem;color:var(--white);font-weight:600"></span>
+      <a href="/auth/logout" style="font-size:.72rem;color:var(--m2);text-decoration:none;padding:3px 9px;border:1px solid var(--b1);border-radius:5px">Logout</a>
+    </div>
+  </div>
+
+  <!-- Post form -->
+  <div id="commentForm" style="display:none;background:var(--card);border:1px solid var(--b1);border-radius:var(--r);padding:14px;margin-bottom:16px">
+    <textarea id="commentText" placeholder="Write a comment or describe a bug..." style="width:100%;min-height:72px;background:var(--s);border:1px solid var(--b1);border-radius:6px;color:var(--white);font-size:.82rem;padding:9px 12px;resize:vertical;font-family:inherit;outline:none;box-sizing:border-box"></textarea>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+      <label style="display:flex;align-items:center;gap:5px;font-size:.76rem;color:var(--m2);cursor:pointer">
+        <input type="checkbox" id="isBug" style="width:auto;min-width:0;flex:none"/> Bug report
+      </label>
+      <button onclick="postComment()" style="margin-left:auto;padding:6px 16px;border-radius:6px;border:none;background:linear-gradient(135deg,var(--gold),#f97316);color:#000;font-size:.76rem;font-weight:700;cursor:pointer;font-family:inherit">Post</button>
+    </div>
+  </div>
+
+  <!-- Comments list -->
+  <div id="commentsList" style="display:flex;flex-direction:column;gap:10px"></div>
+</div>
+
 <footer>
   gd-level-api.liamt.xyz &nbsp;·&nbsp; Free · No auth · No limits
   &nbsp;·&nbsp;
@@ -839,6 +875,76 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
   &nbsp;·&nbsp;
   Powered by <a href="https://github.com/liamt8d" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none">Liam</a>
 </footer>
+
+<script>
+/* ── Comments system ── */
+let currentUser = null;
+
+async function loadUser() {
+  const res  = await fetch('/auth/me');
+  const data = await res.json();
+  document.getElementById('authLoading').style.display = 'none';
+  if (data.user) {
+    currentUser = data.user;
+    document.getElementById('userAvatar').src = data.user.avatar;
+    document.getElementById('userName').textContent = data.user.username;
+    document.getElementById('userInfo').style.display = 'flex';
+    document.getElementById('commentForm').style.display = 'block';
+  } else {
+    document.getElementById('loginBtn').style.display = 'flex';
+  }
+}
+
+async function loadComments() {
+  const res  = await fetch('/api/comments?page=general&limit=50');
+  const list = await res.json();
+  const el   = document.getElementById('commentsList');
+  if (!list.length) {
+    el.innerHTML = '<div style="font-size:.78rem;color:var(--m);text-align:center;padding:20px">No comments yet. Be the first!</div>';
+    return;
+  }
+  el.innerHTML = list.map(c => `
+    <div style="background:var(--card);border:1px solid var(--b1);border-radius:var(--r);padding:12px 15px;animation:fu .2s ease">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+        <img src="${c.avatar||''}" style="width:24px;height:24px;border-radius:50%" onerror="this.style.display='none'"/>
+        <span style="font-size:.8rem;font-weight:700;color:var(--white)">${escHtml(c.username)}</span>
+        ${c.is_bug ? '<span style="font-size:.6rem;font-weight:700;background:#ef444416;color:var(--red);border:1px solid #ef444428;padding:1px 7px;border-radius:20px">BUG</span>' : ''}
+        <span style="font-size:.68rem;color:var(--m);margin-left:auto">${new Date(c.created_at+'Z').toLocaleDateString()}</span>
+        ${currentUser?.discord_id === c.discord_id ? `<button onclick="deleteComment(${c.id})" style="font-size:.65rem;color:var(--m);background:none;border:none;cursor:pointer;padding:0 4px">✕</button>` : ''}
+      </div>
+      <div style="font-size:.8rem;color:var(--m2);line-height:1.6;white-space:pre-wrap">${escHtml(c.content)}</div>
+    </div>
+  `).join('');
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function postComment() {
+  const content = document.getElementById('commentText').value.trim();
+  const is_bug  = document.getElementById('isBug').checked;
+  if (!content) return;
+  const res = await fetch('/api/comments', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ content, is_bug, page: 'general' }),
+  });
+  if (res.ok) {
+    document.getElementById('commentText').value = '';
+    document.getElementById('isBug').checked = false;
+    await loadComments();
+  }
+}
+
+async function deleteComment(id) {
+  await fetch(`/api/comments?id=${id}`, { method: 'DELETE' });
+  await loadComments();
+}
+
+loadUser();
+loadComments();
+</script>
 
 <script>
 const BASE = window.location.origin;

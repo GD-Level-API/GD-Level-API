@@ -12,6 +12,11 @@ compatibility_flags = ["nodejs_compat"]
 binding = "CARD_CACHE"
 id      = "79333153777345988879b240b0b8b1d0"
 
+[[d1_databases]]
+binding     = "DB"
+database_name = "gd-comments"
+database_id = "8b7a88a9-04d4-4306-bb1c-f3cc22c8c75d"
+
 [[rules]]
 type  = "Text"
 globs = ["**/*.html", "**/*.svg"]

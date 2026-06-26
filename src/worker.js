@@ -566,6 +566,147 @@ async function handleThumbnail(pathname) {
 }
 
 // ── Router principal ──────────────────────────────────────────────────────────
+// ── Discord OAuth2 + Comments ─────────────────────────────────────────────────
+const DISCORD_CLIENT_ID  = '1509380071545110538';
+const DISCORD_REDIRECT   = 'https://gd-level-api.liamt.xyz/auth/callback';
+const SESS_TTL           = 60 * 60 * 24 * 7; // 7 days in seconds
+
+function getSession(request) {
+  const cookie = request.headers.get('Cookie') || '';
+  const match  = cookie.match(/gd_session=([^;]+)/);
+  return match ? match[1] : null;
+}
+
+function sessionCookie(id, clear = false) {
+  if (clear) return `gd_session=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`;
+  return `gd_session=${id}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${SESS_TTL}`;
+}
+
+function json(data, status = 200, extra = {}) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { 'Content-Type': 'application/json', ...CORS, ...extra },
+  });
+}
+
+async function handleAuthDiscord() {
+  const params = new URLSearchParams({
+    client_id:     DISCORD_CLIENT_ID,
+    redirect_uri:  DISCORD_REDIRECT,
+    response_type: 'code',
+    scope:         'identify',
+  });
+  return Response.redirect(`https://discord.com/oauth2/authorize?${params}`, 302);
+}
+
+async function handleAuthCallback(url, env) {
+  const code = url.searchParams.get('code');
+  if (!code) return Response.redirect('/?auth=error', 302);
+
+  const tokenRes = await fetch('https://discord.com/api/oauth2/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      client_id:     DISCORD_CLIENT_ID,
+      client_secret: env.DISCORD_SECRET,
+      grant_type:    'authorization_code',
+      code,
+      redirect_uri:  DISCORD_REDIRECT,
+    }),
+  });
+
+  if (!tokenRes.ok) return Response.redirect('/?auth=error', 302);
+  const { access_token } = await tokenRes.json();
+
+  const userRes = await fetch('https://discord.com/api/users/@me', {
+    headers: { Authorization: `Bearer ${access_token}` },
+  });
+  if (!userRes.ok) return Response.redirect('/?auth=error', 302);
+  const user = await userRes.json();
+
+  const sessId = crypto.randomUUID();
+  const sessData = JSON.stringify({
+    discord_id: user.id,
+    username:   user.username,
+    avatar:     user.avatar
+      ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
+      : `https://cdn.discordapp.com/embed/avatars/${parseInt(user.id) % 6}.png`,
+  });
+
+  await env.CARD_CACHE.put(`sess:${sessId}`, sessData, { expirationTtl: SESS_TTL });
+
+  return new Response(null, {
+    status: 302,
+    headers: { Location: '/?auth=ok', 'Set-Cookie': sessionCookie(sessId) },
+  });
+}
+
+async function handleAuthLogout(request, env) {
+  const sessId = getSession(request);
+  if (sessId && env.CARD_CACHE) await env.CARD_CACHE.delete(`sess:${sessId}`);
+  return new Response(null, {
+    status: 302,
+    headers: { Location: '/', 'Set-Cookie': sessionCookie('', true) },
+  });
+}
+
+async function handleAuthMe(request, env) {
+  const sessId = getSession(request);
+  if (!sessId) return json({ user: null });
+  const raw = await env.CARD_CACHE.get(`sess:${sessId}`);
+  if (!raw) return json({ user: null });
+  return json({ user: JSON.parse(raw) });
+}
+
+async function handleGetComments(url, env) {
+  const page  = url.searchParams.get('page') || 'general';
+  const limit = Math.min(parseInt(url.searchParams.get('limit') || '50'), 100);
+  const { results } = await env.DB.prepare(
+    `SELECT id, discord_id, username, avatar, content, is_bug, created_at
+     FROM comments WHERE page = ? ORDER BY created_at DESC LIMIT ?`
+  ).bind(page, limit).all();
+  return json(results);
+}
+
+async function handlePostComment(request, url, env) {
+  const sessId = getSession(request);
+  if (!sessId) return json({ error: 'Not authenticated' }, 401);
+  const raw = await env.CARD_CACHE.get(`sess:${sessId}`);
+  if (!raw) return json({ error: 'Session expired' }, 401);
+  const user = JSON.parse(raw);
+
+  let body;
+  try { body = await request.json(); } catch { return json({ error: 'Invalid JSON' }, 400); }
+
+  const content = (body.content || '').trim().slice(0, 500);
+  if (!content) return json({ error: 'Content required' }, 400);
+  const page   = (body.page || 'general').slice(0, 64);
+  const is_bug = body.is_bug ? 1 : 0;
+
+  const { meta } = await env.DB.prepare(
+    `INSERT INTO comments (page, discord_id, username, avatar, content, is_bug) VALUES (?,?,?,?,?,?)`
+  ).bind(page, user.discord_id, user.username, user.avatar, content, is_bug).run();
+
+  return json({ id: meta.last_row_id, username: user.username, content, is_bug, page }, 201);
+}
+
+async function handleDeleteComment(request, url, env) {
+  const sessId = getSession(request);
+  if (!sessId) return json({ error: 'Not authenticated' }, 401);
+  const raw = await env.CARD_CACHE.get(`sess:${sessId}`);
+  if (!raw) return json({ error: 'Session expired' }, 401);
+  const user = JSON.parse(raw);
+
+  const id = parseInt(url.searchParams.get('id'));
+  if (!id) return json({ error: 'Missing id' }, 400);
+
+  await env.DB.prepare(
+    `DELETE FROM comments WHERE id = ? AND discord_id = ?`
+  ).bind(id, user.discord_id).run();
+
+  return json({ ok: true });
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -582,6 +723,18 @@ export default {
       if (url.pathname === '/api/search')              return await handleSearch(url, env, request);
       if (url.pathname === '/api/card')                return await handleCard(url, env, request);
       if (url.pathname.startsWith('/thumbnail/'))      return await handleThumbnail(url.pathname);
+
+      if (url.pathname === '/auth/discord')            return await handleAuthDiscord();
+      if (url.pathname === '/auth/callback')           return await handleAuthCallback(url, env);
+      if (url.pathname === '/auth/logout')             return await handleAuthLogout(request, env);
+      if (url.pathname === '/auth/me')                 return await handleAuthMe(request, env);
+
+      if (url.pathname === '/api/comments') {
+        if (request.method === 'GET')    return await handleGetComments(url, env);
+        if (request.method === 'POST')   return await handlePostComment(request, url, env);
+        if (request.method === 'DELETE') return await handleDeleteComment(request, url, env);
+      }
+
       if (url.pathname === '/' || url.pathname === '/index.html') {
         return new Response(landingPage, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
       }
