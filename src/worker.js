@@ -410,6 +410,39 @@ async function handleLeaderboard(env) {
   return json(sorted.length ? sorted : POPULAR_FALLBACK);
 }
 
+// ── Handler: /api/stats (request counter) ─────────────────────────────────────
+async function handleApiStats(env) {
+  const total = await env?.CARD_CACHE?.get('stats:requests', 'json').catch(() => 0) || 0;
+  return json({ total_requests: total, since: '2026-06-26' });
+}
+
+async function trackRequest(env) {
+  if (!env?.CARD_CACHE) return;
+  const cur = await env.CARD_CACHE.get('stats:requests', 'json').catch(() => 0) || 0;
+  env.CARD_CACHE.put('stats:requests', JSON.stringify(cur + 1)).catch(() => {});
+}
+
+// ── Handler: /api/notify-changelog ────────────────────────────────────────────
+async function handleNotifyChangelog(request, env) {
+  const { version, description, secret } = await request.json().catch(() => ({}));
+  if (secret !== env?.NOTIFY_SECRET) return json({ error: 'Unauthorized' }, 401);
+  if (!env?.RESEND_KEY) return json({ error: 'RESEND_KEY not set' }, 500);
+  const subs = await env?.CARD_CACHE?.get('status:subscribers', 'json').catch(() => []) || [];
+  for (const email of subs) {
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${env.RESEND_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: 'updates@gd-level-api.liamt.xyz',
+        to: email,
+        subject: `🚀 GD Level API — ${version || 'New update'}`,
+        html: `<p>Hi!</p><p><strong>GD Level API</strong> just got an update.</p>${description ? `<p>${description}</p>` : ''}<p><a href="https://gd-level-api.liamt.xyz#changelog">View changelog</a></p>`,
+      }),
+    }).catch(() => {});
+  }
+  return json({ ok: true, notified: subs.length });
+}
+
 // ── Handler: /api/test-alert ──────────────────────────────────────────────────
 async function handleTestAlert(request, env) {
   const { email } = await request.json().catch(() => ({}));
@@ -1014,6 +1047,7 @@ export default {
     }
 
     try {
+      if (url.pathname.startsWith('/api/')) trackRequest(env);
       if (url.pathname === '/api/level')               return await handleLevel(url, env);
       if (url.pathname === '/api/levels')              return await handleLevelsBatch(url, env);
       if (url.pathname === '/api/leaderboard')         return await handleLeaderboard(env);
@@ -1053,7 +1087,15 @@ export default {
         return new Response(faviconSvg, { headers: { 'Content-Type': 'image/svg+xml', 'Cache-Control': 'public, max-age=86400' } });
       }
       if (url.pathname === '/og') return await handleOgImage(env);
-      return new Response('Not Found', { status: 404 });
+      if (url.pathname === '/robots.txt') {
+        return new Response(`User-agent: *\nAllow: /\nSitemap: https://gd-level-api.liamt.xyz/sitemap.xml`, { headers: { 'Content-Type': 'text/plain' } });
+      }
+      if (url.pathname === '/sitemap.xml') {
+        return new Response(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://gd-level-api.liamt.xyz/</loc><priority>1.0</priority></url><url><loc>https://gd-level-api.liamt.xyz/status</loc><priority>0.8</priority></url></urlset>`, { headers: { 'Content-Type': 'application/xml' } });
+      }
+      if (url.pathname === '/api/stats')  return await handleApiStats(env);
+      if (url.pathname === '/api/notify-changelog' && request.method === 'POST') return await handleNotifyChangelog(request, env);
+      return new Response(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>404 — GD Level API</title><link rel="icon" href="/favicon.svg"><style>*{box-sizing:border-box;margin:0;padding:0}body{background:#07070b;color:#9090c0;font-family:'Segoe UI',sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:16px;text-align:center}h1{font-size:6rem;font-weight:900;color:#eeeeff;letter-spacing:-4px;line-height:1}p{font-size:1rem;color:#6060a0}a{color:#f59e0b;text-decoration:none;font-weight:700;padding:10px 24px;border:1px solid #f59e0b40;border-radius:8px;margin-top:8px;display:inline-block;transition:background .15s}a:hover{background:#f59e0b15}.sub{font-size:.8rem;color:#3d3d5c;margin-top:4px}</style></head><body><h1>404</h1><p>This page doesn't exist.</p><p class="sub">If you're looking for an endpoint, check the docs.</p><a href="/">← Back to docs</a></body></html>`, { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     } catch (err) {
       return new Response(`Error: ${err.message}`, { status: 500 });
     }

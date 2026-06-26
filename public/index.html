@@ -36,6 +36,14 @@
       --r:12px;
     }
     html{scroll-behavior:smooth}
+    html.light{
+      --bg:#f8f8fc;--s:#ffffff;--card:#ffffff;--b1:#e2e2f0;--b2:#c8c8e0;
+      --m:#a0a0c0;--m2:#5050a0;--text:#4040a0;--white:#111133;
+    }
+    html.light body::before{background-image:linear-gradient(rgba(99,102,241,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,.04) 1px,transparent 1px)}
+    html.light nav{background:rgba(248,248,252,.92)}
+    html.light .o1{background:radial-gradient(circle,#6366f108,transparent 70%)}
+    html.light .o2{background:radial-gradient(circle,#f59e0b06,transparent 70%)}
     body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;line-height:1.6;overflow-x:hidden}
 
     /* grid bg */
@@ -333,6 +341,8 @@
       <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
       Discord
     </a>
+    <a class="nlink" href="/status">Status</a>
+    <button id="themeBtn" onclick="toggleTheme()" style="background:none;border:1px solid var(--b2);color:var(--m2);padding:5px 10px;border-radius:7px;cursor:pointer;font-size:.76rem;transition:all .15s" title="Toggle theme">🌙</button>
   </div>
 </nav>
 
@@ -348,6 +358,10 @@
         Thumbnails, generated PNG cards, name search and full level data for any GD level.
         No API key, no rate limits, no sign-up.
       </p>
+      <div id="reqCounter" style="display:inline-flex;align-items:center;gap:8px;font-size:.78rem;color:var(--m2);margin-bottom:16px;padding:6px 14px;background:var(--card);border:1px solid var(--b1);border-radius:8px">
+        <span style="width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block"></span>
+        <span id="reqCount">Loading...</span> API requests served
+      </div>
       <div class="feat-grid">
         <div class="feat">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
@@ -421,6 +435,7 @@
   <div class="docs-layout">
 
     <aside>
+      <input id="docSearch" type="search" placeholder="Search endpoints..." oninput="filterDocs(this.value)" style="width:100%;background:var(--s);border:1px solid var(--b2);border-radius:7px;padding:7px 11px;font-size:.75rem;color:var(--white);outline:none;margin-bottom:12px;transition:border-color .2s" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--b2)'"/>
       <span class="slabel">Overview</span>
       <a href="#ep-level" class="on">/api/level</a>
       <a href="#ep-levels">/api/levels</a>
@@ -1658,6 +1673,31 @@ document.querySelectorAll('.cw').forEach(cw => {
     set('st-gdb', '—');
   }
 })();
+
+/* ── Dark/Light theme ─────────── */
+function toggleTheme() {
+  const light = document.documentElement.classList.toggle('light');
+  localStorage.setItem('theme', light ? 'light' : 'dark');
+  document.getElementById('themeBtn').textContent = light ? '☀️' : '🌙';
+}
+if (localStorage.getItem('theme') === 'light') {
+  document.documentElement.classList.add('light');
+  document.getElementById('themeBtn').textContent = '☀️';
+}
+
+/* ── Doc search ───────────────── */
+function filterDocs(q) {
+  const s = q.toLowerCase();
+  document.querySelectorAll('aside a').forEach(a => {
+    a.style.display = a.textContent.toLowerCase().includes(s) ? '' : 'none';
+  });
+}
+
+/* ── Request counter ──────────── */
+fetch(`${BASE}/api/stats`).then(r => r.json()).then(d => {
+  const el = document.getElementById('reqCount');
+  if (el) el.textContent = (d.total_requests || 0).toLocaleString();
+}).catch(() => { const el = document.getElementById('reqCount'); if(el) el.closest('#reqCounter').style.display='none'; });
 
 /* ── Shareable playground URL ── */
 function updatePlaygroundUrl(params) {
