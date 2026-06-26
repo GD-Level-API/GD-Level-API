@@ -488,6 +488,67 @@ async function handleUser(url) {
   });
 }
 
+// ── Handler: /api/icon ───────────────────────────────────────────────────────
+const ICON_FORMS = ['cube', 'ship', 'ball', 'ufo', 'wave', 'robot', 'spider', 'swing', 'jetpack'];
+const ICON_FIELD = { cube: 'icon', ship: 'ship', ball: 'ball', ufo: 'ufo', wave: 'wave', robot: 'robot', spider: 'spider', swing: 'swing', jetpack: 'jetpack' };
+
+async function handleIcon(url) {
+  const name = url.searchParams.get('name')?.trim();
+  if (!name) return json({ error: 'Parameter "name" required. e.g. /api/icon?name=RobTop' }, 400);
+
+  const all  = url.searchParams.get('all') === '1';
+  const form = url.searchParams.get('form')?.toLowerCase();
+
+  const res = await fetch(`https://gdbrowser.com/api/profile/${encodeURIComponent(name)}`, {
+    headers: { 'User-Agent': 'GD-Level-API/1.0' },
+  });
+  if (!res.ok) return json({ error: 'User not found' }, 404);
+  const u = await res.json();
+  if (!u?.username) return json({ error: 'User not found' }, 404);
+
+  const col1 = u.col1 ?? 0;
+  const col2 = u.col2 ?? 3;
+  const glow = u.glow ? 1 : 0;
+  const activeForm = ICON_FORMS[u.iconType] || 'cube';
+
+  const iconUrl = (f) =>
+    `https://gdbrowser.com/icon/${encodeURIComponent(u.username)}?form=${f}&col1=${col1}&col2=${col2}&glow=${glow}`;
+
+  const apiUrl = (f) =>
+    `${url.origin}/api/icon?name=${encodeURIComponent(u.username)}&form=${f}`;
+
+  if (all) {
+    const icons = {};
+    for (const f of ICON_FORMS) {
+      icons[f] = {
+        form:   f,
+        num:    u[ICON_FIELD[f]] ?? 1,
+        url:    apiUrl(f),
+        active: f === activeForm,
+      };
+    }
+    return json({
+      username:   u.username,
+      activeForm,
+      col1, col2, glow: !!u.glow,
+      icons,
+    });
+  }
+
+  const target = (form && ICON_FORMS.includes(form)) ? form : activeForm;
+  const imgRes = await fetch(iconUrl(target));
+  if (!imgRes.ok) return json({ error: 'Could not fetch icon' }, 502);
+
+  const buf = await imgRes.arrayBuffer();
+  return new Response(buf, {
+    headers: {
+      'Content-Type':  'image/png',
+      'Cache-Control': 'public, max-age=300',
+      ...CORS,
+    },
+  });
+}
+
 // ── Handler: /api/search ─────────────────────────────────────────────────────
 async function handleSearch(url, env, request) {
   const q     = url.searchParams.get('q')?.trim();
@@ -720,6 +781,7 @@ export default {
       if (url.pathname === '/api/levels')              return await handleLevels(url);
       if (url.pathname === '/api/random')              return await handleRandom(url);
       if (url.pathname === '/api/user')                return await handleUser(url);
+      if (url.pathname === '/api/icon')                return await handleIcon(url);
       if (url.pathname === '/api/search')              return await handleSearch(url, env, request);
       if (url.pathname === '/api/card')                return await handleCard(url, env, request);
       if (url.pathname.startsWith('/thumbnail/'))      return await handleThumbnail(url.pathname);
