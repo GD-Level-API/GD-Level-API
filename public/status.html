@@ -75,11 +75,19 @@
     .sub-form{display:flex;gap:8px;max-width:400px;margin:0 auto}
     .sub-input{flex:1;background:var(--s);border:1px solid var(--b2);border-radius:8px;padding:10px 14px;font-size:.82rem;color:var(--white);outline:none;transition:border-color .15s}
     .sub-input:focus{border-color:var(--blue)}
-    .sub-btn{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;transition:opacity .15s}
-    .sub-btn:hover{opacity:.85}
-    .sub-msg{font-size:.75rem;margin-top:10px;min-height:18px}
-    .sub-msg.ok{color:var(--green)}
-    .sub-msg.err{color:var(--red)}
+    .sub-btn{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+    .sub-btn:hover{opacity:.85;transform:translateY(-1px);box-shadow:0 4px 20px #6366f140}
+    .sub-btn:active{transform:translateY(0)}
+    .sub-btn.loading{pointer-events:none;opacity:.7}
+    .sub-btn.done{background:linear-gradient(135deg,#22c55e,#16a34a)}
+    .sub-msg{font-size:.75rem;margin-top:10px;min-height:18px;transition:all .3s}
+    .sub-msg.ok{color:var(--green);animation:fadeUp .4s ease}
+    .sub-msg.err{color:var(--red);animation:fadeUp .3s ease}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes cf{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+    .sub-input{flex:1;background:var(--s);border:1px solid var(--b2);border-radius:8px;padding:10px 14px;font-size:.82rem;color:var(--white);outline:none;transition:border-color .2s,box-shadow .2s}
+    .sub-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px #6366f120}
+    .confetti{position:fixed;pointer-events:none;top:0;left:0;width:100%;height:100%;z-index:999;display:none}
 
     footer{border-top:1px solid var(--b1);padding:28px 0;text-align:center}
     footer a{color:var(--m2);text-decoration:none;font-size:.75rem}
@@ -249,7 +257,9 @@ async function load() {
 async function subscribe() {
   const email = document.getElementById('subEmail').value.trim();
   const msg   = document.getElementById('subMsg');
+  const btn   = document.querySelector('.sub-btn');
   if (!email || !email.includes('@')) { msg.className='sub-msg err'; msg.textContent='Enter a valid email.'; return; }
+  btn.classList.add('loading'); btn.textContent = 'Subscribing...';
   try {
     const r = await fetch(`${BASE}/api/subscribe`, {
       method: 'POST',
@@ -257,10 +267,33 @@ async function subscribe() {
       body: JSON.stringify({ email }),
     });
     const d = await r.json();
-    if (r.ok) { msg.className='sub-msg ok'; msg.textContent='✅ Subscribed! You\'ll be notified of any incidents.'; }
-    else       { msg.className='sub-msg err'; msg.textContent= d.error || 'Something went wrong.'; }
-  } catch { msg.className='sub-msg err'; msg.textContent='Network error.'; }
+    if (r.ok) {
+      btn.classList.remove('loading'); btn.classList.add('done'); btn.textContent = '✅ Subscribed!';
+      msg.className='sub-msg ok'; msg.textContent='You\'ll get an email if any service goes down.';
+      document.getElementById('subEmail').value = '';
+      launchConfetti();
+    } else {
+      btn.classList.remove('loading'); btn.textContent = 'Subscribe';
+      msg.className='sub-msg err'; msg.textContent = d.error || 'Something went wrong.';
+    }
+  } catch {
+    btn.classList.remove('loading'); btn.textContent = 'Subscribe';
+    msg.className='sub-msg err'; msg.textContent='Network error.';
+  }
 }
+
+function launchConfetti() {
+  const colors = ['#6366f1','#f59e0b','#22c55e','#06b6d4','#f97316'];
+  for (let i = 0; i < 60; i++) {
+    const el = document.createElement('div');
+    el.style.cssText = `position:fixed;width:8px;height:8px;border-radius:2px;background:${colors[i%colors.length]};left:${Math.random()*100}vw;top:-10px;z-index:9999;pointer-events:none;animation:cf ${1+Math.random()*2}s ease-in forwards;animation-delay:${Math.random()*0.5}s`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 3000);
+  }
+}
+
+// Enter key on input
+document.getElementById('subEmail')?.addEventListener('keydown', e => { if (e.key==='Enter') subscribe(); });
 
 load();
 </script>

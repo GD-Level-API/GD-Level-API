@@ -410,6 +410,25 @@ async function handleLeaderboard(env) {
   return json(sorted.length ? sorted : POPULAR_FALLBACK);
 }
 
+// ── Handler: /api/test-alert ──────────────────────────────────────────────────
+async function handleTestAlert(request, env) {
+  const { email } = await request.json().catch(() => ({}));
+  if (!email) return json({ error: 'email required' }, 400);
+  if (!env?.RESEND_KEY) return json({ error: 'RESEND_KEY not set' }, 500);
+  const r = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${env.RESEND_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      from: 'status@gd-level-api.liamt.xyz',
+      to: email,
+      subject: '🧪 GD Level API — Test alert',
+      html: `<p>This is a <strong>test alert</strong> from GD Level API Status.</p><p>If you received this, email notifications are working correctly!</p><p><a href="https://gd-level-api.liamt.xyz/status">View status page</a></p>`,
+    }),
+  });
+  const d = await r.json();
+  return json(r.ok ? { ok: true } : { error: d.message || 'Resend error' }, r.ok ? 200 : 500);
+}
+
 // ── Handler: /kofi-webhook ────────────────────────────────────────────────────
 async function handleKofiWebhook(request, env) {
   try {
@@ -1001,6 +1020,7 @@ export default {
       if (url.pathname === '/api/status')              return await handleStatus();
       if (url.pathname === '/api/status-history')      return await handleStatusHistory(env);
       if (url.pathname === '/api/run-cron')            { await runUptimeCron(env); return json({ ok: true }); }
+      if (url.pathname === '/api/test-alert' && request.method === 'POST') return await handleTestAlert(request, env);
       if (url.pathname === '/api/subscribe' && request.method === 'POST') return await handleSubscribe(request, env);
       if (url.pathname === '/api/kofi-goal')           return await handleKofiGoal(env);
       if (url.pathname === '/kofi-webhook' && request.method === 'POST') return await handleKofiWebhook(request, env);
