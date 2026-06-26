@@ -1,0 +1,13 @@
+name             = "gd-api"
+main             = "src/worker.js"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Descomenta y ajustá cuando tengas el dominio listo en Cloudflare
+# [[routes]]
+# pattern  = "thumball.liamt.xyz/*"
+# zone_name = "liamt.xyz"
+
+[[rules]]
+type  = "Text"
+globs = ["**/*.html"]

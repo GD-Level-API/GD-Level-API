@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GD Level API</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0b0b1a;
+      color: #c8c8e0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      padding: 48px 20px 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 52px;
+    }
+
+    .hero h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+    }
+
+    .hero p {
+      color: #8888aa;
+      font-size: 1rem;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #1e1e38;
+      color: #f0c94e;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+
+    /* Endpoints */
+    .endpoints {
+      width: 100%;
+      max-width: 760px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      margin-bottom: 52px;
+    }
+
+    .endpoint-card {
+      background: #131326;
+      border: 1px solid #252545;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .endpoint-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      border-bottom: 1px solid #252545;
+    }
+
+    .method {
+      font-size: 0.7rem;
+      font-weight: 700;
+      background: #1d3a1d;
+      color: #4caf72;
+      padding: 3px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .endpoint-path {
+      font-family: 'Courier New', monospace;
+      font-size: 0.95rem;
+      color: #e8e8ff;
+    }
+
+    .endpoint-desc {
+      padding: 12px 20px 16px;
+      font-size: 0.85rem;
+      color: #8888aa;
+      line-height: 1.6;
+    }
+
+    .param-row {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .param-name {
+      font-family: 'Courier New', monospace;
+      font-size: 0.82rem;
+      color: #f0c94e;
+      background: #1e1e38;
+      padding: 1px 7px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .param-desc { font-size: 0.82rem; color: #8888aa; }
+
+    pre {
+      background: #0f0f23;
+      border-top: 1px solid #252545;
+      padding: 16px 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.78rem;
+      color: #aaaacc;
+      overflow-x: auto;
+      line-height: 1.7;
+    }
+
+    .key   { color: #9eceff; }
+    .str   { color: #ce9178; }
+    .num   { color: #b5cea8; }
+    .bool  { color: #569cd6; }
+
+    /* Demo */
+    .demo-section {
+      width: 100%;
+      max-width: 760px;
+    }
+
+    .demo-section h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 14px;
+    }
+
+    .demo-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    input[type="number"] {
+      flex: 1;
+      padding: 11px 16px;
+      border-radius: 10px;
+      border: 1.5px solid #252545;
+      background: #131326;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="number"]:focus { border-color: #5865f2; }
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+    button {
+      padding: 11px 22px;
+      border-radius: 10px;
+      border: none;
+      background: #5865f2;
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover { background: #4752c4; }
+    button:disabled { background: #2a2a55; cursor: not-allowed; }
+
+    .card-preview {
+      background: #131326;
+      border: 1px solid #252545;
+      border-radius: 14px;
+      overflow: hidden;
+      display: none;
+    }
+    .card-preview.visible { display: block; }
+    .card-preview img { width: 100%; display: block; }
+
+    .urls-box {
+      margin-top: 12px;
+      background: #0f0f23;
+      border: 1px solid #252545;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.8rem;
+      color: #9eceff;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .urls-box.visible { display: flex; }
+    .urls-box a { color: #9eceff; text-decoration: none; }
+    .urls-box a:hover { text-decoration: underline; }
+
+    .error { color: #f04747; font-size: 0.88rem; margin-top: 8px; display: none; }
+    .error.visible { display: block; }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="badge">API pública · gratuita</div>
+    <h1>⭐ GD Level API</h1>
+    <p>Datos de niveles de Geometry Dash + thumbnail + card PNG generada — todo en un endpoint.</p>
+  </div>
+
+  <!-- Endpoints -->
+  <div class="endpoints">
+
+    <!-- /api/level -->
+    <div class="endpoint-card">
+      <div class="endpoint-header">
+        <span class="method">GET</span>
+        <span class="endpoint-path">/api/level?id={levelId}</span>
+      </div>
+      <div class="endpoint-desc">
+        Devuelve un JSON con todos los datos del nivel ya resueltos: nombre, creador, estadísticas, thumbnail y URL de la diff face.
+        <div class="param-row">
+          <span class="param-name">id</span>
+          <span class="param-desc">ID numérico del nivel en Geometry Dash (requerido)</span>
+        </div>
+      </div>
+      <pre>{
+  <span class="key">"id"</span>: <span class="num">128</span>,
+  <span class="key">"name"</span>: <span class="str">"1st level"</span>,
+  <span class="key">"author"</span>: <span class="str">"real storm"</span>,
+  <span class="key">"downloads"</span>: <span class="num">4011196</span>,
+  <span class="key">"likes"</span>: <span class="num">297980</span>,
+  <span class="key">"length"</span>: <span class="str">"Medium"</span>,
+  <span class="key">"lengthEs"</span>: <span class="str">"Medio"</span>,
+  <span class="key">"difficulty"</span>: <span class="str">"Normal"</span>,
+  <span class="key">"stars"</span>: <span class="num">3</span>,
+  <span class="key">"coins"</span>: <span class="num">0</span>,
+  <span class="key">"verifiedCoins"</span>: <span class="bool">false</span>,
+  <span class="key">"featured"</span>: <span class="bool">false</span>,
+  <span class="key">"epic"</span>: <span class="bool">false</span>,
+  <span class="key">"legendary"</span>: <span class="bool">false</span>,
+  <span class="key">"mythic"</span>: <span class="bool">false</span>,
+  <span class="key">"extras"</span>: [],
+  <span class="key">"song"</span>: { <span class="key">"name"</span>: <span class="str">"Base After Base"</span>, <span class="key">"author"</span>: <span class="str">"DJVI"</span> },
+  <span class="key">"urls"</span>: {
+    <span class="key">"thumbnail"</span>: <span class="str">"https://levelthumbs.prevter.me/thumbnail/128"</span>,
+    <span class="key">"diffFace"</span>: <span class="str">"https://autonick.github.io/diff-faces/..."</span>,
+    <span class="key">"card"</span>: <span class="str">"/api/card?id=128"</span>
+  }
+}</pre>
+    </div>
+
+    <!-- /api/card -->
+    <div class="endpoint-card">
+      <div class="endpoint-header">
+        <span class="method">GET</span>
+        <span class="endpoint-path">/api/card?id={levelId}</span>
+      </div>
+      <div class="endpoint-desc">
+        Devuelve directamente una imagen <strong style="color:#fff">PNG (800×260px)</strong> con la card del nivel. Podés embeber la URL en una web con <code style="color:#f0c94e;font-size:0.8rem">&lt;img src="/api/card?id=128"&gt;</code> o enviarla como attachment en un bot.
+        <div class="param-row">
+          <span class="param-name">id</span>
+          <span class="param-desc">ID numérico del nivel en Geometry Dash (requerido)</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Demo en vivo -->
+  <div class="demo-section">
+    <h2>Demo en vivo</h2>
+    <div class="demo-row">
+      <input type="number" id="levelId" placeholder="ID del nivel (ej: 128)" min="1" />
+      <button id="btn" onclick="demo()">Ver card</button>
+    </div>
+
+    <div class="card-preview" id="cardPreview">
+      <img id="cardImg" src="" alt="card del nivel" />
+    </div>
+
+    <div class="urls-box" id="urlsBox">
+      <span>JSON: <a id="linkJson" href="#" target="_blank">/api/level?id=…</a></span>
+      <span>PNG:  <a id="linkCard" href="#" target="_blank">/api/card?id=…</a></span>
+    </div>
+
+    <div class="error" id="errMsg"></div>
+  </div>
+
+  <script>
+    const BASE = window.location.origin;
+
+    function setV(id, show) { document.getElementById(id).classList.toggle('visible', show); }
+
+    async function demo() {
+      const id = parseInt(document.getElementById('levelId').value);
+      if (!id || id < 1) return;
+
+      const btn = document.getElementById('btn');
+      btn.disabled = true;
+      btn.textContent = 'Cargando…';
+      setV('cardPreview', false);
+      setV('urlsBox', false);
+      setV('errMsg', false);
+
+      const cardUrl = `${BASE}/api/card?id=${id}`;
+      const jsonUrl = `${BASE}/api/level?id=${id}`;
+
+      const img = document.getElementById('cardImg');
+      img.src = cardUrl;
+      img.onload = () => {
+        setV('cardPreview', true);
+        document.getElementById('linkJson').href = jsonUrl;
+        document.getElementById('linkJson').textContent = `/api/level?id=${id}`;
+        document.getElementById('linkCard').href = cardUrl;
+        document.getElementById('linkCard').textContent = `/api/card?id=${id}`;
+        setV('urlsBox', true);
+        btn.disabled = false;
+        btn.textContent = 'Ver card';
+      };
+      img.onerror = () => {
+        document.getElementById('errMsg').textContent = '❌ No se encontró ese nivel o hubo un error.';
+        setV('errMsg', true);
+        btn.disabled = false;
+        btn.textContent = 'Ver card';
+      };
+    }
+
+    document.getElementById('levelId').addEventListener('keydown', e => {
+      if (e.key === 'Enter') demo();
+    });
+  </script>
+</body>
+</html>
