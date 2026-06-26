@@ -582,7 +582,7 @@ function sessionCookie(id, clear = false) {
   return `gd_session=${id}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${SESS_TTL}`;
 }
 
-function json(data, status = 200, extra = {}) {
+function jsonResp(data, status = 200, extra = {}) {
   return new Response(JSON.stringify(data), {
     status,
     headers: { 'Content-Type': 'application/json', ...CORS, ...extra },
@@ -652,10 +652,10 @@ async function handleAuthLogout(request, env) {
 
 async function handleAuthMe(request, env) {
   const sessId = getSession(request);
-  if (!sessId) return json({ user: null });
+  if (!sessId) return jsonResp({ user: null });
   const raw = await env.CARD_CACHE.get(`sess:${sessId}`);
-  if (!raw) return json({ user: null });
-  return json({ user: JSON.parse(raw) });
+  if (!raw) return jsonResp({ user: null });
+  return jsonResp({ user: JSON.parse(raw) });
 }
 
 async function handleGetComments(url, env) {
@@ -665,21 +665,21 @@ async function handleGetComments(url, env) {
     `SELECT id, discord_id, username, avatar, content, is_bug, created_at
      FROM comments WHERE page = ? ORDER BY created_at DESC LIMIT ?`
   ).bind(page, limit).all();
-  return json(results);
+  return jsonResp(results);
 }
 
 async function handlePostComment(request, url, env) {
   const sessId = getSession(request);
-  if (!sessId) return json({ error: 'Not authenticated' }, 401);
+  if (!sessId) return jsonResp({ error: 'Not authenticated' }, 401);
   const raw = await env.CARD_CACHE.get(`sess:${sessId}`);
-  if (!raw) return json({ error: 'Session expired' }, 401);
+  if (!raw) return jsonResp({ error: 'Session expired' }, 401);
   const user = JSON.parse(raw);
 
   let body;
-  try { body = await request.json(); } catch { return json({ error: 'Invalid JSON' }, 400); }
+  try { body = await request.json(); } catch { return jsonResp({ error: 'Invalid JSON' }, 400); }
 
   const content = (body.content || '').trim().slice(0, 500);
-  if (!content) return json({ error: 'Content required' }, 400);
+  if (!content) return jsonResp({ error: 'Content required' }, 400);
   const page   = (body.page || 'general').slice(0, 64);
   const is_bug = body.is_bug ? 1 : 0;
 
@@ -687,24 +687,24 @@ async function handlePostComment(request, url, env) {
     `INSERT INTO comments (page, discord_id, username, avatar, content, is_bug) VALUES (?,?,?,?,?,?)`
   ).bind(page, user.discord_id, user.username, user.avatar, content, is_bug).run();
 
-  return json({ id: meta.last_row_id, username: user.username, content, is_bug, page }, 201);
+  return jsonResp({ id: meta.last_row_id, username: user.username, content, is_bug, page }, 201);
 }
 
 async function handleDeleteComment(request, url, env) {
   const sessId = getSession(request);
-  if (!sessId) return json({ error: 'Not authenticated' }, 401);
+  if (!sessId) return jsonResp({ error: 'Not authenticated' }, 401);
   const raw = await env.CARD_CACHE.get(`sess:${sessId}`);
-  if (!raw) return json({ error: 'Session expired' }, 401);
+  if (!raw) return jsonResp({ error: 'Session expired' }, 401);
   const user = JSON.parse(raw);
 
   const id = parseInt(url.searchParams.get('id'));
-  if (!id) return json({ error: 'Missing id' }, 400);
+  if (!id) return jsonResp({ error: 'Missing id' }, 400);
 
   await env.DB.prepare(
     `DELETE FROM comments WHERE id = ? AND discord_id = ?`
   ).bind(id, user.discord_id).run();
 
-  return json({ ok: true });
+  return jsonResp({ ok: true });
 }
 
 export default {
