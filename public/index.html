@@ -3,7 +3,28 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>GD Level API — gd-level-api.liamt.xyz</title>
+  <title>GD Level API — Free Geometry Dash REST API</title>
+  <meta name="description" content="Free public REST API for Geometry Dash. Get full level data, generate PNG cards, search levels, user profiles and player icons — no API key required."/>
+  <meta name="keywords" content="Geometry Dash, GD API, GD level API, Geometry Dash API, GDBrowser, level data, Discord bot"/>
+  <meta name="author" content="Liam"/>
+  <link rel="canonical" href="https://gd-level-api.liamt.xyz"/>
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://gd-level-api.liamt.xyz"/>
+  <meta property="og:title" content="GD Level API — Free Geometry Dash REST API"/>
+  <meta property="og:description" content="Free public REST API for Geometry Dash. Level data, PNG cards, search, user profiles and player icons. No API key required."/>
+  <meta property="og:image" content="https://gd-level-api.liamt.xyz/api/card?id=10565740"/>
+  <meta property="og:image:width" content="800"/>
+  <meta property="og:image:height" content="260"/>
+  <meta property="og:site_name" content="GD Level API"/>
+
+  <!-- Twitter / Discord unfurl -->
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="GD Level API — Free Geometry Dash REST API"/>
+  <meta name="twitter:description" content="Free public REST API for Geometry Dash. No API key required."/>
+  <meta name="twitter:image" content="https://gd-level-api.liamt.xyz/api/card?id=10565740"/>
+
   <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -1489,19 +1510,18 @@ document.querySelectorAll('.cw').forEach(cw => {
 (() => {
   const grid = document.getElementById('galGrid');
   const levels = [
-    { id: 128,      name: '1st level',      author: 'real storm',  stars: 3,  diff: 'Normal' },
-    { id: 10565740, name: 'Clubstep',        author: 'RobTop',      stars: 14, diff: 'Hard Demon' },
-    { id: 44543505, name: 'Finger Dash',     author: 'RobTop',      stars: 10, diff: 'Harder' },
-    { id: 27318416, name: 'Deadlocked',      author: 'RobTop',      stars: 12, diff: 'Insane' },
-    { id: 39017968, name: 'The Lightning Road', author: 'Narutogoku9', stars: 10, diff: 'Harder' },
-    { id: 62717162, name: 'Niwa',            author: 'Exen',        stars: 10, diff: 'Hard' },
+    { id: 128,      name: '1st level',         author: 'real storm',   stars: 3,  diff: 'Normal' },
+    { id: 10565740, name: 'Clubstep',           author: 'RobTop',       stars: 14, diff: 'Hard Demon' },
+    { id: 44543505, name: 'Finger Dash',        author: 'RobTop',       stars: 10, diff: 'Harder' },
+    { id: 27318416, name: 'Deadlocked',         author: 'RobTop',       stars: 12, diff: 'Insane' },
+    { id: 39017968, name: 'The Lightning Road', author: 'Narutogoku9',  stars: 10, diff: 'Harder' },
+    { id: 62717162, name: 'Niwa',               author: 'Exen',         stars: 10, diff: 'Hard' },
   ];
-  const shuffle = a => [...a].sort(() => Math.random() - .5);
   grid.innerHTML = '';
-  shuffle(levels).slice(0, 3).forEach(lvl => {
+  [...levels].sort(() => Math.random() - .5).slice(0, 3).forEach(lvl => {
     const el = document.createElement('div');
     el.className = 'gal-item';
-    el.innerHTML = `<img class="gal-img" src="https://levelthumbs.prevter.me/thumbnail/${lvl.id}" alt="${esc(lvl.name)}" loading="lazy"/>
+    el.innerHTML = `<img class="gal-img" src="${BASE}/api/card?id=${lvl.id}" alt="${esc(lvl.name)}" loading="lazy"/>
       <div class="gal-meta"><span class="gal-name">${esc(lvl.name)}</span><span class="gal-auth">by ${esc(lvl.author)} · ⭐${lvl.stars} · ${esc(lvl.diff)}</span></div>`;
     el.onclick = () => { document.getElementById('cardId').value = lvl.id; document.getElementById('demo-card').scrollIntoView({behavior:'smooth'}); setTimeout(runCard, 350); };
     grid.appendChild(el);
