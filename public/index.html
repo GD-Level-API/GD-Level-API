@@ -578,12 +578,69 @@
         <div class="code-block">
           <div class="tabs">
             <div class="tab active" onclick="switchTab('ep4','html')">HTML</div>
+            <div class="tab" onclick="switchTab('ep4','react')">React / JSX</div>
+            <div class="tab" onclick="switchTab('ep4','astro')">Astro</div>
+            <div class="tab" onclick="switchTab('ep4','vue')">Vue</div>
             <div class="tab" onclick="switchTab('ep4','curl')">curl</div>
           </div>
+
           <div class="tab-pane active" data-ep="ep4" data-lang="html">
-<pre>&lt;<span class="c-kw">img</span> <span class="c-key">src</span>=<span class="c-str">"https://thumball.liamt.xyz/thumbnail/128"</span>
-     <span class="c-key">alt</span>=<span class="c-str">"thumbnail"</span> /&gt;</pre>
+<pre><span class="c-cmt">&lt;!-- Cualquier HTML plano, sin frameworks --&gt;</span>
+&lt;<span class="c-kw">img</span>
+  <span class="c-key">src</span>=<span class="c-str">"https://thumball.liamt.xyz/thumbnail/128"</span>
+  <span class="c-key">alt</span>=<span class="c-str">"thumbnail nivel 128"</span>
+  <span class="c-key">style</span>=<span class="c-str">"width:320px;border-radius:8px"</span>
+/&gt;</pre>
           </div>
+
+          <div class="tab-pane" data-ep="ep4" data-lang="react">
+<pre><span class="c-cmt">// React / Next.js — componente funcional</span>
+<span class="c-kw">export default function</span> <span class="c-fn">LevelThumb</span>({ <span class="c-var">id</span> }) {
+  <span class="c-kw">return</span> (
+    &lt;<span class="c-kw">img</span>
+      <span class="c-key">src</span>=<span class="c-op">{</span><span class="c-str">`https://thumball.liamt.xyz/thumbnail/</span><span class="c-op">${</span><span class="c-var">id</span><span class="c-op">}</span><span class="c-str">`</span><span class="c-op">}</span>
+      <span class="c-key">alt</span>=<span class="c-op">{</span><span class="c-str">`thumbnail nivel </span><span class="c-op">${</span><span class="c-var">id</span><span class="c-op">}</span><span class="c-str">`</span><span class="c-op">}</span>
+      <span class="c-key">style</span>=<span class="c-op">{{</span> <span class="c-key">width</span>: <span class="c-str">"320px"</span>, <span class="c-key">borderRadius</span>: <span class="c-str">"8px"</span> <span class="c-op">}}</span>
+    /&gt;
+  );
+}
+
+<span class="c-cmt">// Uso: &lt;LevelThumb id={128} /&gt;</span></pre>
+          </div>
+
+          <div class="tab-pane" data-ep="ep4" data-lang="astro">
+<pre><span class="c-cmt">--- src/components/LevelThumb.astro ---</span>
+---
+<span class="c-kw">const</span> { <span class="c-var">id</span> } = <span class="c-var">Astro</span>.<span class="c-key">props</span>;
+---
+
+&lt;<span class="c-kw">img</span>
+  <span class="c-key">src</span>=<span class="c-op">{</span><span class="c-str">`https://thumball.liamt.xyz/thumbnail/</span><span class="c-op">${</span><span class="c-var">id</span><span class="c-op">}</span><span class="c-str">`</span><span class="c-op">}</span>
+  <span class="c-key">alt</span>=<span class="c-str">"thumbnail"</span>
+  <span class="c-key">style</span>=<span class="c-str">"width:320px;border-radius:8px"</span>
+/&gt;
+
+<span class="c-cmt">&lt;!-- Uso en otra página --&gt;</span>
+<span class="c-cmt">&lt;!-- &lt;LevelThumb id={128} /&gt; --&gt;</span></pre>
+          </div>
+
+          <div class="tab-pane" data-ep="ep4" data-lang="vue">
+<pre><span class="c-cmt">&lt;!-- Vue 3 / Nuxt --&gt;</span>
+&lt;<span class="c-kw">template</span>&gt;
+  &lt;<span class="c-kw">img</span>
+    <span class="c-key">:src</span>=<span class="c-str">`https://thumball.liamt.xyz/thumbnail/${id}`</span>
+    <span class="c-key">:alt</span>=<span class="c-str">`thumbnail nivel ${id}`</span>
+    <span class="c-key">style</span>=<span class="c-str">"width:320px;border-radius:8px"</span>
+  /&gt;
+&lt;/<span class="c-kw">template</span>&gt;
+
+&lt;<span class="c-kw">script</span> <span class="c-key">setup</span>&gt;
+<span class="c-fn">defineProps</span>({ <span class="c-key">id</span>: <span class="c-var">Number</span> })
+&lt;/<span class="c-kw">script</span>&gt;
+
+<span class="c-cmt">&lt;!-- Uso: &lt;LevelThumb :id="128" /&gt; --&gt;</span></pre>
+          </div>
+
           <div class="tab-pane" data-ep="ep4" data-lang="curl">
 <pre>curl -o thumb.webp <span class="c-str">"https://thumball.liamt.xyz/thumbnail/128"</span></pre>
           </div>
