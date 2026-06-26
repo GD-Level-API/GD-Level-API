@@ -497,7 +497,7 @@ async function handleKofiWebhook(request, env) {
 async function handleKofiGoal(env) {
   const total = await env?.CARD_CACHE?.get('kofi:total', 'json').catch(() => 0) || 0;
   const last  = await env?.CARD_CACHE?.get('kofi:last',  'json').catch(() => null);
-  return json({ total: Math.round(total * 100) / 100, goal: 100, pct: Math.min(100, Math.round(total)), last }, { headers: CORS });
+  return json({ total: Math.round(total * 100) / 100, goal: 100, pct: Math.min(100, Math.round(total)), last });
 }
 
 // ── Handler: /api/status ──────────────────────────────────────────────────────
