@@ -1387,25 +1387,30 @@ async function runIcon() {
   show('iconLoad', true); show('iconRes', false); show('iconErr', false);
 
   const singleUrl    = `${BASE}/api/icon?name=${encodeURIComponent(name)}${form ? '&form='+form : ''}`;
-  const compositeUrl = `${BASE}/api/icon/composite?name=${encodeURIComponent(name)}`;
+  const compositeUrl = `https://icon.liamt.xyz/composite?name=${encodeURIComponent(name)}`;
 
   try {
-    const [singleRes, compositeRes] = await Promise.all([fetch(singleUrl), fetch(compositeUrl)]);
+    const singleRes = await fetch(singleUrl);
     if (!singleRes.ok) {
       show('iconLoad', false);
       txt('iconErr', singleRes.status === 404 ? `⚠ Player "${name}" not found.` : `⚠ Error ${singleRes.status}.`);
       show('iconErr', true); btn.disabled = false; return;
     }
-    const singleBlob    = await singleRes.blob();
-    const compositeBlob = compositeRes.ok ? await compositeRes.blob() : null;
-
-    document.getElementById('iconSingle').src    = URL.createObjectURL(singleBlob);
-    document.getElementById('iconComposite').src = compositeBlob ? URL.createObjectURL(compositeBlob) : '';
+    const singleBlob = await singleRes.blob();
+    document.getElementById('iconSingle').src = URL.createObjectURL(singleBlob);
     const lc = document.getElementById('iconLC');
     lc.href = singleUrl; lc.textContent = singleUrl;
     show('iconLoad', false); show('iconRes', true);
-  } catch(e) { show('iconLoad', false); txt('iconErr','⚠ Network error.'); show('iconErr', true); }
-  btn.disabled = false;
+    btn.disabled = false;
+
+    // composite loads async after — no bloquea el icono individual
+    document.getElementById('iconComposite').src = '';
+    fetch(compositeUrl).then(async r => {
+      if (!r.ok) return;
+      const blob = await r.blob();
+      document.getElementById('iconComposite').src = URL.createObjectURL(blob);
+    }).catch(() => {});
+  } catch(e) { show('iconLoad', false); txt('iconErr','⚠ Network error.'); show('iconErr', true); btn.disabled = false; }
 }
 
 /* keyboard */
