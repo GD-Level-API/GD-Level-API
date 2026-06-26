@@ -901,16 +901,16 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
             </div>
             <div class="lrow" id="iconLoad"><div class="spin v"></div>Rendering icon...</div>
             <div class="err" id="iconErr"></div>
-            <div id="iconRes" style="display:none">
-              <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;margin-top:12px">
-                <div style="text-align:center">
+            <div class="rc" id="iconRes" style="padding:14px">
+              <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap">
+                <div style="text-align:center;flex-shrink:0">
                   <div class="preview-label">Active icon</div>
-                  <img id="iconSingle" src="" alt="icon" style="width:128px;height:128px;border-radius:8px;background:var(--s);display:block"/>
-                  <div class="rlinks" style="margin-top:6px"><a id="iconLC" href="#" target="_blank" style="font-size:.68rem">Copy URL</a></div>
+                  <img id="iconSingle" src="" alt="icon" style="width:128px;height:128px;border-radius:8px;background:var(--bg);display:block"/>
+                  <div class="rlinks v" style="margin-top:6px;justify-content:center"><a id="iconLC" href="#" target="_blank" style="font-size:.68rem">Open URL</a></div>
                 </div>
-                <div style="flex:1;min-width:0">
+                <div style="flex:1;min-width:200px">
                   <div class="preview-label">All forms</div>
-                  <img id="iconComposite" src="" alt="all icons" style="width:100%;border-radius:8px;background:var(--s);display:block;image-rendering:auto"/>
+                  <img id="iconComposite" src="" alt="all icons" style="width:100%;border-radius:8px;background:var(--bg);display:block;min-height:48px"/>
                 </div>
               </div>
             </div>
