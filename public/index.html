@@ -1607,12 +1607,12 @@ document.querySelectorAll('.cw').forEach(cw => {
 (() => {
   const grid = document.getElementById('galGrid');
   const levels = [
-    { id: 44543505, name: 'Finger Dash',   author: 'RobTop',    stars: 10, diff: 'Harder' },
-    { id: 27318416, name: 'Deadlocked',    author: 'RobTop',    stars: 12, diff: 'Insane' },
-    { id: 10565740, name: 'Clubstep',      author: 'RobTop',    stars: 14, diff: 'Hard Demon' },
-    { id: 26276574, name: 'Sonic Wave',    author: 'Cyclic',    stars: 10, diff: 'Extreme Demon' },
-    { id: 39017968, name: 'The Lightning Road', author: 'Narutogoku9', stars: 10, diff: 'Harder' },
-    { id: 5717 ,    name: 'Bloodbath',     author: 'Riot',      stars: 10, diff: 'Extreme Demon' },
+    { id: 21,       name: 'Fingerdash',        author: 'RobTop', stars: 10, diff: 'Harder' },
+    { id: 19,       name: 'Deadlocked',        author: 'RobTop', stars: 12, diff: 'Insane' },
+    { id: 14,       name: 'Clubstep',          author: 'RobTop', stars: 14, diff: 'Hard Demon' },
+    { id: 10565740, name: 'Clubstep (online)', author: 'RobTop', stars: 14, diff: 'Hard Demon' },
+    { id: 12,       name: 'Theory of Everything', author: 'RobTop', stars: 10, diff: 'Harder' },
+    { id: 13,       name: 'Electroman Adventures', author: 'RobTop', stars: 10, diff: 'Harder' },
   ];
   grid.innerHTML = '';
   [...levels].sort(() => Math.random() - .5).slice(0, 3).forEach(lvl => {
