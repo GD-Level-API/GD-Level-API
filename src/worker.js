@@ -446,13 +446,17 @@ async function handleCard(url, env, request) {
 
 // ── Handler: /og ─────────────────────────────────────────────────────────────
 async function handleOgImage(env) {
-  const cacheKey = 'og:banner:v2';
+  const cacheKey = 'og:banner:v3';
   if (env?.CARD_CACHE) {
     const cached = await env.CARD_CACHE.get(cacheKey, 'arrayBuffer');
     if (cached) return new Response(cached, { headers: { 'Content-Type': 'image/png', 'Cache-Control': 'public, max-age=86400' } });
   }
 
-  const [[fontRegular, fontBold]] = await Promise.all([ensureFonts(), ensureWasm()]);
+  const [[fontRegular, fontBold], faviconData] = await Promise.all([
+    ensureFonts().then(f => (ensureWasm(), f)),
+    toDataUrl('https://gd-level-api.liamt.xyz/assets/favicon.png').catch(() => null),
+  ]);
+  await ensureWasm();
 
   const svg = await satori(
     h('div', {
@@ -465,8 +469,10 @@ async function handleOgImage(env) {
     },
       h('div', { style: { position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 70% 30%, rgba(99,102,241,0.12), transparent 60%)', borderRadius: '0' } }),
       h('div', { style: { display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '28px' } },
-        h('div', { style: { width: '72px', height: '72px', background: 'linear-gradient(135deg,#f59e0b,#f97316)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' } },
-          h('div', { style: { color: '#000', fontSize: '42px', fontWeight: 900, fontFamily: 'Inter', lineHeight: 1 } }, 'GD'),
+        h('div', { style: { width: '72px', height: '72px', background: 'linear-gradient(135deg,#f59e0b,#f97316)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' } },
+          faviconData
+            ? h('img', { src: faviconData, style: { width: '56px', height: '56px', objectFit: 'contain' } })
+            : h('div', { style: { color: '#000', fontSize: '42px', fontWeight: 900, lineHeight: 1 } }, 'GD'),
         ),
         h('div', { style: { fontSize: '52px', fontWeight: 900, color: '#eeeeff', letterSpacing: '-2px' } }, 'GD Level API'),
       ),
