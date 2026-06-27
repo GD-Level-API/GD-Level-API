@@ -5,7 +5,7 @@
 [![Discord](https://img.shields.io/discord/wfWX2nuXw4?label=discord&logo=discord&logoColor=white&color=5865F2)](https://discord.gg/wfWX2nuXw4)
 [![Status](https://img.shields.io/badge/status-operational-22c55e)](https://gd-level-api.liamt.xyz/status)
 
-A free public REST API for **Geometry Dash** — level data, PNG card generation, player icons, search and more. No API key, no sign-up, free forever.
+A free public REST API for **Geometry Dash**,  level data, PNG card generation, player icons, search and more. No API key, no sign-up, free forever.
 
 **Base URL:**
 ```
@@ -50,7 +50,7 @@ print(level["name"])  # "1st level"
 | GET | `/api/rate-limit` | Your current rate limit usage |
 
 > [!NOTE]
-> CORS is fully open (`*`) — callable from any browser, bot, or server with no extra configuration.
+> CORS is fully open (`*`),  callable from any browser, bot, or server with no extra configuration.
 
 ---
 
@@ -130,13 +130,13 @@ GD Level API is free and will stay free. If you'd like to support hosting costs,
 
 ## 📎 Links
 
-- 🌐 **Docs & Playground** — [gd-level-api.liamt.xyz](https://gd-level-api.liamt.xyz)
-- 📊 **Status Page** — [gd-level-api.liamt.xyz/status](https://gd-level-api.liamt.xyz/status)
-- 💬 **Discord** — [discord.gg/wfWX2nuXw4](https://discord.gg/wfWX2nuXw4)
-- 🐛 **Report a bug** — [GitHub Issues](https://github.com/GD-Level-API/GD-Level-API/issues)
+- 🌐 **Docs & Playground**,  [gd-level-api.liamt.xyz](https://gd-level-api.liamt.xyz)
+- 📊 **Status Page**,  [gd-level-api.liamt.xyz/status](https://gd-level-api.liamt.xyz/status)
+- 💬 **Discord**,  [discord.gg/wfWX2nuXw4](https://discord.gg/wfWX2nuXw4)
+- 🐛 **Report a bug**,  [GitHub Issues](https://github.com/GD-Level-API/GD-Level-API/issues)
 
 ---
 
 ## 📄 License
 
-[CC BY-NC 4.0](./LICENSE) © 2026 [GD-Level-API](https://github.com/GD-Level-API) — Not affiliated with RobTop Games.
+[CC BY-NC 4.0](./LICENSE) © 2026 [GD-Level-API](https://github.com/GD-Level-API),  Not affiliated with RobTop Games.

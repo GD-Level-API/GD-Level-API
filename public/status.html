@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>GD Level API — Status</title>
+  <title>GD Level API,  Status</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -203,7 +203,7 @@ function renderBars(containerId, history) {
     bar.className = 'bar ' + (val === undefined ? 'empty' : val >= 0.9 ? 'up' : val >= 0.5 ? 'degraded' : 'down');
     const h = val === undefined ? 40 : Math.max(25, Math.round(val * 100));
     bar.style.height = h + '%';
-    bar.title = key + (val !== undefined ? ` — ${Math.round(val*100)}% uptime` : ' — No data');
+    bar.title = key + (val !== undefined ? `,  ${Math.round(val*100)}% uptime` : ',  No data');
     el.appendChild(bar);
     if (val !== undefined) { upCount += val; total++; }
   }

@@ -449,7 +449,7 @@ async function handleNotifyChangelog(request, env) {
       body: JSON.stringify({
         from: 'updates@gd-level-api.liamt.xyz',
         to: email,
-        subject: `🚀 GD Level API — ${version || 'New update'}`,
+        subject: `🚀 GD Level API,  ${version || 'New update'}`,
         html: `<p>Hi!</p><p><strong>GD Level API</strong> just got an update.</p>${description ? `<p>${description}</p>` : ''}<p><a href="https://gd-level-api.liamt.xyz#changelog">View changelog</a></p>`,
       }),
     }).catch(() => {});
@@ -468,7 +468,7 @@ async function handleTestAlert(request, env) {
     body: JSON.stringify({
       from: 'status@gd-level-api.liamt.xyz',
       to: email,
-      subject: '🧪 GD Level API — Test alert',
+      subject: '🧪 GD Level API,  Test alert',
       html: `<p>This is a <strong>test alert</strong> from GD Level API Status.</p><p>If you received this, email notifications are working correctly!</p><p><a href="https://gd-level-api.liamt.xyz/status">View status page</a></p>`,
     }),
   });
@@ -545,7 +545,7 @@ async function runUptimeCron(env) {
         body: JSON.stringify({
           from: 'status@gd-level-api.liamt.xyz',
           to: email,
-          subject: '🔴 GD Level API — Service disruption detected',
+          subject: '🔴 GD Level API,  Service disruption detected',
           html: `<p>Hi,</p><p>We detected an issue with: <strong>${downList.join(', ')}</strong>.</p><p>Check <a href="https://gd-level-api.liamt.xyz/status">gd-level-api.liamt.xyz/status</a> for updates.</p><p style="font-size:12px;color:#666">Unsubscribe: reply with "unsubscribe"</p>`,
         }),
       }).catch(() => {});
@@ -1111,7 +1111,7 @@ export default {
       if (url.pathname === '/api/stats')       return await handleApiStats(env);
       if (url.pathname === '/api/rate-limit')  return await handleRateLimitInfo(request, env);
       if (url.pathname === '/api/notify-changelog' && request.method === 'POST') return await handleNotifyChangelog(request, env);
-      return new Response(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>404 — GD Level API</title><link rel="icon" href="/favicon.svg"><style>*{box-sizing:border-box;margin:0;padding:0}body{background:#07070b;color:#9090c0;font-family:'Segoe UI',sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:16px;text-align:center}h1{font-size:6rem;font-weight:900;color:#eeeeff;letter-spacing:-4px;line-height:1}p{font-size:1rem;color:#6060a0}a{color:#f59e0b;text-decoration:none;font-weight:700;padding:10px 24px;border:1px solid #f59e0b40;border-radius:8px;margin-top:8px;display:inline-block;transition:background .15s}a:hover{background:#f59e0b15}.sub{font-size:.8rem;color:#3d3d5c;margin-top:4px}</style></head><body><h1>404</h1><p>This page doesn't exist.</p><p class="sub">If you're looking for an endpoint, check the docs.</p><a href="/">← Back to docs</a></body></html>`, { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+      return new Response(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>404,  GD Level API</title><link rel="icon" href="/favicon.svg"><style>*{box-sizing:border-box;margin:0;padding:0}body{background:#07070b;color:#9090c0;font-family:'Segoe UI',sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:16px;text-align:center}h1{font-size:6rem;font-weight:900;color:#eeeeff;letter-spacing:-4px;line-height:1}p{font-size:1rem;color:#6060a0}a{color:#f59e0b;text-decoration:none;font-weight:700;padding:10px 24px;border:1px solid #f59e0b40;border-radius:8px;margin-top:8px;display:inline-block;transition:background .15s}a:hover{background:#f59e0b15}.sub{font-size:.8rem;color:#3d3d5c;margin-top:4px}</style></head><body><h1>404</h1><p>This page doesn't exist.</p><p class="sub">If you're looking for an endpoint, check the docs.</p><a href="/">← Back to docs</a></body></html>`, { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     } catch (err) {
       return new Response(`Error: ${err.message}`, { status: 500 });
     }

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>GD Level API — Free Geometry Dash REST API</title>
-  <meta name="description" content="Free public REST API for Geometry Dash. Get full level data, generate PNG cards, search levels, user profiles and player icons — no API key required."/>
+  <title>GD Level API,  Free Geometry Dash REST API</title>
+  <meta name="description" content="Free public REST API for Geometry Dash. Get full level data, generate PNG cards, search levels, user profiles and player icons,  no API key required."/>
   <meta name="keywords" content="Geometry Dash, GD API, GD level API, Geometry Dash API, GDBrowser, level data, Discord bot"/>
   <meta name="author" content="Liam"/>
   <link rel="canonical" href="https://gd-level-api.liamt.xyz"/>
@@ -12,7 +12,7 @@
   <!-- Open Graph -->
   <meta property="og:type" content="website"/>
   <meta property="og:url" content="https://gd-level-api.liamt.xyz"/>
-  <meta property="og:title" content="GD Level API — Free Geometry Dash REST API"/>
+  <meta property="og:title" content="GD Level API,  Free Geometry Dash REST API"/>
   <meta property="og:description" content="Free public REST API for Geometry Dash. Level data, PNG cards, search, user profiles and player icons. No API key required."/>
   <meta property="og:image" content="https://gd-level-api.liamt.xyz/og"/>
   <meta property="og:image:width" content="1200"/>
@@ -21,7 +21,7 @@
 
   <!-- Twitter / Discord unfurl -->
   <meta name="twitter:card" content="summary_large_image"/>
-  <meta name="twitter:title" content="GD Level API — Free Geometry Dash REST API"/>
+  <meta name="twitter:title" content="GD Level API,  Free Geometry Dash REST API"/>
   <meta name="twitter:description" content="Free public REST API for Geometry Dash. No API key required."/>
   <meta name="twitter:image" content="https://gd-level-api.liamt.xyz/og"/>
 
@@ -103,7 +103,7 @@
     @keyframes sh{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
     .live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 7px var(--green);flex-shrink:0}
 
-    /* hero right — live preview */
+    /* hero right,  live preview */
     .preview-box{background:var(--card);border:1px solid var(--b2);border-radius:16px;overflow:hidden;box-shadow:0 24px 80px #00000060}
     .preview-bar{display:flex;align-items:center;gap:7px;padding:12px 16px;border-bottom:1px solid var(--b1);background:var(--s)}
     .pb-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
@@ -395,7 +395,7 @@
       </div>
     </div>
 
-    <!-- Right — live preview -->
+    <!-- Right,  live preview -->
     <div class="hero-right">
       <div class="preview-box">
         <div class="preview-bar">
@@ -430,7 +430,7 @@
   <div class="sec-head">
     <span class="sec-ey">Examples</span>
     <h2>Cards in the wild</h2>
-    <p>Generated on the fly from real GD data — fetched live, cached 1 hour.</p>
+    <p>Generated on the fly from real GD data,  fetched live, cached 1 hour.</p>
   </div>
   <div class="gal-grid" id="galGrid">
     <div class="gal-skeleton"></div>
@@ -469,7 +469,7 @@
       <div class="sec-head">
         <span class="sec-ey">Reference</span>
         <h2>API Endpoints</h2>
-        <p>All endpoints use <strong style="color:var(--white)">GET</strong>. CORS is fully open (<code>*</code>) — call from any browser, bot, or server. Responses are either <strong style="color:var(--white)">JSON</strong> or <strong style="color:var(--white)">PNG</strong>. No authentication or API key required.</p>
+        <p>All endpoints use <strong style="color:var(--white)">GET</strong>. CORS is fully open (<code>*</code>),  call from any browser, bot, or server. Responses are either <strong style="color:var(--white)">JSON</strong> or <strong style="color:var(--white)">PNG</strong>. No authentication or API key required.</p>
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
           <div style="font-size:.73rem;color:var(--m2);background:var(--card);border:1px solid var(--b1);border-radius:7px;padding:7px 13px;line-height:1.7">
             <strong style="color:var(--white)">Base URL</strong><br>
@@ -477,7 +477,7 @@
           </div>
           <div style="font-size:.73rem;color:var(--m2);background:var(--card);border:1px solid var(--b1);border-radius:7px;padding:7px 13px;line-height:1.7">
             <strong style="color:var(--white)">Rate limits</strong><br>
-            None enforced — fair use assumed.
+            None enforced,  fair use assumed.
           </div>
           <div style="font-size:.73rem;color:var(--m2);background:var(--card);border:1px solid var(--b1);border-radius:7px;padding:7px 13px;line-height:1.7">
             <strong style="color:var(--white)">Card caching</strong><br>
@@ -524,11 +524,11 @@
                   <code style="color:var(--gold)">song.author</code><span>Song artist name.</span>
                   <code style="color:var(--gold)">urls.thumbnail</code><span>Direct URL to the level thumbnail image (WebP, served via this API's own proxy, cached 24 h).</span>
                   <code style="color:var(--gold)">urls.diffFace</code><span>Direct URL to the difficulty face PNG matching this level's exact tier (difficulty + coins + rating).</span>
-                  <code style="color:var(--gold)">urls.card</code><span>URL to the auto-generated PNG card for this level — ready to embed in a Discord message or a webpage.</span>
+                  <code style="color:var(--gold)">urls.card</code><span>URL to the auto-generated PNG card for this level,  ready to embed in a Discord message or a webpage.</span>
                 </div>
               </div>
               <div style="margin-top:12px;font-size:.75rem;color:var(--red)">
-                <strong>Errors</strong> — <code style="color:var(--red)">400</code> if <code>id</code> is missing or non-numeric · <code style="color:var(--red)">404</code> if the level doesn't exist.
+                <strong>Errors</strong>,  <code style="color:var(--red)">400</code> if <code>id</code> is missing or non-numeric · <code style="color:var(--red)">404</code> if the level doesn't exist.
               </div>
             </div>
             <div class="cw">
@@ -593,12 +593,12 @@ json.<span class="fn">NewDecoder</span>(<span class="v">resp</span>.Body).<span 
           </div>
           <div class="ep-body"><div class="ep-inner">
             <div class="ep-desc">
-              Fetches up to 10 levels in a single request. Returns a JSON array where each item has the same fields as <code style="color:var(--gold)">/api/level</code>. If an individual ID is not found, that item will contain <code style="color:var(--gold)">{ "id": …, "error": "No encontrado" }</code> instead of being skipped — so you always get one item per requested ID in the same order.
+              Fetches up to 10 levels in a single request. Returns a JSON array where each item has the same fields as <code style="color:var(--gold)">/api/level</code>. If an individual ID is not found, that item will contain <code style="color:var(--gold)">{ "id": …, "error": "No encontrado" }</code> instead of being skipped,  so you always get one item per requested ID in the same order.
               <div class="params" style="margin-top:10px">
                 <div class="pr"><span class="pn">ids</span><span class="req">required</span><span class="pi">Comma-separated level IDs, e.g. <code style="color:var(--gold)">?ids=128,1,2</code>. Duplicates are removed automatically. Max 10 IDs per call.</span></div>
               </div>
               <div style="margin-top:10px;font-size:.75rem;color:var(--red)">
-                <strong>Errors</strong> — <code style="color:var(--red)">400</code> if <code>ids</code> is missing or contains no valid numeric IDs.
+                <strong>Errors</strong>,  <code style="color:var(--red)">400</code> if <code>ids</code> is missing or contains no valid numeric IDs.
               </div>
             </div>
             <div class="cw">
@@ -627,7 +627,7 @@ json.<span class="fn">NewDecoder</span>(<span class="v">resp</span>.Body).<span 
           </div>
           <div class="ep-body"><div class="ep-inner">
             <div class="ep-desc">
-              Searches Geometry Dash levels by name (powered by GDBrowser). Returns a JSON array of matching levels, each with the same fields as <code style="color:var(--gold)">/api/level</code> plus <code style="color:var(--gold)">description</code>. All URL fields (<code>thumbnail</code>, <code>diffFace</code>, <code>card</code>) are fully resolved — no extra calls needed.
+              Searches Geometry Dash levels by name (powered by GDBrowser). Returns a JSON array of matching levels, each with the same fields as <code style="color:var(--gold)">/api/level</code> plus <code style="color:var(--gold)">description</code>. All URL fields (<code>thumbnail</code>, <code>diffFace</code>, <code>card</code>) are fully resolved,  no extra calls needed.
               <div class="params" style="margin-top:10px">
                 <div class="pr"><span class="pn">q</span><span class="req">required</span><span class="pi">Level name or partial name to search for.</span></div>
                 <div class="pr"><span class="pn">count</span><span class="opt">optional</span><span class="pi">How many results to return. Default <code style="color:var(--gold)">10</code>, max <code style="color:var(--gold)">20</code>.</span></div>
@@ -636,7 +636,7 @@ json.<span class="fn">NewDecoder</span>(<span class="v">resp</span>.Body).<span 
                 Returns an empty array <code>[]</code> when there are no results. The response includes a <code style="color:var(--gold)">description</code> field (the in-game level description) which is not present in the single-level endpoint.
               </div>
               <div style="margin-top:8px;font-size:.75rem;color:var(--red)">
-                <strong>Errors</strong> — <code style="color:var(--red)">400</code> if <code>q</code> is missing · <code style="color:var(--red)">502</code> if the upstream search failed.
+                <strong>Errors</strong>,  <code style="color:var(--red)">400</code> if <code>q</code> is missing · <code style="color:var(--red)">502</code> if the upstream search failed.
               </div>
             </div>
             <div class="cw">
@@ -675,10 +675,10 @@ json.<span class="fn">NewDecoder</span>(<span class="v">resp</span>.Body).<span 
               </div>
               <div class="params" style="margin-top:10px">
                 <div class="pr"><span class="pn">id</span><span class="req">required</span><span class="pi">Numeric level ID.</span></div>
-                <div class="pr"><span class="pn">size</span><span class="opt">optional</span><span class="pi"><code style="color:var(--gold)">normal</code> (default) — outputs a <strong>1600×520 px</strong> PNG · <code style="color:var(--gold)">small</code> — outputs a <strong>1200×320 px</strong> PNG. Both are @2x renders of their logical canvas.</span></div>
+                <div class="pr"><span class="pn">size</span><span class="opt">optional</span><span class="pi"><code style="color:var(--gold)">normal</code> (default),  outputs a <strong>1600×520 px</strong> PNG · <code style="color:var(--gold)">small</code>,  outputs a <strong>1200×320 px</strong> PNG. Both are @2x renders of their logical canvas.</span></div>
               </div>
               <div style="margin-top:10px;font-size:.75rem;color:var(--red)">
-                <strong>Errors</strong> — <code style="color:var(--red)">400</code> if <code>id</code> is invalid · <code style="color:var(--red)">404</code> if the level doesn't exist.
+                <strong>Errors</strong>,  <code style="color:var(--red)">400</code> if <code>id</code> is invalid · <code style="color:var(--red)">404</code> if the level doesn't exist.
               </div>
             </div>
             <div class="cw">
@@ -724,13 +724,13 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
             <div class="ep-desc">
               Proxy that fetches the raw WebP thumbnail for a level from the upstream source (<code>levelthumbs.prevter.me</code>) and forwards it through this API. Cached for <strong style="color:var(--white)">24 hours</strong> via Cloudflare CDN. Use this instead of the upstream URL to avoid CORS issues, get consistent caching, and stay on your own domain.
               <div style="margin-top:10px;font-size:.77rem;color:var(--m2);line-height:1.7">
-                Not all levels have a thumbnail — if none is available the upstream returns a 404 and so does this endpoint. In that case you can fall back to the <code>noThumb</code> placeholder used in the card generator.
+                Not all levels have a thumbnail,  if none is available the upstream returns a 404 and so does this endpoint. In that case you can fall back to the <code>noThumb</code> placeholder used in the card generator.
               </div>
               <div class="params" style="margin-top:10px">
-                <div class="pr"><span class="pn">levelId</span><span class="req">required</span><span class="pi">Level ID in the URL path — e.g. <code style="color:var(--gold)">/thumbnail/128</code></span></div>
+                <div class="pr"><span class="pn">levelId</span><span class="req">required</span><span class="pi">Level ID in the URL path,  e.g. <code style="color:var(--gold)">/thumbnail/128</code></span></div>
               </div>
               <div style="margin-top:10px;font-size:.75rem;color:var(--red)">
-                <strong>Errors</strong> — <code style="color:var(--red)">400</code> if ID is omitted · <code style="color:var(--red)">404</code> if no thumbnail exists for that level.
+                <strong>Errors</strong>,  <code style="color:var(--red)">400</code> if ID is omitted · <code style="color:var(--red)">404</code> if no thumbnail exists for that level.
               </div>
             </div>
             <div class="cw">
@@ -784,7 +784,7 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
             <div class="ep-desc">
               Returns a random <strong style="color:var(--white)">featured</strong> level. Picks a random page from the GDBrowser featured search and returns one result formatted identically to <code style="color:var(--gold)">/api/level</code>. Great for bots that show a "level of the day" or showcase random content.
               <div style="margin-top:8px;font-size:.75rem;color:var(--m2)">No parameters required.</div>
-              <div style="margin-top:8px;font-size:.75rem;color:var(--red)"><strong>Errors</strong> — <code style="color:var(--red)">502</code> if the upstream featured search fails.</div>
+              <div style="margin-top:8px;font-size:.75rem;color:var(--red)"><strong>Errors</strong>,  <code style="color:var(--red)">502</code> if the upstream featured search fails.</div>
             </div>
             <div class="cw">
               <div class="tabs">
@@ -828,10 +828,10 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
                   <code style="color:var(--gold)">stars / diamonds / coins / userCoins / demons</code><span>Player stats.</span>
                   <code style="color:var(--gold)">creatorPoints</code><span>Creator points (rated levels).</span>
                   <code style="color:var(--gold)">socials</code><span>YouTube, Twitter/X, Twitch links (null if not set).</span>
-                  <code style="color:var(--gold)">urls.avatar</code><span>PNG icon rendered with the player's colors and glow — use directly in an <code>&lt;img&gt;</code> or Discord embed.</span>
+                  <code style="color:var(--gold)">urls.avatar</code><span>PNG icon rendered with the player's colors and glow,  use directly in an <code>&lt;img&gt;</code> or Discord embed.</span>
                 </div>
               </div>
-              <div style="margin-top:10px;font-size:.75rem;color:var(--red)"><strong>Errors</strong> — <code style="color:var(--red)">400</code> if <code>name</code> is missing · <code style="color:var(--red)">404</code> if player not found.</div>
+              <div style="margin-top:10px;font-size:.75rem;color:var(--red)"><strong>Errors</strong>,  <code style="color:var(--red)">400</code> if <code>name</code> is missing · <code style="color:var(--red)">404</code> if player not found.</div>
             </div>
             <div class="cw">
               <div class="tabs">
@@ -879,7 +879,7 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
           </div>
           <div class="ep-body"><div class="ep-inner">
             <div class="ep-desc">
-              Returns the player's GD icon rendered as a PNG with their real colors, glow, and correct icon number — not a placeholder. Powered by a dedicated render server using sprite atlas compositing.
+              Returns the player's GD icon rendered as a PNG with their real colors, glow, and correct icon number,  not a placeholder. Powered by a dedicated render server using sprite atlas compositing.
               <div class="params" style="margin-top:10px">
                 <div class="pr"><span class="pn">name</span><span class="req">required</span><span class="pi">GD username.</span></div>
                 <div class="pr"><span class="pn">form</span><span class="opt">optional</span><span class="pi">Icon form: <code>cube</code>, <code>ship</code>, <code>ball</code>, <code>ufo</code>, <code>wave</code>, <code>robot</code>, <code>spider</code>, <code>swing</code>, <code>jetpack</code>. Defaults to the player's active form.</span></div>
@@ -887,10 +887,10 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
               </div>
               <div style="margin-top:10px;font-size:.77rem;color:var(--m2);line-height:1.8">
                 <strong style="color:var(--white);display:block;margin-bottom:5px">Response</strong>
-                Without <code>all=1</code>: returns a <strong style="color:var(--white)">PNG image</strong> directly — drop the URL into an <code>&lt;img&gt;</code> tag or Discord embed thumbnail.<br>
+                Without <code>all=1</code>: returns a <strong style="color:var(--white)">PNG image</strong> directly,  drop the URL into an <code>&lt;img&gt;</code> tag or Discord embed thumbnail.<br>
                 With <code>all=1</code>: returns JSON with <code>icons</code> object containing all forms, icon numbers, and per-form URLs.
               </div>
-              <div style="margin-top:10px;font-size:.75rem;color:var(--red)"><strong>Errors</strong> — <code style="color:var(--red)">404</code> if player not found · <code style="color:var(--red)">502</code> if render failed.</div>
+              <div style="margin-top:10px;font-size:.75rem;color:var(--red)"><strong>Errors</strong>,  <code style="color:var(--red)">404</code> if player not found · <code style="color:var(--red)">502</code> if render failed.</div>
             </div>
             <div class="cw">
               <div class="tabs">
@@ -939,7 +939,7 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
               </div>
               <div style="margin-top:10px;font-size:.77rem;color:var(--m2);line-height:1.8">
                 <strong style="color:var(--white);display:block;margin-bottom:5px">Response</strong>
-                Returns a <strong style="color:var(--white)">PNG image</strong> — a horizontal strip of all icon forms.
+                Returns a <strong style="color:var(--white)">PNG image</strong>,  a horizontal strip of all icon forms.
               </div>
             </div>
             <div class="cw">
@@ -995,7 +995,7 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
           </div>
           <div class="ep-body"><div class="ep-inner">
             <div class="ep-desc">
-              Returns the current operational status of the API and upstream services. Always responds instantly — if you get a response, the API is up.
+              Returns the current operational status of the API and upstream services. Always responds instantly,  if you get a response, the API is up.
               <div style="margin-top:10px;font-size:.77rem;color:var(--m2);line-height:1.8">
                 <strong style="color:var(--white);display:block;margin-bottom:5px">Response</strong>
                 JSON with status string, latency in ms, and upstream service states.
@@ -1073,7 +1073,7 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
       <div class="sec-head" id="playground">
         <span class="sec-ey">Interactive</span>
         <h2>Try it live</h2>
-        <p>Interact with the API directly — no code needed.</p>
+        <p>Interact with the API directly,  no code needed.</p>
       </div>
 
       <div class="pg-grid">
@@ -1289,7 +1289,7 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
       </div>
       <div class="legal-section">
         <h3>Acceptable use</h3>
-        <p>You may use this API to build bots, websites, apps or tools that display Geometry Dash data. Please be respectful of rate limits — they exist to keep the service free for everyone.</p>
+        <p>You may use this API to build bots, websites, apps or tools that display Geometry Dash data. Please be respectful of rate limits,  they exist to keep the service free for everyone.</p>
       </div>
       <div class="legal-section">
         <h3>Prohibited</h3>
@@ -1321,7 +1321,7 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
   <div class="sec-head">
     <span class="sec-ey">Live</span>
     <h2>API Status</h2>
-    <p>Real-time health check — updated on page load.</p>
+    <p>Real-time health check,  updated on page load.</p>
   </div>
   <div class="status-grid">
     <div class="status-card">
@@ -1379,7 +1379,7 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
       <div class="clog-content">
         <span class="clog-tag feat">Feature</span>
         <h4>Batch level fetch</h4>
-        <p>New <code>/api/levels?ids=1,2,3</code> endpoint — fetch up to 10 levels in a single request.</p>
+        <p>New <code>/api/levels?ids=1,2,3</code> endpoint,  fetch up to 10 levels in a single request.</p>
       </div>
     </div>
     <div class="clog-entry">
@@ -1387,7 +1387,7 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
       <div class="clog-content">
         <span class="clog-tag feat">Feature</span>
         <h4>Interactive playground</h4>
-        <p>Live API playground on the docs site — test every endpoint in your browser with real-time previews.</p>
+        <p>Live API playground on the docs site,  test every endpoint in your browser with real-time previews.</p>
       </div>
     </div>
     <div class="clog-entry">
@@ -1395,7 +1395,7 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
       <div class="clog-content">
         <span class="clog-tag new">New</span>
         <h4>PNG Card generation</h4>
-        <p>Added <code>/api/card</code> — generates a styled 800×260 PNG card with level info, thumbnail, difficulty face and song data.</p>
+        <p>Added <code>/api/card</code>,  generates a styled 800×260 PNG card with level info, thumbnail, difficulty face and song data.</p>
       </div>
     </div>
     <div class="clog-entry">
@@ -1414,7 +1414,7 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
     <div class="sponsor-left">
       <span class="sponsor-tag">☕ Support the project</span>
       <div class="sponsor-title">Help keep GD Level API free</div>
-      <p class="sponsor-desc">This API runs 100% free, no ads, no paywalls. If it's been useful for your bot, project or app — consider buying a coffee. Every contribution helps cover server costs.</p>
+      <p class="sponsor-desc">This API runs 100% free, no ads, no paywalls. If it's been useful for your bot, project or app,  consider buying a coffee. Every contribution helps cover server costs.</p>
       <div class="sponsor-goal">
         <div class="sponsor-goal-label">
           <span>Goal: hosting &amp; uptime</span>
@@ -1435,7 +1435,7 @@ document.<span class="fn">querySelector</span>(<span class="s">"img"</span>).src
       <div class="flogo">
         <img src="/favicon.svg" style="width:20px;height:20px"/> GD Level API
       </div>
-      <p>Free public REST API for Geometry Dash. Get level data, generate PNG cards, search levels and more — no key required.</p>
+      <p>Free public REST API for Geometry Dash. Get level data, generate PNG cards, search levels and more,  no key required.</p>
       <p style="margin-top:10px;font-size:.72rem">Powered by <a href="https://github.com/liamt8d" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none;font-weight:700">Liam</a></p>
     </div>
 
@@ -1606,7 +1606,7 @@ async function loadPreview() {
     document.getElementById('pvSpin').classList.remove('v');
     document.getElementById('pvBtn').disabled = false;
     const err = document.getElementById('pvErr');
-    err.textContent = '⚠ Level not found — check the ID and try again.';
+    err.textContent = '⚠ Level not found,  check the ID and try again.';
     err.classList.add('v');
   };
 }
@@ -1629,7 +1629,7 @@ async function runCard() {
       const status = res.status;
       show('cardLoad', false);
       txt('cardErr', status === 404 ? `⚠ Level #${id} not found.`
-        : status === 429 ? '⚠ Too many requests — wait a moment and try again.'
+        : status === 429 ? '⚠ Too many requests,  wait a moment and try again.'
         : `⚠ Could not generate card (error ${status}).`);
       show('cardErr', true); btn.disabled = false; return;
     }
@@ -1644,7 +1644,7 @@ async function runCard() {
       updatePlaygroundUrl({ id, size });
     };
   } catch(e) {
-    show('cardLoad', false); txt('cardErr', '⚠ Network error — check your connection.'); show('cardErr', true); btn.disabled = false;
+    show('cardLoad', false); txt('cardErr', '⚠ Network error,  check your connection.'); show('cardErr', true); btn.disabled = false;
   }
 }
 
@@ -1672,7 +1672,7 @@ async function runSearch() {
         el.onclick=()=>loadSrCard(l.id);
         c.appendChild(el);
       });
-      txt('srHint',`${data.length} result${data.length!==1?'s':''} — click one to load its card`);
+      txt('srHint',`${data.length} result${data.length!==1?'s':''},  click one to load its card`);
       show('srList',true); show('srHint',true);
     }
   } catch(e) { show('srLoad',false); txt('srErr','Search error.'); show('srErr',true); }
@@ -1758,7 +1758,7 @@ async function runIcon() {
     show('iconLoad', false); show('iconRes', true);
     btn.disabled = false;
 
-    // composite loads async after — no bloquea el icono individual
+    // composite loads async after,  no bloquea el icono individual
     document.getElementById('iconComposite').src = '';
     fetch(compositeUrl).then(async r => {
       if (!r.ok) return;
